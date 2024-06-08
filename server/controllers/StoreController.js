@@ -50,8 +50,17 @@ export const createService = async (req, res) => {
 
 export const createCoupon = async (req, res) => {
   const { couponName } = req.body;
+  const { storeId } = req.params;
   try {
+    const store = await StoreModel.findOne({ _id: storeId });
+    if (!store) {
+      return res.status(404).json({
+        success: false,
+        error: "Store not found",
+      });
+    }
     const coupon = await CouponModel.create({
+      storeOwner: store.nameOfStore,
       couponName,
     });
     res.status(201).json({
