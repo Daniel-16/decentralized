@@ -49,7 +49,7 @@ export const createService = async (req, res) => {
 };
 
 export const createCoupon = async (req, res) => {
-  const { couponName } = req.body;
+  const { couponName, typeOfCoupon } = req.body;
   const { storeId } = req.params;
   try {
     const store = await StoreModel.findOne({ _id: storeId });
@@ -62,6 +62,7 @@ export const createCoupon = async (req, res) => {
     const coupon = await CouponModel.create({
       storeOwner: store.nameOfStore,
       couponName,
+      typeOfCoupon,
     });
     res.status(201).json({
       success: true,
