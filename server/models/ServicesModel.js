@@ -14,6 +14,10 @@ const ServiceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  coupon: {
+    type: Array,
+    required: true,
+  },
 });
 
 const ServiceModel = mongoose.model("Service", ServiceSchema);
