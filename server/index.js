@@ -6,7 +6,8 @@ import router from "./routes/routes.js";
 
 const app = express();
 app.use(cors());
-// Rate limiting to prevent DOS
+
+// Rate limit
 app.use(express.json({ limit: "30mb" }));
 app.use("/api", router);
 
