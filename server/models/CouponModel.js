@@ -23,6 +23,10 @@ const CouponSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  tokenId: {
+    type: Number,
+    required: true,
+  },
 });
 
 const CouponModel = mongoose.model("Coupon", CouponSchema);
