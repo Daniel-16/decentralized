@@ -1,15 +1,6 @@
 import mongoose from "mongoose";
 
 const CouponSchema = new mongoose.Schema({
-  // serviceId: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "Service",
-  //   required: true,
-  // },
-  // serviceOwner: {
-  //   type: mongoose.Schema.Types.String,
-  //   ref: "Service",
-  // },
   storeOwner: {
     type: mongoose.Schema.Types.String,
     ref: "Store",
