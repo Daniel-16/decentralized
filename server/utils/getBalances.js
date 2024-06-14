@@ -1,7 +1,7 @@
 import Sdk from "@unique-nft/sdk";
 
 const options = {
-  baseUrl: "https://rest.unique.network/opal/v1",
+  baseUrl: process.env.BASE_URL,
 };
 
 export const getBalance = (_req, res) => {
