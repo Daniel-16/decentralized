@@ -11,7 +11,7 @@ export const getBalance = (_req, res) => {
       sdk.balance.get({ address });
     res.status(200).json({
       success: true,
-      availableBalance,
+      address,
     });
   } catch (error) {
     res.status(500).json({
