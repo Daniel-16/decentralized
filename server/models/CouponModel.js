@@ -6,18 +6,13 @@ const CouponSchema = new mongoose.Schema({
     ref: "Store",
     required: true,
   },
-  couponName: {
-    type: String,
-    required: true,
-  },
-  typeOfCoupon: {
-    type: String,
-    required: true,
-  },
+  collectionId: Number,
+  service: { type: mongoose.Schema.Types.ObjectId, ref: "Service" },
   tokenId: {
     type: Number,
     required: true,
   },
+  redeemed: { type: Boolean, default: false },
 });
 
 const CouponModel = mongoose.model("Coupon", CouponSchema);
