@@ -90,3 +90,18 @@ export const getStores = async (_req, res) => {
     });
   }
 };
+
+export const getServices = async (_req, res) => {
+  try {
+    const services = await ServiceModel.find();
+    res.status(200).json({
+      success: true,
+      services,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
