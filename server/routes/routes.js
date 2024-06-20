@@ -3,6 +3,7 @@ import {
   createCoupon,
   createService,
   createStore,
+  getStores,
 } from "../controllers/StoreController.js";
 import { createAccount } from "../utils/createAccount.js";
 import { getBalance } from "../utils/getBalances.js";
@@ -16,5 +17,6 @@ router.post("/createCoupon/:storeId", createCoupon);
 router.get("/createAccount", createAccount);
 // router.get("/getAccount", getAccount);
 router.get("/getBalance", getBalance);
+router.get("/getStores", getStores);
 
 export default router;
