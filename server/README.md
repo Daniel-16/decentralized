@@ -31,7 +31,7 @@
    ```
    npm run dev
    ```
-   The server would run on `http://localhost:7000`
+   The server would run on `http://localhost:5500`
 
 ## API Endpoints
 
@@ -42,4 +42,6 @@
 - `POST /api/createService/:storeId`: Create a service with the store id as param.
   - Required fields: `nameOfService`.
 - `POST /api/createCoupon/:storeId`: Create a coupon for relevant store and service.
-  - Required fields: `couponName`.
+  - Required fields: `collectionId`, `tokenId`, `redeemed`.
+- `GET /api/getStores`: Get all the stores available in the Database.
+- `GET /api/getServices`: Get all services available in the Database.
