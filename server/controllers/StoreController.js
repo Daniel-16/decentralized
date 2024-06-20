@@ -49,7 +49,7 @@ export const createService = async (req, res) => {
 };
 
 export const createCoupon = async (req, res) => {
-  const { couponName, typeOfCoupon } = req.body;
+  const { collectionId, tokenId, redeemed } = req.body;
   const { storeId } = req.params;
   try {
     const store = await StoreModel.findOne({ _id: storeId });
@@ -61,8 +61,9 @@ export const createCoupon = async (req, res) => {
     }
     const coupon = await CouponModel.create({
       storeOwner: store.nameOfStore,
-      couponName,
-      typeOfCoupon,
+      collectionId,
+      tokenId,
+      redeemed,
     });
     res.status(201).json({
       success: true,
@@ -97,6 +98,21 @@ export const getServices = async (_req, res) => {
     res.status(200).json({
       success: true,
       services,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+export const getCoupons = async (_req, res) => {
+  try {
+    const coupons = await CouponModel.find();
+    res.status(200).json({
+      success: true,
+      coupons,
     });
   } catch (error) {
     res.status(500).json({

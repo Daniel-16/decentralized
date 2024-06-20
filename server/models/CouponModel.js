@@ -7,7 +7,7 @@ const CouponSchema = new mongoose.Schema({
     required: true,
   },
   collectionId: Number,
-  service: { type: mongoose.Schema.Types.ObjectId, ref: "Service" },
+  // service: { type: mongoose.Schema.Types.ObjectId, ref: "Service" },
   tokenId: {
     type: Number,
     required: true,
