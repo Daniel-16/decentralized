@@ -75,3 +75,18 @@ export const createCoupon = async (req, res) => {
     });
   }
 };
+
+export const getStores = async (_req, res) => {
+  try {
+    const stores = await StoreModel.find();
+    res.status(200).json({
+      success: true,
+      stores,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
