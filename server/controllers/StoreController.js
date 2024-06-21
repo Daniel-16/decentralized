@@ -121,3 +121,28 @@ export const getCoupons = async (_req, res) => {
     });
   }
 };
+
+export const redeemCoupon = async (req, res) => {
+  const { collectionId } = req.body;
+  try {
+    const redeemCoupon = await CouponModel.findOneAndUpdate(
+      { collectionId },
+      { redeemed: true }
+    );
+    if (!redeemCoupon) {
+      res.status(404).json({
+        success: false,
+        error: "Coupon does not exist",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      redeemCoupon,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
