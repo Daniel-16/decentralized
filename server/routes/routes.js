@@ -6,6 +6,7 @@ import {
   getCoupons,
   getServices,
   getStores,
+  redeemCoupon,
 } from "../controllers/StoreController.js";
 import { createAccount } from "../utils/createAccount.js";
 import { getBalance } from "../utils/getBalances.js";
@@ -22,5 +23,6 @@ router.get("/getBalance", getBalance);
 router.get("/getStores", getStores);
 router.get("/getServices", getServices);
 router.get("/getCoupons", getCoupons);
+router.put("/redeemCoupon", redeemCoupon);
 
 export default router;
