@@ -1,21 +1,27 @@
-// import { Accounts } from "@unique-nft/accounts";
-// import { KeyringLocalProvider } from "@unique-nft/accounts/keyring-local";
-// import {
-//   PolkadotAccount,
-//   PolkadotProvider,
-// } from "@unique-nft/accounts/polkadot";
+// import { Sr25519Account } from "@unique-nft/sr25519";
+// import { Sdk } from "@unique-nft/sdk";
 
-// export const getAccount = async (_req, res) => {
+// // set "account" as a default signer
+// // const sdk = new Sdk({
+// //   baseUrl: "https://rest.unique.network/opal/v1",
+// //   account,
+// // });
+
+// export const getSdk = async (req, res) => {
+//   const mnemonic = "<SET THE MNEMONIC SEED PHRASE FOR THE DEFAULT SIGNER>";
+//   const account = Sr25519Account.fromUri(mnemonic);
 //   try {
-//     const accounts = new Accounts();
-//     const provider = new PolkadotProvider({ accountType: ["sr25519"] });
-//     await provider.init();
-//     const _accountList = await provider.getAccounts();
+//     const sdk = new Sdk({
+//       baseUrl: "https://rest.unique.network/opal/v1",
+//       account,
+//     });
 //     res.status(201).json({
-//       signer,
+//       success: true,
+//       sdk,
 //     });
 //   } catch (error) {
 //     res.status(500).json({
+//       success: false,
 //       error: error.message,
 //     });
 //   }
