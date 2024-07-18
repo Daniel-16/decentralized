@@ -11,6 +11,8 @@ export const createStore = async (req, res) => {
     res.status(201).json({
       success: true,
       store,
+      userGeneratedMnemonic:
+        "bus ahead nation nice damp recall place dance guide media clap language",
     });
   } catch (error) {
     res.status(500).json({
