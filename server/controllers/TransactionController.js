@@ -30,7 +30,7 @@ export const purchaseItem = async (req, res) => {
 };
 
 export const getUserTransactions = async (req, res) => {
-  const userId = req.user.id; // Assuming you have middleware to extract user from token
+  const userId = req.user.id;
 
   try {
     const transactions = await TransactionModel.find({ user: userId })
