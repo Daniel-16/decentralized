@@ -28,3 +28,18 @@ export const createItem = async (req, res) => {
     });
   }
 };
+
+export const getAllItems = async (req, res) => {
+  try {
+    const items = await ItemModel.find({});
+    res.status(200).json({
+      success: true,
+      items,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
