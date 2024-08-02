@@ -12,12 +12,14 @@ import { createAccount } from "../utils/createAccount.js";
 import { getAccount } from "../utils/getAccount.js";
 import { createCollectionController } from "../utils/getUserBalance.js";
 import { createCollectionAndTokenController } from "../controllers/MintToken.js";
+import { createUser, loginUser } from "../controllers/UserController.js";
 // import { getBalance } from "../utils/getBalances.js";
 // import { getSdk } from "../utils/getAccount.js";
 // import { getAccount } from "../utils/getAccount.js";
 const router = express.Router();
 
-// router.post("/createUser", createU)
+router.post("/createUser", createUser);
+router.post("/loginUser", loginUser);
 router.post("/createStore", createStore);
 router.post("/createService/:storeId", createService);
 router.post("/createCoupon/:storeId", createCoupon);
