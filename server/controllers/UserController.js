@@ -1,5 +1,6 @@
 import UserModel from "../models/UserModel.js";
 import bcrypt from "bcrypt";
+import { generateToken } from "../middleware/generateToken.js";
 
 export const createUser = async (req, res) => {
   const { username, email, password } = req.body;
@@ -9,9 +10,17 @@ export const createUser = async (req, res) => {
       email,
       password,
     });
+
+    const token = generateToken(user);
+
     res.status(201).json({
       success: true,
-      user,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+      token,
     });
   } catch (error) {
     res.status(500).json({
@@ -31,16 +40,20 @@ export const loginUser = async (req, res) => {
         error: "Invalid email or password",
       });
     }
-    const matchPassword = await bcrypt.compare(password, user.password);
+    const matchPassword = bcrypt.compare(password, user.password);
     if (!matchPassword) {
       return res.status(401).json({
         success: false,
         error: "Invalid email or password",
       });
     }
+
+    const token = generateToken(user);
+
     res.status(200).json({
       success: true,
       user,
+      token,
     });
   } catch (error) {
     res.status(500).json({

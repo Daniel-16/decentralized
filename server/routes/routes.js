@@ -14,6 +14,8 @@ import { createCollectionController } from "../utils/getUserBalance.js";
 import { createCollectionAndTokenController } from "../controllers/MintToken.js";
 import { createUser, loginUser } from "../controllers/UserController.js";
 import { createItem, getAllItems } from "../controllers/ItemsController.js";
+import { verifyToken } from "../middleware/generateToken.js";
+import { purchaseItem } from "../controllers/TransactionController.js";
 // import { getBalance } from "../utils/getBalances.js";
 // import { getSdk } from "../utils/getAccount.js";
 // import { getAccount } from "../utils/getAccount.js";
@@ -36,6 +38,8 @@ router.post("/mintToken", createCollectionAndTokenController);
 
 router.post("/createItem", createItem);
 router.get("/allItems", getAllItems);
+
+router.get("/purchaseItem", verifyToken, purchaseItem);
 // router.get("/getSdk", getSdk);
 
 export default router;
