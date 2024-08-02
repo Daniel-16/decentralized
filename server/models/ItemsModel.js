@@ -9,9 +9,17 @@ const ItemSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  itemOwner: {
+  itemOwnerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Store",
     required: true,
   },
+  itemOwner: {
+    type: mongoose.Schema.Types.String,
+    ref: "Store",
+    required: true,
+  },
 });
+
+const ItemModel = mongoose.model("Item", ItemSchema);
+export default ItemModel;
