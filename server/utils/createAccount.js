@@ -5,8 +5,8 @@ export const createAccount = async (req, res) => {
     const mnemonic = Sr25519Account.generateMnemonic();
     const account = Sr25519Account.fromUri(mnemonic);
     res.status(201).json({
-      success: true,
       account,
+      mnemonic,
     });
   } catch (error) {
     res.status(500).json({
