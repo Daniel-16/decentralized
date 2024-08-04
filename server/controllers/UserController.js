@@ -6,15 +6,23 @@ import { Sr25519Account } from "@unique-nft/sr25519";
 export const createUser = async (req, res) => {
   const { username, email, password } = req.body;
   try {
+    const userExist = await UserModel.findOne({ email });
+    if (userExist) {
+      return res.status(409).json({
+        success: false,
+        error: "A user with this email already exist",
+      });
+    }
+    const mnemonic = Sr25519Account.generateMnemonic();
+    const account = Sr25519Account.fromUri(mnemonic);
     const user = await UserModel.create({
       username,
       email,
       password,
+      accountAddress: account.address,
     });
 
     const token = generateToken(user);
-    const mnemonic = Sr25519Account.generateMnemonic();
-    const account = Sr25519Account.fromUri(mnemonic);
 
     res.status(201).json({
       success: true,

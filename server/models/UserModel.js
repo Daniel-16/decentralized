@@ -7,6 +7,9 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
   },
+  accountAddress: {
+    type: String,
+  },
 });
 
 UserSchema.pre("save", async function (next) {
