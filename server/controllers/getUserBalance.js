@@ -1,6 +1,6 @@
 import Sdk from "@unique-nft/sdk";
 
-export const getBalance = async () => {
+export const getUserBalance = async (req, res) => {
   const { inputAddress } = req.body;
   try {
     const options = {
@@ -8,7 +8,6 @@ export const getBalance = async () => {
     };
     const sdk = new Sdk(options);
     const result = await sdk.balance.get({ address: inputAddress });
-    console.log(result);
 
     const { address, availableBalance, lockedBalance, freeBalance } = result;
     res.status(200).json({
@@ -21,7 +20,7 @@ export const getBalance = async () => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message,
+      error,
     });
   }
 };

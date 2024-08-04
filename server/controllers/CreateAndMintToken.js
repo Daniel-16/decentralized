@@ -8,22 +8,22 @@ export const createCollectionAndTokenController = async (req, res) => {
     tokenDescription,
     tokenPrefix,
     collectionName,
-    collectionDesc,
+    name,
+    description,
   } = req.body;
 
-  if (
-    !mnemonic ||
-    !tokenPrefix ||
-    !tokenName ||
-    !tokenDescription ||
-    !collectionName ||
-    !collectionDesc
-  ) {
-    return res.status(400).json({
-      message:
-        "Mnemonic, tokenPrefix, tokenName, tokenDescription, collection name, and collection description are required",
-    });
-  }
+  // if (
+  //   !mnemonic ||
+  //   !tokenPrefix ||
+  //   !tokenName ||
+  //   !tokenDescription ||
+  //   !collectionName
+  // ) {
+  //   return res.status(400).json({
+  //     message:
+  //       "Mnemonic, tokenPrefix, tokenName, tokenDescription, collection name, and collection description are required",
+  //   });
+  // }
 
   try {
     const account = await KeyringProvider.fromMnemonic(mnemonic);
@@ -36,9 +36,9 @@ export const createCollectionAndTokenController = async (req, res) => {
 
     const { parsed, error } = await sdk.collection.create.submitWaitResult({
       address,
-      name: "Munch Box",
-      description: "This is a collection for munch box",
-      tokenPrefix: tokenPrefix,
+      name,
+      description,
+      tokenPrefix,
     });
 
     if (error) {
@@ -75,7 +75,7 @@ export const createCollectionAndTokenController = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "An error occurred while creating the collection and token",
-      error: error.message,
+      error: error,
     });
   }
 };

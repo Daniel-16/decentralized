@@ -10,8 +10,7 @@ import {
 } from "../controllers/StoreController.js";
 import { createAccount } from "../utils/createAccount.js";
 import { getAccount } from "../utils/getAccount.js";
-import { createCollectionController } from "../utils/getUserBalance.js";
-import { createCollectionAndTokenController } from "../controllers/MintToken.js";
+import { createCollectionAndTokenController } from "../controllers/CreateAndMintToken.js";
 import { createUser, loginUser } from "../controllers/UserController.js";
 import { createItem, getAllItems } from "../controllers/ItemsController.js";
 import { verifyToken } from "../middleware/generateToken.js";
@@ -19,6 +18,9 @@ import {
   getUserTransactions,
   purchaseItem,
 } from "../controllers/TransactionController.js";
+import { getUserBalance } from "../controllers/getUserBalance.js";
+// import { createCollection } from "../utils/createCollection.js";
+import { createTestCollection } from "../controllers/CreateCollection.js";
 // import { getBalance } from "../utils/getBalances.js";
 // import { getSdk } from "../utils/getAccount.js";
 // import { getAccount } from "../utils/getAccount.js";
@@ -31,19 +33,21 @@ router.post("/createService/:storeId", createService);
 router.post("/createCoupon/:storeId", createCoupon);
 router.post("/createAccount", createAccount);
 router.get("/getAccount", getAccount);
-// router.get("/getBalance", getBalance);
 router.get("/getStores", getStores);
 router.get("/getServices", getServices);
 router.get("/getCoupons", getCoupons);
 router.put("/redeemCoupon", redeemCoupon);
-router.post("/createCollection", createCollectionController);
-router.post("/mintToken", createCollectionAndTokenController);
+// router.post("/createCollection", createCollectionController);
+// router.post("/mintToken", createCollectionAndTokenController);
 
 router.post("/createItem", createItem);
 router.get("/allItems", getAllItems);
 
 router.get("/purchaseItem", verifyToken, purchaseItem);
 router.get("/getTransactions", verifyToken, getUserTransactions);
-// router.get("/getSdk", getSdk);
+
+router.get("/getUserBalance", getUserBalance);
+router.post("/createCollection", createTestCollection);
+router.post("/createAndMint", createCollectionAndTokenController);
 
 export default router;

@@ -1,6 +1,7 @@
 import UserModel from "../models/UserModel.js";
 import bcrypt from "bcrypt";
 import { generateToken } from "../middleware/generateToken.js";
+import { Sr25519Account } from "@unique-nft/sr25519";
 
 export const createUser = async (req, res) => {
   const { username, email, password } = req.body;
@@ -12,6 +13,8 @@ export const createUser = async (req, res) => {
     });
 
     const token = generateToken(user);
+    const mnemonic = Sr25519Account.generateMnemonic();
+    const account = Sr25519Account.fromUri(mnemonic);
 
     res.status(201).json({
       success: true,
@@ -20,6 +23,8 @@ export const createUser = async (req, res) => {
         username: user.username,
         email: user.email,
       },
+      account,
+      mnemonic,
       token,
     });
   } catch (error) {
