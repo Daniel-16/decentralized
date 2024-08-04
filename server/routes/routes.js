@@ -21,6 +21,7 @@ import {
 import { getUserBalance } from "../controllers/getUserBalance.js";
 // import { createCollection } from "../utils/createCollection.js";
 import { createTestCollection } from "../controllers/CreateCollection.js";
+import { transferTokenController } from "../controllers/TransferToken.js";
 // import { getBalance } from "../utils/getBalances.js";
 // import { getSdk } from "../utils/getAccount.js";
 // import { getAccount } from "../utils/getAccount.js";
@@ -49,5 +50,6 @@ router.get("/getTransactions", verifyToken, getUserTransactions);
 router.get("/getUserBalance", getUserBalance);
 router.post("/createCollection", createTestCollection);
 router.post("/createAndMint", createCollectionAndTokenController);
+router.post("/transferToken", transferTokenController);
 
 export default router;
