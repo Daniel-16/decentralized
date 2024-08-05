@@ -2,6 +2,7 @@ import UserModel from "../models/UserModel.js";
 import bcrypt from "bcrypt";
 import { generateToken } from "../middleware/generateToken.js";
 import { Sr25519Account } from "@unique-nft/sr25519";
+import { getUserBalance } from "./getUserBalance.js";
 
 export const createUser = async (req, res) => {
   const { username, email, password } = req.body;
@@ -67,6 +68,29 @@ export const loginUser = async (req, res) => {
       success: true,
       user,
       token,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+export const getUser = async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const user = await UserModel.findById(userId).select("-password");
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      user,
     });
   } catch (error) {
     res.status(500).json({

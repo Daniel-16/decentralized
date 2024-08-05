@@ -11,7 +11,11 @@ import {
 import { createAccount } from "../utils/createAccount.js";
 import { getAccount } from "../utils/getAccount.js";
 import { createCollectionAndTokenController } from "../controllers/CreateAndMintToken.js";
-import { createUser, loginUser } from "../controllers/UserController.js";
+import {
+  createUser,
+  getUser,
+  loginUser,
+} from "../controllers/UserController.js";
 import { createItem, getAllItems } from "../controllers/ItemsController.js";
 import { verifyToken } from "../middleware/generateToken.js";
 import {
@@ -29,6 +33,7 @@ const router = express.Router();
 
 router.post("/createUser", createUser);
 router.post("/loginUser", loginUser);
+router.get("/getUser", verifyToken, getUser);
 router.post("/createStore", createStore);
 router.post("/createService/:storeId", createService);
 router.post("/createCoupon/:storeId", createCoupon);
