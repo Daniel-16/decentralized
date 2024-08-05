@@ -10,6 +10,10 @@ const UserSchema = new mongoose.Schema({
   accountAddress: {
     type: String,
   },
+  hasReceivedToken: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 UserSchema.pre("save", async function (next) {

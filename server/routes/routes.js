@@ -19,6 +19,7 @@ import {
 import { createItem, getAllItems } from "../controllers/ItemsController.js";
 import { verifyToken } from "../middleware/generateToken.js";
 import {
+  checkPurchases,
   getUserTransactions,
   purchaseItem,
 } from "../controllers/TransactionController.js";
@@ -46,7 +47,7 @@ router.put("/redeemCoupon", redeemCoupon);
 // router.post("/createCollection", createCollectionController);
 // router.post("/mintToken", createCollectionAndTokenController);
 
-router.post("/createItem", createItem);
+router.post("/createItem", verifyToken, createItem);
 router.get("/allItems", getAllItems);
 
 router.get("/purchaseItem", verifyToken, purchaseItem);
@@ -56,5 +57,7 @@ router.get("/getUserBalance", getUserBalance);
 router.post("/createCollection", createTestCollection);
 router.post("/createAndMint", createCollectionAndTokenController);
 router.post("/transferToken", transferTokenController);
+
+router.get("/purchases", verifyToken, checkPurchases);
 
 export default router;

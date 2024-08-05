@@ -1,21 +1,23 @@
 import ItemModel from "../models/ItemsModel.js";
 import StoreModel from "../models/StoreModel.js";
+import UserModel from "../models/UserModel.js";
 
 export const createItem = async (req, res) => {
-  const { nameOfItem, priceOfItem, storeId } = req.body;
+  const { nameOfItem, priceOfItem } = req.body;
+  const userId = req.user.id;
   try {
-    const store = await StoreModel.findById(storeId);
-    if (!store) {
+    const user = await UserModel.findById(userId);
+    if (!user) {
       return res.status(404).json({
         success: false,
-        error: "Store not found",
+        error: "User not found",
       });
     }
     const newItem = await ItemModel.create({
       nameOfItem,
       priceOfItem,
-      itemOwnerId: storeId,
-      itemOwner: store.nameOfStore,
+      itemOwnerId: user._id,
+      itemOwner: user.username,
     });
     res.status(201).json({
       success: true,
