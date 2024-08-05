@@ -69,8 +69,8 @@ export const createCollectionAndTokenController = async (req, res) => {
       message: "Collection and token created successfully",
       collectionId,
       tokenId,
-      collectionUrl: `https://uniquescan.io/opal/collections/${collectionId}`,
-      tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
+      collectionUrl: `Collection url: https://uniquescan.io/opal/collections/${collectionId}`,
+      tokenUrl: `Token url: https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
     });
   } catch (error) {
     res.status(500).json({
