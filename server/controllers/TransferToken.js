@@ -25,7 +25,7 @@ export const transferTokenController = async (req, res) => {
       tokenId,
       address,
       to: toAddress,
-      // from: fromAddress || address, // Use provided fromAddress or default to the signer's address
+      // from: fromAddress || address,
     });
 
     const parsedTransfer = txTransfer.parsed;
