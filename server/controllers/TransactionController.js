@@ -70,7 +70,7 @@ export const getUserTransactions = async (req, res) => {
 export const checkPurchases = async (req, res) => {
   const userId = req.user.id;
   try {
-    const purchases = await TransactionModel.find({ user: userId });
+    const purchases = await TransactionModel.find({ buyerId: userId });
     if (purchases.length <= 0) {
       return res.status(200).json({
         success: true,
