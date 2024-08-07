@@ -7,6 +7,13 @@ export const purchaseItem = async (req, res) => {
   const userId = req.user.id;
 
   try {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
+    }
     const item = await ItemModel.findById(itemId);
     if (!item) {
       return res.status(404).json({ success: false, error: "Item not found" });
@@ -15,9 +22,11 @@ export const purchaseItem = async (req, res) => {
     const totalPrice = item.priceOfItem * quantity;
 
     const transaction = new TransactionModel({
-      user: userId,
+      buyerId: userId,
+      buyerName: user.username,
       item: itemId,
-      store: item.itemOwnerId,
+      itemName: item.nameOfItem,
+      // store: item.itemOwnerId,
       quantity,
       totalPrice,
     });

@@ -1,8 +1,13 @@
 import mongoose from "mongoose";
 
 const TransactionSchema = new mongoose.Schema({
-  user: {
+  buyerId: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  buyerName: {
+    type: mongoose.Schema.Types.String,
     ref: "User",
     required: true,
   },
@@ -11,9 +16,14 @@ const TransactionSchema = new mongoose.Schema({
     ref: "Item",
     required: true,
   },
-  store: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Store",
+  // store: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "Store",
+  //   required: true,
+  // },
+  itemName: {
+    type: mongoose.Schema.Types.String,
+    ref: "Item",
     required: true,
   },
   quantity: {
