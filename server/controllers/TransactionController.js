@@ -114,7 +114,7 @@ export const checkStorePurchases = async (req, res) => {
       });
     }
 
-    // Calculate some statistics
+    // Calculate total sales and items
     const totalSales = storePurchases.reduce(
       (sum, purchase) => sum + purchase.totalPrice,
       0
