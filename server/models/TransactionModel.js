@@ -16,6 +16,16 @@ const TransactionSchema = new mongoose.Schema({
     ref: "Item",
     required: true,
   },
+  itemOwner: {
+    type: mongoose.Schema.Types.String,
+    ref: "Item",
+    required: true,
+  },
+  storeOwnerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Item",
+    required: true,
+  },
   // store: {
   //   type: mongoose.Schema.Types.ObjectId,
   //   ref: "Store",

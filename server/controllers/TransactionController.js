@@ -25,6 +25,8 @@ export const purchaseItem = async (req, res) => {
       buyerId: userId,
       buyerName: user.username,
       item: itemId,
+      itemOwner: item.itemOwner,
+      storeOwnerId: item.itemOwnerId,
       itemName: item.nameOfItem,
       // store: item.itemOwnerId,
       quantity,
@@ -80,6 +82,55 @@ export const checkPurchases = async (req, res) => {
     res.status(200).json({
       success: true,
       purchases,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+export const checkStorePurchases = async (req, res) => {
+  const itemOwnerId = req.user.id; // Assuming the store owner is the logged-in user
+
+  try {
+    const item = await ItemModel.find({ itemOwnerId });
+    if (!item) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
+    }
+    // Find all transactions where the itemOwner matches the store owner's ID
+    const storePurchases = await TransactionModel.find({
+      storeOwnerId: itemOwnerId,
+    }) // Sort by creation date, newest first
+      .select("buyerId buyerName itemName quantity totalPrice createdAt"); // Select relevant fields
+
+    if (storePurchases.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "No purchases have been made from your store yet.",
+      });
+    }
+
+    // Calculate some statistics
+    const totalSales = storePurchases.reduce(
+      (sum, purchase) => sum + purchase.totalPrice,
+      0
+    );
+    const totalItems = storePurchases.reduce(
+      (sum, purchase) => sum + purchase.quantity,
+      0 - 1
+    );
+
+    res.status(200).json({
+      success: true,
+      purchases: storePurchases,
+      totalSales,
+      totalItems,
+      totalTransactions: storePurchases.length,
     });
   } catch (error) {
     res.status(500).json({

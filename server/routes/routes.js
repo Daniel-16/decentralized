@@ -20,6 +20,7 @@ import { createItem, getAllItems } from "../controllers/ItemsController.js";
 import { verifyToken } from "../middleware/generateToken.js";
 import {
   checkPurchases,
+  checkStorePurchases,
   getUserTransactions,
   purchaseItem,
 } from "../controllers/TransactionController.js";
@@ -59,5 +60,6 @@ router.post("/createAndMint", createCollectionAndTokenController);
 router.post("/transferToken", transferTokenController);
 
 router.get("/purchases", verifyToken, checkPurchases);
+router.get("/checkStorePurchases", verifyToken, checkStorePurchases);
 
 export default router;
