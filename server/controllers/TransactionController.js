@@ -124,12 +124,21 @@ export const checkStorePurchases = async (req, res) => {
       0
     );
 
+    const highestBuyer = storePurchases.reduce((prev, current) => {
+      return prev.totalPrice > current.totalPrice ? prev : current;
+    });
+
     res.status(200).json({
       success: true,
       purchases: storePurchases,
       totalSales,
       totalItems,
       totalTransactions: storePurchases.length,
+      highestBuyer: {
+        buyerId: highestBuyer.buyerId,
+        buyerName: highestBuyer.buyerName,
+        totalPurchase: highestBuyer.totalPrice,
+      },
     });
   } catch (error) {
     res.status(500).json({
