@@ -92,7 +92,7 @@ export const checkPurchases = async (req, res) => {
 };
 
 export const checkStorePurchases = async (req, res) => {
-  const itemOwnerId = req.user.id; // Assuming the store owner is the logged-in user
+  const itemOwnerId = req.user.id;
 
   try {
     const item = await ItemModel.find({ itemOwnerId });
@@ -105,8 +105,7 @@ export const checkStorePurchases = async (req, res) => {
     // Find all transactions where the itemOwner matches the store owner's ID
     const storePurchases = await TransactionModel.find({
       storeOwnerId: itemOwnerId,
-    }) // Sort by creation date, newest first
-      .select("buyerId buyerName itemName quantity totalPrice createdAt"); // Select relevant fields
+    }).select("buyerId buyerName itemName quantity totalPrice createdAt");
 
     if (storePurchases.length === 0) {
       return res.status(200).json({
