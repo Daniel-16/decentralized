@@ -79,3 +79,47 @@ export const createCollectionAndTokenController = async (req, res) => {
     });
   }
 };
+
+export const mintToken = async (req, res) => {
+  const { collectionId, mnemonic, tokenName, tokenDescription } = req.body;
+  try {
+    const account = await KeyringProvider.fromMnemonic(mnemonic);
+    const address = account.address;
+
+    const sdk = new Sdk({
+      baseUrl: CHAIN_CONFIG.opal.restUrl,
+      signer: account,
+    });
+
+    const result = await sdk.token.create.submitWaitResult({
+      address,
+      collectionId,
+      data: {
+        image: {
+          ipfsCid: "QmcAcH4F9HYQtpqKHxBFwGvkfKb8qckXj2YWUrcc8yd24G/image1.png",
+        },
+        name: {
+          _: tokenName,
+        },
+        description: {
+          _: tokenDescription,
+        },
+      },
+    });
+
+    const tokenId = result.parsed?.tokenId;
+    res.status(200).json({
+      success: true,
+      message: "Token created successfully",
+      collectionId,
+      tokenId,
+      collectionUrl: `Collection url: https://uniquescan.io/opal/collections/${collectionId}`,
+      tokenUrl: `Token url: https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error,
+    });
+  }
+};

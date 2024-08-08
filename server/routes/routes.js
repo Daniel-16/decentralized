@@ -10,7 +10,10 @@ import {
 } from "../controllers/StoreController.js";
 import { createAccount } from "../utils/createAccount.js";
 import { getAccount } from "../utils/getAccount.js";
-import { createCollectionAndTokenController } from "../controllers/CreateAndMintToken.js";
+import {
+  createCollectionAndTokenController,
+  mintToken,
+} from "../controllers/CreateAndMintToken.js";
 import {
   createUser,
   getUser,
@@ -58,6 +61,7 @@ router.get("/getUserBalance", getUserBalance);
 router.post("/createCollection", createTestCollection);
 router.post("/createAndMint", createCollectionAndTokenController);
 router.post("/transferToken", transferTokenController);
+router.post("/mintToken", verifyToken, mintToken);
 
 router.get("/purchases", verifyToken, checkPurchases);
 router.get("/checkStorePurchases", verifyToken, checkStorePurchases);
