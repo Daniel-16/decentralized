@@ -122,7 +122,7 @@ export const checkStorePurchases = async (req, res) => {
     );
     const totalItems = storePurchases.reduce(
       (sum, purchase) => sum + purchase.quantity,
-      0 - 1
+      0
     );
 
     res.status(200).json({
