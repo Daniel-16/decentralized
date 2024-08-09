@@ -72,3 +72,6 @@
   - Required fields: `mnemonic`, `tokenName`, `tokenDescription`, `tokenPrefix`, `name`, `description`.
     It then gets user account from the mnemonic and creates a unique network collection and token.
   - Authorization required: `Bearer ${token}`.
+- `GET /api/getUserBalance`: This gets a user's current balance in the form of tokens acquired.
+  - Required fields: `walletAddress`.
+  - Authorization required: `Bearer ${token}`.

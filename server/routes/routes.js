@@ -57,7 +57,7 @@ router.get("/getItems", getAllItems);
 router.post("/purchaseItem", verifyToken, purchaseItem);
 router.get("/getTransactions", verifyToken, getUserTransactions);
 
-router.get("/getUserBalance", getUserBalance);
+router.get("/getUserBalance", verifyToken, getUserBalance);
 router.post("/createCollection", createTestCollection);
 router.post("/createAndMint", verifyToken, createCollectionAndTokenController);
 router.post("/transferToken", transferTokenController);
