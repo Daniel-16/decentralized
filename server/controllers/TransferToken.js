@@ -2,7 +2,7 @@ import Sdk, { CHAIN_CONFIG } from "@unique-nft/sdk";
 import { KeyringProvider } from "@unique-nft/accounts/keyring";
 
 export const transferTokenController = async (req, res) => {
-  const { mnemonic, collectionId, tokenId, toAddress, fromAddress } = req.body;
+  const { mnemonic, collectionId, tokenId, toAddress } = req.body;
 
   if (!mnemonic || !collectionId || !tokenId || !toAddress) {
     return res.status(400).json({
