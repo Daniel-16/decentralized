@@ -45,7 +45,7 @@
 
 - `POST /api/createUser`: Create a new user
   - Required fields: `username`, `email`, `password`
-  - Expected response: JSON object containing user details as well as an account address from the unique network. A web token is also sent to keep the user signed in for a while.
+  - Expected response: JSON object containing user details as well as an account address and mnemonic generated from the unique network. A web token is also sent to keep the user signed in for a while.
 - `POST /api/loginUser`: Signs in an existing user.
   - Required fields: `email`, `password`.
   - Expected response: JSON object containing user details as well as web token.
@@ -64,4 +64,11 @@
 - `GET /api/purchases`: This is for a user to check purchases they have made.
   - Authorization required: `Bearer ${token}`.
 - `GET /api/checkStorePurchases`: This is for store owners to check purchases made to only their stores.
+  - Authorization required: `Bearer ${token}`.
+
+### Tokens and Collections
+
+- `POST /api/createAndMint`: This is for creating a new collection alongside the collection's token.
+  - Required fields: `mnemonic`, `tokenName`, `tokenDescription`, `tokenPrefix`, `name`, `description`.
+    It then gets user account from the mnemonic and creates a unique network collection and token.
   - Authorization required: `Bearer ${token}`.

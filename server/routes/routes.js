@@ -59,7 +59,7 @@ router.get("/getTransactions", verifyToken, getUserTransactions);
 
 router.get("/getUserBalance", getUserBalance);
 router.post("/createCollection", createTestCollection);
-router.post("/createAndMint", createCollectionAndTokenController);
+router.post("/createAndMint", verifyToken, createCollectionAndTokenController);
 router.post("/transferToken", transferTokenController);
 router.post("/mintToken", verifyToken, mintToken);
 
