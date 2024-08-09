@@ -52,9 +52,9 @@ router.put("/redeemCoupon", redeemCoupon); //Not in use for now
 // router.post("/mintToken", createCollectionAndTokenController);
 
 router.post("/createItem", verifyToken, createItem);
-router.get("/allItems", getAllItems);
+router.get("/getItems", getAllItems);
 
-router.get("/purchaseItem", verifyToken, purchaseItem);
+router.post("/purchaseItem", verifyToken, purchaseItem);
 router.get("/getTransactions", verifyToken, getUserTransactions);
 
 router.get("/getUserBalance", getUserBalance);

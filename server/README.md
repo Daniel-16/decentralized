@@ -50,6 +50,18 @@
   - Required fields: `email`, `password`.
   - Expected response: JSON object containing user details as well as web token.
 - `GET /api/getUser`: Returns the details of a signed in user.
-  - Authorization required in header: `Bearer token`
-- `GET /api/getStores`: Get all the stores available in the Database.
-- `GET /api/getServices`: Get all services available in the Database.
+  - Authorization required: `Bearer ${token}`
+
+### Items
+
+- `POST /api/createItem`: Creates a new item
+  - Required fields: `nameOfItem`, `priceOfItem`.
+  - Authorization required: `Bearer ${token}`
+- `GET /api/getItems`: Gets all items in DB.
+- `POST /api/purchaseItems`: Purchases an already existing item.
+  - Required fields: `itemId`, `quantity`.
+  - Authorization required: `Bearer ${token}`
+- `GET /api/purchases`: This is for a user to check purchases they have made.
+  - Authorization required: `Bearer ${token}`.
+- `GET /api/checkStorePurchases`: This is for store owners to check purchases made to only their stores.
+  - Authorization required: `Bearer ${token}`.
