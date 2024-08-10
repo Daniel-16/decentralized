@@ -75,3 +75,7 @@
 - `GET /api/getUserBalance`: This gets a user's current balance in the form of tokens/NFT acquired.
   - Required fields: `walletAddress`.
   - Authorization required: `Bearer ${token}`.
+- `POST /api/transferToken`: Transfer a token from one user to another.
+  - Required fields: `mnemonic` of signed in user.
+    `collectionId`, `tokenId`, `toAddress`.
+  - Authorization required: `Bearer ${token}`.

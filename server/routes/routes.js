@@ -60,7 +60,7 @@ router.get("/getTransactions", verifyToken, getUserTransactions);
 router.get("/getUserBalance", verifyToken, getUserBalance);
 router.post("/createCollection", createTestCollection);
 router.post("/createAndMint", verifyToken, createCollectionAndTokenController);
-router.post("/transferToken", transferTokenController);
+router.post("/transferToken", verifyToken, transferTokenController);
 router.post("/mintToken", verifyToken, mintToken);
 
 router.get("/purchases", verifyToken, checkPurchases);
