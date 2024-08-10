@@ -79,3 +79,6 @@
   - Required fields: `mnemonic` of signed in user.
     `collectionId`, `tokenId`, `toAddress`.
   - Authorization required: `Bearer ${token}`.
+- `POST /api/mintToken`: Route for creating/minting a new token. This is to be used the collection owners (typically store owners).
+  - Required fields: `collectionId`, `mnemonic` of signed in user, `tokenName`, `tokenDescription`.
+  - Authorization required: `Bearer ${token}`.
