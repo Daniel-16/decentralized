@@ -61,7 +61,7 @@
 - `POST /api/purchaseItems`: Purchases an already existing item.
   - Required fields: `itemId`, `quantity`.
   - Authorization required: `Bearer ${token}`
-- `GET /api/purchases`: This is for a user to check purchases they have made.
+- `GET /api/purchases`: Check all purchases made by a signed in user.
   - Authorization required: `Bearer ${token}`.
 - `GET /api/checkStorePurchases`: This is for store owners to check purchases made to only their stores.
   - Authorization required: `Bearer ${token}`.
