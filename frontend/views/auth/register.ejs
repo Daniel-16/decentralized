@@ -1,0 +1,86 @@
+<%- include('../partials/header') %>
+
+
+<div class="grid_frame page-content">
+    <div class="container_grid">
+        <div class="mod-register">
+            <h3 class="rs title-mod">Hello there stranger! Welcome to KooponCraft</h3>
+            <div class="desc-reg">Sign up for free and get exclusive access to members-only savings, rewards and special promotions from KooponCraft. </div>
+            <div class="wrap-form-reg clearfix">
+                <form id="userForm">
+                    <div class="left-form">
+                        <label class="wrap-txt" for="sys_email">
+                            <input class="input-txt" id="sys_email" required type="email" placeholder="you@mail.com"/>
+                        </label>
+                        <label class="wrap-txt" for="sys_pass">
+                            <input class="input-txt" id="sys_pass" required type="password" placeholder="password please!"/>
+                        </label>
+                        <label class="wrap-check" for="sys_chk_news">
+                            <input id="sys_chk_news" class="input-chk" type="checkbox"/> Send me the weekly KooponCraft’s offers.
+                            <i class="icon iUncheck"></i>
+                        </label>
+                        <label class="wrap-check" for="sys_chk_agree">
+                            <input id="sys_chk_agree" class="input-chk" type="checkbox"/> I agree to the <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.
+                            <i class="icon iUncheck"></i>
+                        </label>
+                    </div>
+                    <div class="right-connect">
+                        <button class="btn-flat yellow btn-submit-reg" type="submit">Create an account</button>
+                        <div class="sep-connect">
+                            <span>Or</span>
+                        </div>
+                        <div class="grp-connect">
+                            <p class="rs">Sign up using your account on:</p>
+                            <a class="btn-flat fb" href="#">Facebook</a>
+                            <a class="btn-flat gg" href="#">Google</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <p class="rs wrap-link-back">
+                <a href="/login" class="link-back">
+                    <i class="pick-r"></i>
+                    Back to login
+                </a>
+            </p>
+        </div><!--end: .mod-register -->
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+  $(document).ready(function() {
+    $('#userForm').on('submit', function(event) {
+      event.preventDefault();
+
+      const email = $('#sys_email').val();
+      const password = $('#sys_pass').val();
+    //   const agree = $('#sys_chk_agree').is(':checked');
+
+    //   if (!agree) {
+    //     toastr.error("You must agree to the Terms of Use and Privacy Policy.");
+    //     return;
+    //   }
+
+      $.ajax({
+        url: '/api/createUser',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ email, password }),
+        success: function(response) {
+          if (response.success) {
+            toastr.success('Account created successfully!');
+            location.assign('/login');
+          } else {
+            toastr.error(response.error || 'An error occurred');
+          }
+        },
+        error: function(jqXHR) {
+          toastr.info(jqXHR.responseJSON?.error || 'An error occurred');
+        }
+      });
+    });
+  });
+</script>
+<%- include('../partials/footer') %>
