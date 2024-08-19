@@ -23,7 +23,7 @@ export const purchaseItem = async (req, res) => {
 
     const transaction = new TransactionModel({
       buyerId: userId,
-      buyerName: user.username,
+      buyerName: user.username || user.email,
       item: itemId,
       itemOwner: item.itemOwner,
       storeOwnerId: item.itemOwnerId,

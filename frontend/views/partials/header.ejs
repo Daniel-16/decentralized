@@ -52,7 +52,7 @@
                                         <a href="/home">Home</a>
                                     </li>
                                     <li>
-                                        <a href="#">Coupons</a>
+                                        <a href="/shop">Shop</a>
                                     </li>
                                     <li>
                                         <a href="#">My coupons</a>
@@ -85,3 +85,72 @@
                 </ul>
             </div>
         </nav><!--end: .mp-menu -->
+
+        <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var token = localStorage.getItem("token");
+
+        if (token) {
+            // hide the login button
+            var loginButton = document.getElementById("sys_head_login");
+            if (loginButton) {
+                loginButton.style.display = "none";
+            }
+
+            // iff token exists, add the "My Account" dropdown menu
+            var mainMenu = document.getElementById("main-menu");
+
+            // "My Account" dropdown menu
+            var accountMenu = `
+                <li class="has-sub">
+                    <a href="coupon-code.html">My account</a>
+                    <ul class="sub-menu">
+                        <li><a href="/my-store">My store</a></li>
+                        <li><a href="/item/create">New Item</a></li>
+                        <li><a href="/transactions">My Transactions</a></li>
+                        <li><a id="logout" href="#">Logout</a></li>
+                    </ul>
+                </li>
+            `;
+
+            // add the account menu to the main menu
+            mainMenu.innerHTML += accountMenu;
+        }
+    });
+
+
+
+</script>
+
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+  integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+     $(document).ready(function () {
+        // Logout event handler
+        $("#logout").on("click", function (e) {
+            e.preventDefault();
+            // Clear the token from localStorage
+            localStorage.removeItem("token");
+
+            // Optionally, make an API call to destroy the session on the server-side
+            $.ajax({
+            url: "/api/logout", // assuming you have a logout route on your backend
+            method: "POST",
+            success: function (response) {
+                // Redirect to the login page or home page after logout
+                window.location.href = "/login"; // or "/"
+            },
+            error: function (error) {
+                console.log("Error logging out:", error);
+                // You might still want to redirect even if there's an error
+                window.location.href = "/login"; // or "/"
+            },
+            });
+        });
+    });
+</script>
