@@ -59,10 +59,15 @@ export const getUserTransactions = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const transactions = await TransactionModel.find({ user: userId })
-      .populate("item")
-      .populate("store");
-
+    const transactions = await TransactionModel.find({ user: userId }).populate(
+      "item"
+    );
+    if (transactions.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "No transactions for this user",
+      });
+    }
     res.status(200).json({ success: true, transactions });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
