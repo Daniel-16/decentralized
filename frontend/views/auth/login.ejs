@@ -1,0 +1,77 @@
+<%- include('../partials/header') %>
+
+
+<div class="grid_frame page-content">
+    <div class="container_grid">
+        <div class="mod-register">
+            <h3 class="rs title-mod">Hello pretty! Welcome to KooponCraft</h3>
+            <div class="wrap-form-reg clearfix">
+                <form id="loginUserForm">
+                    <div class="left-form">
+                        <label class="wrap-txt" for="sys_email">
+                            <input class="input-txt" id="sys_email" type="email" placeholder="you@mail.com"/>
+                        </label>
+                        <label class="wrap-txt" for="sys_pass">
+                            <input class="input-txt" id="sys_pass" type="password" placeholder="password please!"/>
+                        </label>
+                        <label class="wrap-check" for="sys_chk_news">
+                            <input id="sys_chk_news" class="input-chk" type="checkbox"/> Remember me
+                            <i class="icon iUncheck"></i>
+                            <a class="lost-pass" href="#">Forgot password ?</a>
+                        </label>
+                        <div class="wrap-login-btn">
+                            <button class="btn-flat gr btn-submit-reg" type="submit">Login</button>
+                            <div class="sep-connect">
+                                <span>Or</span>
+                            </div>
+                            <div class="grp-connect">
+                                <a class="btn-flat fb" href="#">Facebook</a>
+                                <a class="btn-flat gg" href="#">Google</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right-create-acc">
+                        <img class="account" src="/assets/images/null.gif" alt="KooponCraft"/>
+                        <p class="lbl-dung-lo rs">Not a member? Don’t worry</p>
+                        <a href="/register" class="btn-flat yellow btn-submit-reg">Create an account</a>
+                        <div id="sys_warning_sms" class="warning-sms" data-warning-txt="No spam guarantee,No disturb,Promotion News"></div>
+                    </div>
+                </form>
+                <i class="line-sep"></i>
+            </div>
+        </div><!--end: .mod-register -->
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+  $(document).ready(function() {
+    $('#loginUserForm').on('submit', function(event) {
+      event.preventDefault();
+
+      const email = $('#sys_email').val();
+      const password = $('#sys_pass').val();
+
+      $.ajax({
+        url: '/api/loginUser',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ email, password }),
+        success: function(response) {
+            console.log(response)
+          if (response.success) {
+            toastr.success('Login successfully!');
+            location.assign('/home');
+          } else {
+            toastr.error(response.error || 'An error occurred');
+          }
+        },
+        error: function(jqXHR) {
+          toastr.info(jqXHR.responseJSON?.error || 'An error occurred');
+        }
+      });
+    });
+  });
+</script>
+<%- include('../partials/footer') %>
