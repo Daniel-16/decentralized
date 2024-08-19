@@ -1,0 +1,134 @@
+<%- include('../partials/header') %>
+<div class="top-area">
+  <div class="grid_frame">
+    <div class="container_grid clearfix">
+      <div class="grid_12">
+        <h2 class="page-title">My Transactions</h2>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="grid_frame page-content">
+  <div class="container_grid">
+    <div class="layout-2cols pt-hight clearfix">
+      <div class="grid_12 content">
+        <div class="mod-list-article">
+          <div class="list-article">
+            <div class="article-item">
+              <div class="flex">
+                <div class="thumb-left wrap-date-post">
+                  <div class="date">
+                    <span class="day">12</span>
+                    <span class="my">May / 2013</span>
+                  </div>
+                  <a class="btn-more" href="blog-detail.html">$5000</a>
+                </div>
+                <div class="flex-body">
+                  <p class="art-title rs">
+                    <a href="blog-detail.html"
+                      >Lorem ipsum dolor sit amet consectetuer
+                    </a>
+                  </p>
+                  <p class="rs art-desc">
+                    Nullam magna velit, rhoncus at urna et, dapibus eu,
+                    fermentum eros. Integer sit amet purus hendrerit, porttitor
+                    ligula et, mollis est. Etiam odio est, pharetra non dui eu,
+                    blandit lacinia nunc. Proin vel pharetra lacus. Quisque at
+                    elit et elit elementum tempor quis quis mi
+                  </p>
+                </div>
+              </div>
+            </div>
+            <!--end: article-item -->
+
+            <div id="transactionsContainer"></div>
+          </div>
+        </div>
+        <!--end: .mod-list-article -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+  integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  $(document).ready(function () {
+    console.log("Document ready");
+    // Function to fetch and display transactions
+    function loadTransactions() {
+      // Retrieve token from localStorage
+      const token = localStorage.getItem("token");
+
+      $.ajax({
+        url: "/api/getTransactions",
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`, 
+        },
+        success: function (response) {
+          console.log(response);
+          if (response.success) {
+            const transactions = response.transactions;
+            let transactionsHTML = "";
+
+            transactions.forEach((transaction) => {
+              transactionsHTML += `
+            <div class="article-item">
+              <div class="flex">
+                <div class="thumb-left wrap-date-post">
+                  <div class="date">
+                    <span class="day">${new Date(
+                      transaction.createdAt
+                    ).getDate()}</span>
+                    <span class="my">${new Date(
+                      transaction.createdAt
+                    ).toLocaleDateString("en-GB", {
+                      month: "short",
+                      year: "numeric",
+                    })}</span>
+                  </div>
+                  <a class="btn-more" href="#">$${transaction.totalPrice.toFixed(
+                    2
+                  )}</a>
+                </div>
+                <div class="flex-body">
+                  <p class="art-title rs"><a href="#">${
+                    transaction.itemName
+                  }</a></p>
+                  <p class="rs art-desc">Purchased ${
+                    transaction.quantity
+                  } item(s) from ${
+                transaction.itemOwner
+              }. Total cost: $${transaction.totalPrice.toFixed(2)}.</p>
+                </div>
+              </div>
+            </div><!--end: article-item -->
+            `;
+            });
+
+            // Append transactions to the #transactionsContainer
+            $("#transactionsContainer").html(transactionsHTML);
+          } else {
+            $("#transactionsContainer").html("<p>No transactions found.</p>");
+          }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          $("#transactionsContainer").html(
+            "<p>Error fetching transactions.</p>"
+          );
+        },
+      });
+    }
+
+    // Load transactions when the document is ready
+    loadTransactions();
+  });
+</script>
+
+<%- include('../partials/footer') %>

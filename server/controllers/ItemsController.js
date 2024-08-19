@@ -17,7 +17,7 @@ export const createItem = async (req, res) => {
       nameOfItem,
       priceOfItem,
       itemOwnerId: user._id,
-      itemOwner: user.username,
+      itemOwner: user.username || user.email,
     });
     res.status(201).json({
       success: true,

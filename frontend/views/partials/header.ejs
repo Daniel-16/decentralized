@@ -45,14 +45,14 @@
                                      KooponCraft
                                 </a>
                             </h1>
-                            <a id="sys_head_login" class="btn btn-green type-login btn-login" href="/login">Login</a>
+                            <a id="sys_head_login" class="btn btn-green type-login btn-login" href="/login">Logfin</a>
                             <nav class="main-nav">
                                 <ul id="main-menu" class="nav nav-horizontal clearfix">
                                     <li class="active">
                                         <a href="/home">Home</a>
                                     </li>
                                     <li>
-                                        <a href="#">Coupons</a>
+                                        <a href="/shop">Shop</a>
                                     </li>
                                     <li>
                                         <a href="#">My coupons</a>
@@ -85,3 +85,37 @@
                 </ul>
             </div>
         </nav><!--end: .mp-menu -->
+
+        <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var token = localStorage.getItem("token");
+
+        if (token) {
+            // Hide the login button
+            var loginButton = document.getElementById("sys_head_login");
+            if (loginButton) {
+                loginButton.style.display = "none";
+            }
+
+            // Token exists, add the "My Account" dropdown menu
+            var mainMenu = document.getElementById("main-menu");
+
+            // Create the "My Account" dropdown menu
+            var accountMenu = `
+                <li class="has-sub">
+                    <a href="coupon-code.html">My account</a>
+                    <ul class="sub-menu">
+                        <li><a href="#">My profile</a></li>
+                        <li><a href="/item/create">New Item</a></li>
+                        <li><a href="/transactions">My Transactions</a></li>
+                        <li><a href="#">Logout</a></li>
+                    </ul>
+                </li>
+            `;
+
+            // Append the account menu to the main menu
+            mainMenu.innerHTML += accountMenu;
+        }
+    });
+</script>
+

@@ -23,7 +23,7 @@ export const purchaseItem = async (req, res) => {
 
     const transaction = new TransactionModel({
       buyerId: userId,
-      buyerName: user.username,
+      buyerName: user.username || user.email,
       item: itemId,
       itemOwner: item.itemOwner,
       storeOwnerId: item.itemOwnerId,
@@ -57,11 +57,13 @@ export const purchaseItem = async (req, res) => {
 
 export const getUserTransactions = async (req, res) => {
   const userId = req.user.id;
-
+  const user = await UserModel.findById(userId);
+  console.log(user);
   try {
-    const transactions = await TransactionModel.find({ user: userId })
+    const transactions = await TransactionModel.find({ buyerId: userId })
       .populate("item")
       .populate("store");
+      console.log("transactions", transactions);
 
     res.status(200).json({ success: true, transactions });
   } catch (error) {

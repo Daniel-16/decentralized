@@ -71,7 +71,7 @@
         success: function(response) {
           if (response.success) {
             toastr.success('Account created successfully!');
-            location.assign('/login');
+            location.assign('/home');
           } else {
             toastr.error(response.error || 'An error occurred');
           }
