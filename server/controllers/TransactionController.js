@@ -55,23 +55,26 @@ export const purchaseItem = async (req, res) => {
   }
 };
 
-export const getUserTransactions = async (req, res) => {
-  const userId = req.user.id;
-  const user = await UserModel.findById(userId);
-  console.log(user);
-  try {
-    const transactions = await TransactionModel.find({ buyerId: userId })
-      .populate("item")
-      .populate("store");
-      console.log("transactions", transactions);
+// export const getUserTransactions = async (req, res) => {
+//   const userId = req.user.id;
 
-    res.status(200).json({ success: true, transactions });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
+//   try {
+//     const transactions = await TransactionModel.find({ user: userId }).populate(
+//       "item"
+//     );
+//     if (transactions.length === 0) {
+//       return res.status(200).json({
+//         success: true,
+//         message: "No transactions for this user",
+//       });
+//     }
+//     res.status(200).json({ success: true, transactions });
+//   } catch (error) {
+//     res.status(500).json({ success: false, error: error.message });
+//   }
+// };
 
-export const checkPurchases = async (req, res) => {
+export const checkBuyerPurchases = async (req, res) => {
   const userId = req.user.id;
   try {
     const purchases = await TransactionModel.find({ buyerId: userId });
