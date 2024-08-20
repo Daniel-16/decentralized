@@ -12,12 +12,10 @@ export const verifyToken = (req, res, next) => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
-    return res
-      .status(401)
-      .json({
-        success: false,
-        error: "No token provided, authorization denied",
-      });
+    return res.status(401).json({
+      success: false,
+      error: "No token provided, authorization denied",
+    });
   }
 
   try {
