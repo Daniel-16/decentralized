@@ -3,7 +3,7 @@ import StoreModel from "../models/StoreModel.js";
 import UserModel from "../models/UserModel.js";
 
 export const createItem = async (req, res) => {
-  const { nameOfItem, priceOfItem } = req.body;
+  const { nameOfItem, itemImage, priceOfItem } = req.body;
   const userId = req.user.id;
   try {
     const user = await UserModel.findById(userId);
@@ -15,6 +15,7 @@ export const createItem = async (req, res) => {
     }
     const newItem = await ItemModel.create({
       nameOfItem,
+      itemImage,
       priceOfItem,
       itemOwnerId: user._id,
       itemOwner: user.username || user.email,

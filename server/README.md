@@ -55,7 +55,7 @@
 ### Items
 
 - `POST /api/createItem`: Creates a new item
-  - Required fields: `nameOfItem`, `priceOfItem`.
+  - Required fields: `nameOfItem`, `priceOfItem`, `itemImage`(optional).
   - Authorization required: `Bearer ${token}`
 - `GET /api/getItems`: Gets all items in DB.
 - `POST /api/purchaseItems`: Purchases an already existing item.
