@@ -35,7 +35,7 @@
 <!-- get all transactions -->
 <script>
   $(document).ready(function () {
-  console.log("Document ready");
+  // console.log("Document ready");
   function loadTransactions() {
     const token = localStorage.getItem("token");
 
@@ -46,7 +46,7 @@
         Authorization: `Bearer ${token}`, 
       },
       success: function (response) {
-        console.log(response);
+        // console.log(response);
         if (response.success) {
           const transactions = response.purchases;
           let transactionsHTML = "";
