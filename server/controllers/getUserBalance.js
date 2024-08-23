@@ -1,7 +1,8 @@
 import Sdk from "@unique-nft/sdk";
 
 export const getUserBalance = async (req, res) => {
-  const { walletAddress } = req.body;
+  // const { walletAddress } = req.body;
+    const walletAddress = req.query.wallet_address;
   try {
     const options = {
       baseUrl: "https://rest.unique.network/opal/v1",
