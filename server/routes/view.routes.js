@@ -37,4 +37,12 @@ router.get("/my-store", async function (req, res) {
   res.render("transactions/my_store_transactions");
 });
 
+
+// collection, mint
+// create collection
+router.get("/collection/create", async function (req, res) {
+  res.render("collection/create_collection");
+});
+
+
 export default router;

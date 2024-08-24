@@ -30,9 +30,61 @@
     <![endif]-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* for cover spin */
+        #cover-spin {
+            position: fixed;
+            width: 100%;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.7);
+            z-index: 9999;
+            display: none;
+        }
+
+        @-webkit-keyframes spin {
+            from {
+                -webkit-transform: rotate(0deg);
+            }
+
+            to {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        #cover-spin::after {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 48%;
+            top: 40%;
+            width: 40px;
+            height: 40px;
+            border-style: solid;
+            border-color: black;
+            border-top-color: transparent;
+            border-width: 4px;
+            border-radius: 50%;
+            -webkit-animation: spin .8s linear infinite;
+            animation: spin .8s linear infinite;
+        }
+    </style>
 
 </head>
 <body class="gray"><!--<div class="alert_w_p_u"></div>-->
+    <div id="cover-spin"></div>
 <div class="container-page">
     <div class="mp-pusher" id="mp-pusher">
         <header class="mod-header">
@@ -59,7 +111,7 @@
                                         <a href="#">My coupons</a>
                                         <i class="icon iPickRed lbl-count"><span>12</span></i>
                                     </li>
-                                    <li>
+                                    <li id="user_balance">
                                         <i class="fa-solid fa-coins fa-1x" style="color: #FFD43B;"></i>
                                         <span style="padding-top: 20px;" id="availableBalance">loading...</span>
                                     </li>
@@ -96,8 +148,9 @@
         var token = localStorage.getItem("token");
 
         if (token) {
+            console.log("Token exists:", token);
             // hide the login button
-            var loginButton = document.getElementById("sys_head_login");
+            var loginButton = document.getElementById("sys_head_login")
             if (loginButton) {
                 loginButton.style.display = "none";
             }
@@ -108,7 +161,7 @@
             // "My Account" dropdown menu
             var accountMenu = `
                 <li class="has-sub">
-                    <a href="coupon-code.html">My account</a>
+                    <a href="#">My account</a>
                     <ul class="sub-menu">
                         <li><a href="/my-store">My store</a></li>
                         <li><a href="/item/create">New Item</a></li>
@@ -154,8 +207,15 @@
 <!-- for avail bal -->
 <script>
   $(document).ready(function () {
+    var token = localStorage.getItem("token");
+    if (!token) {
+        var userBalance = document.getElementById("user_balance");
+        if (userBalance) {
+            userBalance.style.display = "none";
+        }
+    }
     function fetchUserBalance() {
-      const token = localStorage.getItem("token");
+    //   const token = localStorage.getItem("token");
       const wallet_address = localStorage.getItem("accountAddress");
     //   console.log("this is the wallet address: ", wallet_address);
       const apiUrl = `/api/getUserBalance?wallet_address=${wallet_address}`;
@@ -171,11 +231,11 @@
         // data: JSON.stringify({ wallet_address }),
         success: function (response) {
           if (response.success) {
-            console.log("the resp", response);
+            // console.log("the resp", response);
             // update the header with balance information
-            $("#availableBalance").text(`$${response.availableBalance.amount}`);
-            $("#lockedBalance").text(`$${response.lockedBalance.amount}`);
-            $("#freeBalance").text(`$${response.freeBalance.amount}`);
+            $("#availableBalance").text(`UNQ${parseFloat(response.availableBalance.amount).toFixed(2)}`);
+            $("#lockedBalance").text(`UNQ${response.lockedBalance.amount.toLocaleString()}`);
+            $("#freeBalance").text(`UNQ${response.freeBalance.amount.toLocaleString()}`);
           } else {
             console.error("Failed to fetch user balance:", response.error);
           }

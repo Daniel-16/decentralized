@@ -1,0 +1,216 @@
+<%- include('../partials/header') %>
+
+<style>
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    #create-collection-form {
+        /* background-color: #fff; */
+        border-radius: 8px;
+        padding: 10px;
+        /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+        max-width: 500px;
+        width: 100%;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #555;
+    }
+
+    input[type="text"],
+    textarea {
+        width: calc(100% - 22px);
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    textarea {
+        height: 100px;
+        resize: none;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+
+    #response {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .error {
+        color: red;
+    }
+
+    .success {
+        color: green;
+    }
+</style>
+
+<div class="grid_frame page-content">
+    <div class="container_grid">
+        <div class="mod-brand-detail-4 clearfix">
+            <div class="grid_12">
+                <div class="brand-top-info clearfix">
+                    <div class="brand-logo">
+                        <div class="img-thumb-center">
+                            <div class="wrap-img-thumb">
+                                <span class="ver_hold"></span>
+                                <a href="#" class="ver_container"><img src="/assets/images/ex/08-02.jpg" alt="$BRAND_NAME"/></a>
+                            </div>
+                        </div>
+                        <!-- <i class="stick-lbl trust-brand-b"></i> -->
+                    </div>
+                    <div class="brand-desc">
+                        <div class="title-desc">Create A Collection</div>
+                        <div>
+                            <form id="create-collection-form">
+                                <label for="mnemonic">Mnemonic (Secret Phrase):</label>
+                                <textarea id="mnemonic" name="mnemonic" required></textarea>
+
+                                <label for="name">Collection Name:</label>
+                                <input type="text" id="name" name="name" required>
+
+                                <label for="description">Collection Description:</label>
+                                <input type="text" id="description" name="description" required>
+
+                                <label for="tokenPrefix">Token Prefix:</label>
+                                <input type="text" id="tokenPrefix" name="tokenPrefix" required>
+
+                                <button type="submit">Create Collection</button>
+                            </form>
+
+                            <div id="response"></div>
+                        </div>              
+                    </div>
+                    <div class="right-counter" style="padding-top: 20px;">
+                        <div class="wrap-content">
+                            <h4 class="note-title"><b>Things to Know About Creating a Collection</b></h4>
+                            <ul class="note-list">
+                                <li>Your <b>mnemonic</b> is your secret phrase; keep it safe and private.</li>
+                                <li>Choose a <b>unique collection name</b> to stand out.</li>
+                                <li>Provide a <b>clear description</b> to let others know what your collection is about.</li>
+                                <li>The <b>token prefix</b> helps identify your tokens, so choose wisely.</li>
+                            </ul>
+                            <a class="btn btn-blue btn-follow-brand" href="#">Learn More</a>
+                            <!-- <a class="btn btn-blue btn-follow-brand" href="#">Follow brand</a> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mod-grp-coupon block">
+                <div class="block-content list-coupon clearfix">
+                    <div class="coupon-item grid_3">
+                    <h1>My Collections</h1>
+                        <div class="coupon-content">
+                            <div class="img-thumb-center">
+                               
+                            </div>
+                            <div class="coupon-price">Collection Name</div>
+                            <div class="coupon-brand">Collection ID</div>
+                            <div class="coupon-brand">Token Prefix</div>
+                            <div class="coupon-desc">Collection Description </div>
+                            <br>
+                            <a class="btn btn-blue btn-take-coupon" href="#">New Token</a>
+                        </div>
+                    </div><!--end: .coupon-item -->
+                </div>
+                </div><!--end block: List Coupons-->
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
+<script>
+    $(document).ready(function() {
+        $('#create-collection-form').submit(function(event) {
+            $('#cover-spin').show(0);
+            event.preventDefault(); 
+
+            const mnemonic = $('#mnemonic').val();
+            const name = $('#name').val();
+            const description = $('#description').val();
+            const tokenPrefix = $('#tokenPrefix').val();
+
+            $.ajax({
+                url: '/api/createCollection',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    mnemonic: mnemonic,
+                    name: name,
+                    description: description,
+                    tokenPrefix: tokenPrefix
+                }),
+                success: function(response) {
+                    if (response.success) {
+                        $('#cover-spin').hide(0);
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: "Collection created successfully!",
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                        $('#response').html(`<p class="success">Collection created successfully! Collection ID: ${response.collectionId}</p>`);
+
+                        const wallet_address = localStorage.getItem("accountAddress");
+                        const apiUrl = `/api/getUserBalance?wallet_address=${wallet_address}`;
+
+                        $.ajax({
+                            url: apiUrl,
+                            method: "GET",
+                            headers: {
+                                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    // console.log("the resp", response);
+                                    // update the header with balance information
+                                    $("#availableBalance").text(`UNQ${parseFloat(response.availableBalance.amount).toFixed(2)}`);
+                                    $("#lockedBalance").text(`UNQ${response.lockedBalance.amount.toLocaleString()}`);
+                                    $("#freeBalance").text(`UNQ${response.freeBalance.amount.toLocaleString()}`);
+                                } else {
+                                    console.error("Failed to fetch user balance:", response.error);
+                                }
+                            },
+                            error: function(jqXHR) {
+                                console.log(jqXHR);
+                            }
+                        });
+                    } else {
+                        $('#cover-spin').hide(0);
+                        $('#response').html(`<p class="error">Error: ${response.error}</p>`);
+                    }
+                },
+                error: function(jqXHR) {
+                    $('#cover-spin').hide(0);
+                    $('#response').html(`<p class="error">An error occurred: ${jqXHR.responseText}</p>`);
+                }
+            });
+        });
+    });
+</script>
+
