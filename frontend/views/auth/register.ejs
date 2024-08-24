@@ -1,4 +1,36 @@
 <%- include('../partials/header') %>
+<style>
+  .modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+  }
+
+  .close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+    font-size: 20px;
+  }
+</style>
+
 
 
 <div class="grid_frame page-content">
@@ -9,6 +41,9 @@
             <div class="wrap-form-reg clearfix">
                 <form id="userForm">
                     <div class="left-form">
+                        <label class="wrap-txt" for="sys_username">
+                            <input class="input-txt" id="sys_username" required type="text" placeholder="myusername"/>
+                        </label>
                         <label class="wrap-txt" for="sys_email">
                             <input class="input-txt" id="sys_email" required type="email" placeholder="you@mail.com"/>
                         </label>
@@ -48,14 +83,29 @@
 </div>
 
 
+<!-- Mnemonic Modal -->
+<div id="mnemonicModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Important: Backup Your Mnemonic</h2>
+        <p>Your mnemonic is used to access your account. Please save it securely and do not share it with anyone.</p>
+        <textarea id="mnemonicText" readonly></textarea>
+        <button id="copyMnemonicBtn">Copy to Clipboard</button>
+        <button id="mnemonicModalCloseBtn">Close</button>
+    </div>
+</div>
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
   $(document).ready(function() {
     $('#userForm').on('submit', function(event) {
+      $('#cover-spin').show(0);
       event.preventDefault();
 
       const email = $('#sys_email').val();
       const password = $('#sys_pass').val();
+      const username = $('#sys_username').val();
     //   const agree = $('#sys_chk_agree').is(':checked');
 
     //   if (!agree) {
@@ -67,19 +117,51 @@
         url: '/api/createUser',
         method: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify({ email, password }),
+        data: JSON.stringify({ email, password, username }),
         success: function(response) {
           if (response.success) {
-            toastr.success('Account created successfully!');
-            location.assign('/home');
+            $('#cover-spin').hide(0)
+            console.log("response: ",response);
+            localStorage.setItem("token", response.token);
+            localStorage.setItem("username", response.user.username);
+            localStorage.setItem("email", response.user.email);
+            localStorage.setItem("accountAddress", response.account.address);
+            localStorage.setItem("hasReceivedToken", response.user.hasReceivedToken);
+            // toastr.success('Account created successfully!');
+            // location.assign('/home');
+              $('#mnemonicText').val(response.mnemonic); // Set mnemonic text in the modal
+              $('#mnemonicModal').show(); // Show the modal
           } else {
+            $('#cover-spin').show(0)
             toastr.error(response.error || 'An error occurred');
           }
         },
         error: function(jqXHR) {
+          $('#cover-spin').show(0)
           toastr.info(jqXHR.responseJSON?.error || 'An error occurred');
         }
+        $('#cover-spin').show(0)
       });
+    });
+
+    // Close modal on close button click
+    $('#mnemonicModalCloseBtn').on('click', function() {
+      $('#mnemonicModal').hide();
+      location.assign('/home');
+    });
+
+    // Close modal when clicking on the close "X"
+    $('.close').on('click', function() {
+      $('#mnemonicModal').hide();
+      location.assign('/home');
+    });
+
+    // Copy mnemonic to clipboard
+    $('#copyMnemonicBtn').on('click', function() {
+      const mnemonicText = $('#mnemonicText');
+      mnemonicText.select();
+      document.execCommand('copy');
+      toastr.success('Mnemonic copied to clipboard!');
     });
   });
 </script>
