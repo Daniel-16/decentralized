@@ -1,5 +1,6 @@
 import Sdk, { CHAIN_CONFIG } from "@unique-nft/sdk";
 import { KeyringProvider } from "@unique-nft/accounts/keyring";
+import CollectionModel from "../models/CollectionModel.js";
 
 export const createCollectionAndTokenController = async (req, res) => {
   const {
@@ -64,13 +65,17 @@ export const createCollectionAndTokenController = async (req, res) => {
     });
 
     const tokenId = tokenResult.parsed?.tokenId;
+    const collectionPayload = await CollectionModel.create({
+      collectionId,
+      tokenId,
+      collectionUrl: `https://uniquescan.io/opal/collections/${collectionId}`,
+      tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
+      walletAddress: address,
+    });
 
     res.status(200).json({
       message: "Collection and token created successfully",
-      collectionId,
-      tokenId,
-      collectionUrl: `Collection url: https://uniquescan.io/opal/collections/${collectionId}`,
-      tokenUrl: `Token url: https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
+      collectionPayload,
     });
   } catch (error) {
     res.status(500).json({
