@@ -77,8 +77,8 @@
   - Authorization required: `Bearer ${token}`.
 - `POST /api/transferToken`: Transfer a token from one user to another.
   - Required fields: `mnemonic` of signed in user.
-    `collectionId`, `tokenId`, `toAddress`.
+    `collectionId`, `tokenId`, `toAddress: Receiver's address`.
   - Authorization required: `Bearer ${token}`.
-- `POST /api/mintToken`: Route for creating/minting a new token. This is to be used the collection owners (typically store owners).
+- `POST /api/mintToken`: Route for creating/minting a new token. When creating a new token, it adds such token to the collection based on its `id`.
   - Required fields: `collectionId`, `mnemonic` of signed in user, `tokenName`, `tokenDescription`.
   - Authorization required: `Bearer ${token}`.
