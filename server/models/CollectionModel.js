@@ -15,6 +15,12 @@ const CollecionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  token: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Token",
+    },
+  ],
 });
 
 const CollectionModel = mongoose.model("Collection", CollecionSchema);

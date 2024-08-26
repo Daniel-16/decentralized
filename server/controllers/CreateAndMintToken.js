@@ -1,6 +1,7 @@
 import Sdk, { CHAIN_CONFIG } from "@unique-nft/sdk";
 import { KeyringProvider } from "@unique-nft/accounts/keyring";
 import CollectionModel from "../models/CollectionModel.js";
+import TokenModel from "../models/TokenModel.js";
 
 export const createCollectionAndTokenController = async (req, res) => {
   const {
@@ -113,14 +114,31 @@ export const mintToken = async (req, res) => {
     });
 
     const tokenId = result.parsed?.tokenId;
-    res.status(200).json({
-      success: true,
-      message: "Token created successfully",
-      collectionId,
-      tokenId,
-      collectionUrl: `Collection url: https://uniquescan.io/opal/collections/${collectionId}`,
-      tokenUrl: `Token url: https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
+
+    const findCollection = await CollectionModel.findOne({ collectionId });
+    if (findCollection) {
+      const mintToken = await TokenModel.create({
+        tokenName,
+        tokenDescription,
+        tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
+      });
+      findCollection.token.push(mintToken._id);
+      await findCollection.save();
+      return res.status(200).json({
+        success: true,
+        message: "Token minted successfully",
+        mintToken,
+      });
+    }
+    res.status(422).json({
+      success: false,
+      message: "Something went wrong",
     });
+    // res.status(200).json({
+    //   success: true,
+    //   message: "Token created successfully",
+
+    // });
   } catch (error) {
     res.status(500).json({
       success: false,
