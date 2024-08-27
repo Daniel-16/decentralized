@@ -87,19 +87,29 @@
                         <div class="title-desc">Create A Collection</div>
                         <div>
                             <form id="create-collection-form">
-                                <label for="mnemonic">Mnemonic (Secret Phrase):</label>
+                                <label for="mnemonic">Mnemonic (Secret Phrase): <span style="color: red;">*</span></label>
                                 <textarea id="mnemonic" name="mnemonic" required></textarea>
 
-                                <label for="name">Collection Name:</label>
+                                <label for="name">Collection Name:<span style="color: red;">*</span></label>
                                 <input type="text" id="name" name="name" required>
 
-                                <label for="description">Collection Description:</label>
+                                <label for="description">Collection Description:<span style="color: red;">*</span></label>
                                 <input type="text" id="description" name="description" required>
 
-                                <label for="tokenPrefix">Token Prefix:</label>
+                                <hr>
+                                <h1>Token Details</h1>
+                                <hr>
+
+                                <label for="tokenPrefix">Token Prefix:<span style="color: red;">*</span></label>
                                 <input type="text" id="tokenPrefix" name="tokenPrefix" required>
 
-                                <button type="submit">Create Collection</button>
+                                <label for="tokenName">Token Name:<span style="color: red;">*</span></label>
+                                <input type="text" id="tokenName" name="tokenName" required>
+
+                                <label for="tokenDescription">Token Description:<span style="color: red;">*</span></label>
+                                <input type="text" id="tokenDescription" name="tokenDescription" required>
+
+                                <button type="submit">Create</button>
                             </form>
 
                             <div id="response"></div>
@@ -150,19 +160,29 @@
             event.preventDefault(); 
 
             const mnemonic = $('#mnemonic').val();
-            const name = $('#name').val();
+            const collectionName = $('#name').val();
             const description = $('#description').val();
             const tokenPrefix = $('#tokenPrefix').val();
+            const tokenDescription = $('#tokenDescription').val();
+            const tokenName = $('#tokenName').val();
+
+            const token = localStorage.getItem('token');
 
             $.ajax({
-                url: '/api/createCollection',
+                // url: '/api/createCollection',
+                url: '/api/createAndMint',
                 method: 'POST',
                 contentType: 'application/json',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
                 data: JSON.stringify({
                     mnemonic: mnemonic,
-                    name: name,
+                    name: collectionName,
                     description: description,
-                    tokenPrefix: tokenPrefix
+                    tokenPrefix: tokenPrefix,
+                    tokenName: tokenName,
+                    tokenDescription: tokenDescription
                 }),
                 success: function(response) {
                     if (response.success) {
@@ -170,15 +190,23 @@
                         Swal.fire({
                             position: "center",
                             icon: "success",
-                            title: "Collection created successfully!",
+                            title: response.message,
                             showConfirmButton: false,
                             timer: 1500,
                         });
-                        $('#response').html(`<p class="success">Collection created successfully! Collection ID: ${response.collectionId}</p>`);
+                        $('#response').html(
+                            `
+                            <div class="alert">
+                            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                            ${response.message} <br> Collection ID: ${response.collectionPayload.collectionId} <br> Token ID: ${response.collectionPayload.tokenId}
+                            </div>
+                            `
+                        )
+                        // $('#response').html(`<p class="success">${response.message} <br> Collection ID: ${response.collectionPayload.collectionId} <br> Token ID: ${response.collectionPayload.tokenId} </p>`);
 
+                        // auto get the user balance after creating a collection
                         const wallet_address = localStorage.getItem("accountAddress");
                         const apiUrl = `/api/getUserBalance?wallet_address=${wallet_address}`;
-
                         $.ajax({
                             url: apiUrl,
                             method: "GET",
@@ -204,9 +232,17 @@
                         $('#cover-spin').hide(0);
                         $('#response').html(`<p class="error">Error: ${response.error}</p>`);
                     }
+
                 },
                 error: function(jqXHR) {
                     $('#cover-spin').hide(0);
+                    Swal.fire({
+                        position: "center",
+                        icon: "error",
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
                     $('#response').html(`<p class="error">An error occurred: ${jqXHR.responseText}</p>`);
                 }
             });

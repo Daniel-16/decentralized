@@ -80,6 +80,32 @@
             -webkit-animation: spin .8s linear infinite;
             animation: spin .8s linear infinite;
         }
+
+
+        /* The alert message box */
+        .alert {
+            padding: 20px;
+            background-color: #048513; /* Green */
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        /* The close button */
+        .closebtn {
+            margin-left: 15px;
+            color: white;
+            font-weight: bold;
+            float: right;
+            font-size: 22px;
+            line-height: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        /* When moving the mouse over the close button */
+        .closebtn:hover {
+            color: black;
+        }
     </style>
 
 </head>
@@ -163,6 +189,7 @@
                 <li class="has-sub">
                     <a href="#">My account</a>
                     <ul class="sub-menu">
+                        <li><a href="/collection/create">My Tokens</a></li>
                         <li><a href="/my-store">My store</a></li>
                         <li><a href="/item/create">New Item</a></li>
                         <li><a href="/transactions">My Transactions</a></li>
