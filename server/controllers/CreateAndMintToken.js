@@ -75,11 +75,13 @@ export const createCollectionAndTokenController = async (req, res) => {
     });
 
     res.status(200).json({
+      success: true,
       message: "Collection and token created successfully",
       collectionPayload,
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: "An error occurred while creating the collection and token",
       error: error,
     });
