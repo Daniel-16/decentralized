@@ -82,3 +82,5 @@
 - `POST /api/mintToken`: Route for creating/minting a new token. When creating a new token, it adds such token to the collection based on its `id`.
   - Required fields: `collectionId`, `mnemonic` of signed in user, `tokenName`, `tokenDescription`.
   - Authorization required: `Bearer ${token}`.
+- `GET /api/getCollections`: Get all signed in user's collections.
+  - Authorization required: `Bearer ${token}`
