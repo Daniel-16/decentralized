@@ -2,6 +2,7 @@ import Sdk, { CHAIN_CONFIG } from "@unique-nft/sdk";
 import { KeyringProvider } from "@unique-nft/accounts/keyring";
 import CollectionModel from "../models/CollectionModel.js";
 import TokenModel from "../models/TokenModel.js";
+import UserModel from "../models/UserModel.js";
 
 export const createCollectionAndTokenController = async (req, res) => {
   const {
@@ -13,6 +14,7 @@ export const createCollectionAndTokenController = async (req, res) => {
     name,
     description,
   } = req.body;
+  const userId = req.user.id;
 
   // if (
   //   !mnemonic ||
@@ -28,6 +30,13 @@ export const createCollectionAndTokenController = async (req, res) => {
   // }
 
   try {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
     const account = await KeyringProvider.fromMnemonic(mnemonic);
     const address = account.address;
 
@@ -66,7 +75,9 @@ export const createCollectionAndTokenController = async (req, res) => {
     });
 
     const tokenId = tokenResult.parsed?.tokenId;
+
     const collectionPayload = await CollectionModel.create({
+      collectionOwner: user._id,
       collectionId,
       tokenId,
       collectionUrl: `https://uniquescan.io/opal/collections/${collectionId}`,
@@ -145,6 +156,28 @@ export const mintToken = async (req, res) => {
     res.status(500).json({
       success: false,
       error,
+    });
+  }
+};
+
+export const getUserCollections = async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const collections = await CollectionModel.find({ collectionOwner: userId });
+    if (collections.length <= 0) {
+      return res.status(200).json({
+        success: true,
+        message: "No collections created for this user",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      collections,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
     });
   }
 };

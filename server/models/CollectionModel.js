@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const CollecionSchema = new mongoose.Schema({
+  collectionOwner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   collectionId: {
     type: String,
     required: true,

@@ -12,6 +12,7 @@ import { createAccount } from "../utils/createAccount.js";
 import { getAccount } from "../utils/getAccount.js";
 import {
   createCollectionAndTokenController,
+  getUserCollections,
   mintToken,
 } from "../controllers/CreateAndMintToken.js";
 import {
@@ -64,5 +65,6 @@ router.post("/mintToken", verifyToken, mintToken);
 
 router.get("/buyerPurchases", verifyToken, checkBuyerPurchases);
 router.get("/checkStorePurchases", verifyToken, checkStorePurchases);
+router.get("/getCollections", verifyToken, getUserCollections);
 
 export default router;
