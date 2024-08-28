@@ -76,11 +76,23 @@
   - Required fields: `walletAddress`.
   - Authorization required: `Bearer ${token}`.
 - `POST /api/transferToken`: Transfer a token from one user to another.
-  - Required fields: `mnemonic` of signed in user.
-    `collectionId`, `tokenId`, `toAddress: Receiver's address`.
+  - Required fields:
+    - `mnemonic`: The mnemonic of the signed-in user (token sender).
+    - `collectionId`: The ID of the collection containing the token.
+    - `tokenId`: The ID of the token to be transferred.
+    - `toAddress`: The wallet address of the token receiver.
   - Authorization required: `Bearer ${token}`.
-- `POST /api/mintToken`: Route for creating/minting a new token. When creating a new token, it adds such token to the collection based on its `id`.
-  - Required fields: `collectionId`, `mnemonic` of signed in user, `tokenName`, `tokenDescription`.
-  - Authorization required: `Bearer ${token}`.
-- `GET /api/getCollections`: Get all signed in user's collections.
+  - Description: This endpoint uses the Unique Network SDK to transfer an NFT token from the sender's address to the receiver's address. It updates the token ownership in the database and returns the transfer details, including the new owner's address, token ID, and collection ID.
+- `POST /api/mintToken`: Mint a new token and add it to an existing collection
+
+  - Required fields:
+    - `collectionId`: ID of the collection to add the token to
+    - `mnemonic`: Mnemonic phrase of the authenticated user
+    - `tokenName`: Name of the new token
+    - `tokenDescription`: Description of the new token
   - Authorization required: `Bearer ${token}`
+  - Description: This endpoint creates a new token and adds it to the specified collection. It uses the provided mnemonic to authenticate the user and perform the minting process.
+
+- `GET /api/getCollections`: Retrieve all collections owned by the authenticated user
+  - Authorization required: `Bearer ${token}`
+  - Description: This endpoint returns a list of all collections associated with the currently authenticated user. No additional parameters are required.

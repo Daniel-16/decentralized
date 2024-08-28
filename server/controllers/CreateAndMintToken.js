@@ -158,11 +158,6 @@ export const mintToken = async (req, res) => {
       success: false,
       message: "Collection not found",
     });
-    // res.status(200).json({
-    //   success: true,
-    //   message: "Token created successfully",
-
-    // });
   } catch (error) {
     res.status(500).json({
       success: false,
