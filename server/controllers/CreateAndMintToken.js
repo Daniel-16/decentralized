@@ -78,6 +78,8 @@ export const createCollectionAndTokenController = async (req, res) => {
 
     const createToken = await TokenModel.create({
       tokenName,
+      tokenId,
+      tokenOwnerAddress: address,
       tokenDescription,
       tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
     });
@@ -139,6 +141,8 @@ export const mintToken = async (req, res) => {
     if (findCollection) {
       const mintToken = await TokenModel.create({
         tokenName,
+        tokenId,
+        tokenOwnerAddress: address,
         tokenDescription,
         tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
       });
