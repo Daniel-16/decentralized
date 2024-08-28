@@ -1,5 +1,6 @@
 import Sdk, { CHAIN_CONFIG } from "@unique-nft/sdk";
 import { KeyringProvider } from "@unique-nft/accounts/keyring";
+import TokenModel from "../models/TokenModel.js";
 
 export const transferTokenController = async (req, res) => {
   const { mnemonic, collectionId, tokenId, toAddress } = req.body;
@@ -30,12 +31,20 @@ export const transferTokenController = async (req, res) => {
 
     const parsedTransfer = txTransfer.parsed;
 
+    const updatedToken = await TokenModel.findOneAndUpdate(
+      { tokenId: tokenId },
+      {
+        tokenOwnerAddress: toAddress,
+      }
+    );
+
     res.status(200).json({
       success: true,
       message: "Token transferred successfully",
       newOwner: parsedTransfer?.to,
       tokenId: parsedTransfer?.tokenId,
       collectionId: parsedTransfer?.collectionId,
+      updatedToken,
     });
   } catch (error) {
     res.status(500).json({
