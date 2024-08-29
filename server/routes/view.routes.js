@@ -44,5 +44,16 @@ router.get("/collection/create", async function (req, res) {
   res.render("collection/create_collection");
 });
 
+// tranfer token
+// router.get("/token/transfer", async function (req, res) {
+//   res.render("collection/tokens/transfer_token");
+// });
+
+// all tokens
+router.get("/tokens", async function (req, res) {
+  res.render("collection/tokens/all_tokens");
+});
+
+
 
 export default router;

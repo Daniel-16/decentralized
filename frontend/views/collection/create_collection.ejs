@@ -68,7 +68,15 @@
         color: green;
     }
 </style>
-
+<div class="top-area">
+    <div class="grid_frame">
+        <div class="container_grid clearfix">
+            <div class="grid_12">
+                <h2 class="page-title">Collections</h2>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="grid_frame page-content">
     <div class="container_grid">
         <div class="mod-brand-detail-4 clearfix">
@@ -134,16 +142,8 @@
                 <div class="block-content list-coupon clearfix">
                     <div class="coupon-item grid_3">
                     <h1>My Collections</h1>
-                        <div class="coupon-content">
-                            <div class="img-thumb-center">
-                               
-                            </div>
-                            <div class="coupon-price">Collection Name</div>
-                            <div class="coupon-brand">Collection ID</div>
-                            <div class="coupon-brand">Token Prefix</div>
-                            <div class="coupon-desc">Collection Description </div>
-                            <br>
-                            <a class="btn btn-blue btn-take-coupon" href="#">New Token</a>
+                        <div id="collections-container">
+                            <!-- appending collections here -->
                         </div>
                     </div><!--end: .coupon-item -->
                 </div>
@@ -153,6 +153,7 @@
 </div>
 
 <%- include('../partials/footer') %>
+<!-- store the collection and token -->
 <script>
     $(document).ready(function() {
         $('#create-collection-form').submit(function(event) {
@@ -203,7 +204,7 @@
                             `
                         )
                         // $('#response').html(`<p class="success">${response.message} <br> Collection ID: ${response.collectionPayload.collectionId} <br> Token ID: ${response.collectionPayload.tokenId} </p>`);
-
+                        location.reload();
                         // auto get the user balance after creating a collection
                         const wallet_address = localStorage.getItem("accountAddress");
                         const apiUrl = `/api/getUserBalance?wallet_address=${wallet_address}`;
@@ -249,4 +250,57 @@
         });
     });
 </script>
+<!-- end: store the collection and token -->
 
+
+<!-- get collections -->
+<script>
+$(document).ready(function() {
+    function fetchUserCollections() {
+        const token = localStorage.getItem('token');
+        $.ajax({
+            url: '/api/getCollections',  
+            type: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            },
+            success: function(response) {
+                $('#collections-container').empty();  // remove existing content
+                
+                if (response && response.success) {
+                    if (response.collections && response.collections.length > 0) {
+                        response.collections.forEach(function(collection) {
+                            const collectionItem = `
+                                <div class="coupon-content">
+                                    <div class="img-thumb-center">
+                                        <!-- include an image here if needed -->
+                                    </div>
+                                    <div class="coupon-price">Collection ID: ${collection.collectionId}</div>
+                                    <div class="coupon-brand">Token ID: ${collection.tokenId}</div>
+                                    <br>
+                                    <a class="btn btn-blue btn-take-coupon" href="#">New Token</a>
+                                </div>
+                            `;
+
+                            $('#collections-container').append(collectionItem);
+                        });
+                    } else {
+                        $('#collections-container').append('<p>No collections created for this user.</p>');
+                    }
+                } else {
+                    console.error('Invalid response format or missing success flag.');
+                    $('#collections-container').append('<p>Error fetching collections.</p>');
+                }
+            },
+            error: function(xhr) {
+                console.error('An error occurred:', xhr.responseText);
+                $('#collections-container').append('<p>Failed to fetch collections. Please try again later.</p>');
+            }
+        });
+    }
+
+    // call the function
+    fetchUserCollections();
+});
+</script>
+<!-- end: get collections -->
