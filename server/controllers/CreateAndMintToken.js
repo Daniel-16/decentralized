@@ -4,6 +4,7 @@ import CollectionModel from "../models/CollectionModel.js";
 import TokenModel from "../models/TokenModel.js";
 import UserModel from "../models/UserModel.js";
 
+// Controller to create a new collection and mint its first token
 export const createCollectionAndTokenController = async (req, res) => {
   const {
     mnemonic,
@@ -30,6 +31,7 @@ export const createCollectionAndTokenController = async (req, res) => {
   // }
 
   try {
+    // Find the user by ID
     const user = await UserModel.findById(userId);
     if (!user) {
       return res.status(404).json({
@@ -37,14 +39,18 @@ export const createCollectionAndTokenController = async (req, res) => {
         message: "User not found",
       });
     }
+
+    // Find an account from the provided mnemonic
     const account = await KeyringProvider.fromMnemonic(mnemonic);
     const address = account.address;
 
+    // Initialize the SDK
     const sdk = new Sdk({
       baseUrl: CHAIN_CONFIG.opal.restUrl,
       signer: account,
     });
 
+    // Create a new collection
     const { parsed, error } = await sdk.collection.create.submitWaitResult({
       address,
       name,
@@ -58,6 +64,7 @@ export const createCollectionAndTokenController = async (req, res) => {
 
     const collectionId = parsed?.collectionId;
 
+    // Create the first token in the collection
     const tokenResult = await sdk.token.create.submitWaitResult({
       address,
       collectionId,
@@ -76,6 +83,7 @@ export const createCollectionAndTokenController = async (req, res) => {
 
     const tokenId = tokenResult.parsed?.tokenId;
 
+    // Create a new token document in the database
     const createToken = await TokenModel.create({
       tokenName,
       tokenId,
@@ -84,6 +92,7 @@ export const createCollectionAndTokenController = async (req, res) => {
       tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
     });
 
+    // Create a new collection document in the database
     const collectionPayload = await CollectionModel.create({
       collectionOwner: user._id,
       collectionId,
@@ -108,17 +117,21 @@ export const createCollectionAndTokenController = async (req, res) => {
   }
 };
 
+// Controller to mint a new token in an existing collection
 export const mintToken = async (req, res) => {
   const { collectionId, mnemonic, tokenName, tokenDescription } = req.body;
   try {
+    // Find an account from the provided mnemonic
     const account = await KeyringProvider.fromMnemonic(mnemonic);
     const address = account.address;
 
+    // Initialize the SDK
     const sdk = new Sdk({
       baseUrl: CHAIN_CONFIG.opal.restUrl,
       signer: account,
     });
 
+    // Mint a new token
     const result = await sdk.token.create.submitWaitResult({
       address,
       collectionId,
@@ -137,6 +150,7 @@ export const mintToken = async (req, res) => {
 
     const tokenId = result.parsed?.tokenId;
 
+    // Find the collection and add the new token
     const findCollection = await CollectionModel.findOne({ collectionId });
     if (findCollection) {
       const mintToken = await TokenModel.create({
@@ -166,6 +180,7 @@ export const mintToken = async (req, res) => {
   }
 };
 
+// Controller to get all collections owned by a user
 export const getUserCollections = async (req, res) => {
   const userId = req.user.id;
   try {
