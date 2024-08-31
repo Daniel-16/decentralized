@@ -1,4 +1,5 @@
 import express from "express";
+import { redirectIfAuthenticated } from "../middleware/redirectIfAuthenticated.js";
 const router = express.Router();
 
 router.get("/home", async function (req, res) {
@@ -6,11 +7,11 @@ router.get("/home", async function (req, res) {
   res.render("home", );
 });
 
-router.get("/register", async function (req, res) {
+router.get("/register", redirectIfAuthenticated, async function (req, res) {
   res.render("auth/register");
 });
 
-router.get("/login", async function (req, res) {
+router.get("/login", redirectIfAuthenticated, async function (req, res) {
   res.render("auth/login");
 });
 
