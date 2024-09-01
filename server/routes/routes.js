@@ -53,15 +53,15 @@ router.post("/loginUser", loginUser);
  */
 router.get("/getUser", verifyToken, getUser);
 
-router.post("/createStore", createStore); //Not in use for now
-router.post("/createService/:storeId", createService); //Not in use for now
-router.post("/createCoupon/:storeId", createCoupon); //Not in use for now
-router.post("/createAccount", createAccount); //Not in use for now
-router.get("/getAccount", getAccount); //Not in use for now
-router.get("/getStores", getStores); //Not in use for now
-router.get("/getServices", getServices); //Not in use for now
-router.get("/getCoupons", getCoupons); //Not in use for now
-router.put("/redeemCoupon", redeemCoupon); //Not in use for now
+// router.post("/createStore", createStore); //Not in use for now
+// router.post("/createService/:storeId", createService); //Not in use for now
+// router.post("/createCoupon/:storeId", createCoupon); //Not in use for now
+// router.post("/createAccount", createAccount); //Not in use for now
+// router.get("/getAccount", getAccount); //Not in use for now
+// router.get("/getStores", getStores); //Not in use for now
+// router.get("/getServices", getServices); //Not in use for now
+// router.get("/getCoupons", getCoupons); //Not in use for now
+// router.put("/redeemCoupon", redeemCoupon); //Not in use for now
 
 /**
  * @route POST /api/createItem
