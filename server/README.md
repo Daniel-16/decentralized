@@ -1,4 +1,4 @@
-# Decentralized API
+# KooponCraftAPI
 
 ## Prerequisites
 
