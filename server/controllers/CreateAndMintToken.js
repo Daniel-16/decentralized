@@ -202,3 +202,22 @@ export const getUserCollections = async (req, res) => {
     });
   }
 };
+
+export const getUserTokensAndPrizes = async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const user = await UserModel.findById(userId)
+      .populate("collectedTokens")
+      .populate("wonPrizes");
+    res.status(200).json({
+      success: true,
+      collectedTokens: user.collectedTokens,
+      wonPrizes: user.wonPrizes,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};

@@ -48,27 +48,15 @@ export const getAllItems = async (req, res) => {
   }
 };
 
-export const attachTokenToItem = async (req, res) => {
-  try {
-    const items = await ItemModel.find({ attachedToken: null });
-    const tokens = await TokenModel.find({});
+export const attachTokenToItem = async () => {
+  const items = await ItemModel.find({ attachedToken: null });
+  const tokens = await TokenModel.find({});
 
-    for (const item of items) {
-      if (Math.random() < 0.1) {
-        const randomToken = tokens[Math.floor(Math.random() * tokens.length)];
-        item.attachedToken = randomToken._id;
-        await item.save();
-      }
+  for (const item of items) {
+    if (Math.random() < 0.1) {
+      const randomToken = tokens[Math.floor(Math.random() * tokens.length)];
+      item.attachedToken = randomToken._id;
+      await item.save();
     }
-
-    res.status(200).json({
-      success: true,
-      message: "Tokens attached to items successfully",
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
   }
 };

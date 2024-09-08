@@ -25,7 +25,6 @@ const ItemSchema = new mongoose.Schema({
   attachedToken: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Token",
-    required: true,
     default: null,
   },
 });
