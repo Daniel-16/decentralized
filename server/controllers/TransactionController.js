@@ -31,9 +31,8 @@ export const purchaseItem = async (req, res) => {
       const prize = await PrizeModel.findOne({ name: "Cash Prize Won" });
       user.wonPrizes.push(prize);
       user.collectedTokens = [];
+      await user.save();
     }
-
-    await user.save();
 
     const totalPrice = item.priceOfItem * quantity;
 
@@ -47,9 +46,6 @@ export const purchaseItem = async (req, res) => {
       // store: item.itemOwnerId,
       quantity,
       totalPrice,
-      user,
-      tokenCollected: !!item.attachedToken,
-      prizeWon: user.wonPrizes.length > 0,
     });
 
     await transaction.save();
@@ -68,30 +64,17 @@ export const purchaseItem = async (req, res) => {
     //   }
     // }
 
-    res.json({ success: true, transaction });
+    res.json({
+      success: true,
+      transaction,
+      user,
+      tokenCollected: !!item.attachedToken,
+      prizeWon: user.wonPrizes.length > 0,
+    });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 };
-
-// export const getUserTransactions = async (req, res) => {
-//   const userId = req.user.id;
-
-//   try {
-//     const transactions = await TransactionModel.find({ user: userId }).populate(
-//       "item"
-//     );
-//     if (transactions.length === 0) {
-//       return res.status(200).json({
-//         success: true,
-//         message: "No transactions for this user",
-//       });
-//     }
-//     res.status(200).json({ success: true, transactions });
-//   } catch (error) {
-//     res.status(500).json({ success: false, error: error.message });
-//   }
-// };
 
 export const checkBuyerPurchases = async (req, res) => {
   const userId = req.user.id;
