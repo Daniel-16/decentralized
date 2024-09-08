@@ -22,6 +22,12 @@ const ItemSchema = new mongoose.Schema({
     ref: "Store",
     required: true,
   },
+  attachedToken: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Token",
+    required: true,
+    default: null,
+  },
 });
 
 const ItemModel = mongoose.model("Item", ItemSchema);

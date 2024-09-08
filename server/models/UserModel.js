@@ -23,10 +23,18 @@ const UserSchema = new mongoose.Schema({
   accountAddress: {
     type: String,
   },
-  hasReceivedToken: {
-    type: Boolean,
-    default: false,
-  },
+  collectedTokens: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Token",
+    },
+  ],
+  wonPrizes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Prize",
+    },
+  ],
 });
 
 UserSchema.pre("save", async function (next) {
