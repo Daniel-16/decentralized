@@ -1,18 +1,8 @@
 import express from "express";
 import {
-  createCoupon,
-  createService,
-  createStore,
-  getCoupons,
-  getServices,
-  getStores,
-  redeemCoupon,
-} from "../controllers/StoreController.js";
-import { createAccount } from "../utils/createAccount.js";
-import { getAccount } from "../utils/getAccount.js";
-import {
   createCollectionAndTokenController,
   getUserCollections,
+  getUserTokensAndPrizes,
   mintToken,
 } from "../controllers/CreateAndMintToken.js";
 import {
@@ -139,5 +129,7 @@ router.get("/checkStorePurchases", verifyToken, checkStorePurchases);
  * @access Private
  */
 router.get("/getCollections", verifyToken, getUserCollections);
+
+router.get("/getUserTokensAndPrizes", verifyToken, getUserTokensAndPrizes);
 
 export default router;
