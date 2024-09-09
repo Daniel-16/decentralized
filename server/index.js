@@ -6,6 +6,7 @@ import router from "./routes/routes.js";
 import viewRouter from "./routes/view.routes.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import "./utils/cron.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

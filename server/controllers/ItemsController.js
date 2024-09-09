@@ -53,7 +53,7 @@ export const attachTokenToItem = async () => {
   const tokens = await TokenModel.find({});
 
   for (const item of items) {
-    if (Math.random() < 0.1) {
+    if (Math.random() < 0.9) {
       const randomToken = tokens[Math.floor(Math.random() * tokens.length)];
       item.attachedToken = randomToken._id;
       await item.save();
