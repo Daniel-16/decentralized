@@ -17,19 +17,6 @@ export const createCollectionAndTokenController = async (req, res) => {
   } = req.body;
   const userId = req.user.id;
 
-  // if (
-  //   !mnemonic ||
-  //   !tokenPrefix ||
-  //   !tokenName ||
-  //   !tokenDescription ||
-  //   !collectionName
-  // ) {
-  //   return res.status(400).json({
-  //     message:
-  //       "Mnemonic, tokenPrefix, tokenName, tokenDescription, collection name, and collection description are required",
-  //   });
-  // }
-
   try {
     // Find the user by ID
     const user = await UserModel.findById(userId);
@@ -88,6 +75,7 @@ export const createCollectionAndTokenController = async (req, res) => {
       tokenName,
       tokenId,
       tokenOwnerAddress: address,
+      tokenCreator: user.email,
       tokenDescription,
       tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
     });
@@ -120,7 +108,15 @@ export const createCollectionAndTokenController = async (req, res) => {
 // Controller to mint a new token in an existing collection
 export const mintToken = async (req, res) => {
   const { collectionId, mnemonic, tokenName, tokenDescription } = req.body;
+  const userId = req.user.id;
   try {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
     // Find an account from the provided mnemonic
     const account = await KeyringProvider.fromMnemonic(mnemonic);
     const address = account.address;
@@ -157,6 +153,7 @@ export const mintToken = async (req, res) => {
         tokenName,
         tokenId,
         tokenOwnerAddress: address,
+        tokenCreator: user.email,
         tokenDescription,
         tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
       });
