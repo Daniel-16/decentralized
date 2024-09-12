@@ -65,6 +65,9 @@ export const createCollectionAndTokenController = async (req, res) => {
         description: {
           _: tokenDescription,
         },
+        // attributes: {
+
+        // }
       },
     });
 
@@ -75,7 +78,7 @@ export const createCollectionAndTokenController = async (req, res) => {
       tokenName,
       tokenId,
       tokenOwnerAddress: address,
-      tokenCreator: user.email,
+      tokenOwnerId: user._id,
       tokenDescription,
       tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
     });
@@ -148,14 +151,18 @@ export const mintToken = async (req, res) => {
 
     // Find the collection and add the new token
     const findCollection = await CollectionModel.findOne({ collectionId });
+    const isWinningToken = Math.random() < 0.1;
+    console.log(isWinningToken);
+
     if (findCollection) {
       const mintToken = await TokenModel.create({
         tokenName,
         tokenId,
         tokenOwnerAddress: address,
-        tokenCreator: user.email,
+        tokenOwnerId: user._id,
         tokenDescription,
         tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
+        isWinningToken,
       });
       findCollection.token.push(mintToken._id);
       await findCollection.save();

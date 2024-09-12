@@ -4,12 +4,16 @@ const TokenSchema = new mongoose.Schema({
   tokenId: String,
   tokenName: String,
   tokenOwnerAddress: String,
-  tokenCreator: {
-    type: mongoose.Schema.Types.String,
+  tokenOwnerId: {
+    type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
   tokenDescription: String,
   tokenUrl: String,
+  isWinningToken: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const TokenModel = mongoose.model("Token", TokenSchema);

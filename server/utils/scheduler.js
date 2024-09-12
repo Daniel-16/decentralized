@@ -1,7 +1,7 @@
 import cron from "node-cron";
 import { attachTokenToItem } from "./attackTokenToItem.js";
 
-cron.schedule("15 14 * * *", () => {
+cron.schedule("0 * * * *", () => {
+  console.log("Running attaching token to item");
   attachTokenToItem();
-  console.log("Attacked token to an item");
 });
