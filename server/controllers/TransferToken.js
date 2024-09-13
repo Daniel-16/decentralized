@@ -1,6 +1,7 @@
 import Sdk, { CHAIN_CONFIG } from "@unique-nft/sdk";
 import { KeyringProvider } from "@unique-nft/accounts/keyring";
 import TokenModel from "../models/TokenModel.js";
+import UserModel from "../models/UserModel.js";
 
 export const transferTokenController = async (req, res) => {
   const { mnemonic, collectionId, tokenId, toAddress } = req.body;
@@ -36,6 +37,14 @@ export const transferTokenController = async (req, res) => {
         tokenOwnerAddress: toAddress,
       }
     );
+
+    if (updatedToken.isWinningToken) {
+      await UserModel.findOneAndUpdate(
+        { accountAddress: toAddress },
+        { $addToSet: { collectedTokens: updatedToken._id } },
+        { new: true }
+      );
+    }
 
     res.status(200).json({
       success: true,
