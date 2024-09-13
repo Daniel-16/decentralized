@@ -7,7 +7,6 @@ export const attachTokenToItem = async () => {
     const items = await ItemModel.find({});
     const winningTokens = await TokenModel.find({ isWinningToken: true });
 
-    // Loop through all winning tokens
     for (const token of winningTokens) {
       // Find items that belong to the same owner as the token
       const matchingItems = items.filter(
