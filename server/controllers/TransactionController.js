@@ -35,44 +35,19 @@ export const purchaseItem = async (req, res) => {
 
     await transaction.save();
 
-    // const userTransactions = await TransactionModel.find({ user: userId })
-    // const totalItemsPurchased = userTransactions.reduce((total, t) => total + t.quantity, 0);
+    if (item.attachedToken) {
+      await UserModel.findByIdAndUpdate(
+        userId,
+        { $addToSet: { collectedTokens: item.attachedToken } },
+        { new: true }
+      );
+    }
 
-    // if (totalItemsPurchased >= 4) {
-    //   try {
-    //     const user = await UserModel.findById(userId);
-    //     if (!user.hasReceivedToken) {
-
-    //     }
-    //   } catch (error) {
-
-    //   }
-    // }
-
-    res.json({ success: true, transaction });
+    res.status(201).json({ success: true, transaction });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 };
-
-// export const getUserTransactions = async (req, res) => {
-//   const userId = req.user.id;
-
-//   try {
-//     const transactions = await TransactionModel.find({ user: userId }).populate(
-//       "item"
-//     );
-//     if (transactions.length === 0) {
-//       return res.status(200).json({
-//         success: true,
-//         message: "No transactions for this user",
-//       });
-//     }
-//     res.status(200).json({ success: true, transactions });
-//   } catch (error) {
-//     res.status(500).json({ success: false, error: error.message });
-//   }
-// };
 
 export const checkBuyerPurchases = async (req, res) => {
   const userId = req.user.id;

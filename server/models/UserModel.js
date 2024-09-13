@@ -29,12 +29,12 @@ const UserSchema = new mongoose.Schema({
       ref: "Token",
     },
   ],
-  wonPrizes: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Prize",
-    },
-  ],
+  // wonPrizes: [
+  //   {
+  //     type: mongoose.Schema.Types.ObjectId,
+  //     ref: "Prize",
+  //   },
+  // ],
 });
 
 UserSchema.pre("save", async function (next) {
