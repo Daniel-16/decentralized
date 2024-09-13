@@ -87,6 +87,11 @@ export const getUser = async (req, res) => {
         error: "User not found",
       });
     }
+    if (user.collectedTokens.length >= 3) {
+      return res.status(200).json({
+        message: `Winning user: ${user.username}, email: ${user.email}`,
+      });
+    }
 
     res.status(200).json({
       success: true,
