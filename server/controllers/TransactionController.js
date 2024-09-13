@@ -1,7 +1,6 @@
 import TransactionModel from "../models/TransactionModel.js";
 import ItemModel from "../models/ItemsModel.js";
 import UserModel from "../models/UserModel.js";
-import PrizeModel from "../models/PrizeModel.js";
 
 export const purchaseItem = async (req, res) => {
   const { itemId, quantity } = req.body;
@@ -9,29 +8,15 @@ export const purchaseItem = async (req, res) => {
 
   try {
     const user = await UserModel.findById(userId);
-    const item = await ItemModel.findById(itemId).populate("attachedToken");
     if (!user) {
       return res.status(404).json({
         success: false,
         error: "User not found",
       });
     }
-    // const item = await ItemModel.findById(itemId);
+    const item = await ItemModel.findById(itemId);
     if (!item) {
       return res.status(404).json({ success: false, error: "Item not found" });
-    }
-
-    if (item.attachedToken) {
-      user.collectedTokens.push(item.attachedToken);
-      item.attachedToken = null;
-      await item.save();
-    }
-
-    if (user.collectedTokens.length >= 3) {
-      const prize = await PrizeModel.findOne({ name: "Cash Prize Won" });
-      user.wonPrizes.push(prize);
-      user.collectedTokens = [];
-      await user.save();
     }
 
     const totalPrice = item.priceOfItem * quantity;
@@ -64,17 +49,30 @@ export const purchaseItem = async (req, res) => {
     //   }
     // }
 
-    res.json({
-      success: true,
-      transaction,
-      user,
-      tokenCollected: !!item.attachedToken,
-      prizeWon: user.wonPrizes.length > 0,
-    });
+    res.json({ success: true, transaction });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+// export const getUserTransactions = async (req, res) => {
+//   const userId = req.user.id;
+
+//   try {
+//     const transactions = await TransactionModel.find({ user: userId }).populate(
+//       "item"
+//     );
+//     if (transactions.length === 0) {
+//       return res.status(200).json({
+//         success: true,
+//         message: "No transactions for this user",
+//       });
+//     }
+//     res.status(200).json({ success: true, transactions });
+//   } catch (error) {
+//     res.status(500).json({ success: false, error: error.message });
+//   }
+// };
 
 export const checkBuyerPurchases = async (req, res) => {
   const userId = req.user.id;
