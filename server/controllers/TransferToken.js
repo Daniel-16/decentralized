@@ -5,6 +5,7 @@ import UserModel from "../models/UserModel.js";
 
 export const transferTokenController = async (req, res) => {
   const { mnemonic, collectionId, tokenId, toAddress } = req.body;
+  const userId = req.user.id;
 
   if (!mnemonic || !collectionId || !tokenId || !toAddress) {
     return res.status(400).json({
@@ -14,6 +15,12 @@ export const transferTokenController = async (req, res) => {
   }
 
   try {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
     const account = await KeyringProvider.fromMnemonic(mnemonic);
     const address = account.address;
 
@@ -31,8 +38,20 @@ export const transferTokenController = async (req, res) => {
 
     const parsedTransfer = txTransfer.parsed;
 
+    const token = await TokenModel.findOne({ tokenOwnerAddress: address });
+    const findUser = await UserModel.findOne({ accountAddress: address });
+
+    if (token.isWinningToken && findUser.collectedTokens.includes(token._id)) {
+      await UserModel.findOneAndUpdate(
+        { accountAddress: address },
+        { $pull: { collectedTokens: token._id } },
+        { new: true }
+      );
+      console.log("Winning token removed from sender");
+    }
+
     const updatedToken = await TokenModel.findOneAndUpdate(
-      { tokenId: tokenId },
+      { collectionId, tokenId },
       {
         tokenOwnerAddress: toAddress,
       }

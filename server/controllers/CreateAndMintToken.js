@@ -77,6 +77,7 @@ export const createCollectionAndTokenController = async (req, res) => {
     const createToken = await TokenModel.create({
       tokenName,
       tokenId,
+      collectionId,
       tokenOwnerAddress: address,
       tokenOwnerId: user._id,
       tokenDescription,
@@ -158,6 +159,7 @@ export const mintToken = async (req, res) => {
       const mintToken = await TokenModel.create({
         tokenName,
         tokenId,
+        collectionId,
         tokenOwnerAddress: address,
         tokenOwnerId: user._id,
         tokenDescription,
