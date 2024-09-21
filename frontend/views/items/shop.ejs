@@ -29,11 +29,9 @@
         </div>
         <div class="grid_7">
           <div class="brand-desc">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. In quis
-            metus non nunc iaculis dapibus. Nullam tempus accumsan metus vitae
-            facilisis. Nullam non faucibus nisi, nec auctor neque. Ut consequat
-            consequat purus. Sed vestivbulum viverra nulla vel fermentum. Fusce
-            luctus ultrices lorem, in placerat nibh adipiscing ut.
+            Browse our selection, make a purchase, and see what 
+            rewards you can unlock in the KooponCraft Marketplace! It’s more 
+            than shopping—it’s a chance to win big with every item.
           </div>
         </div>
       </div>
@@ -46,15 +44,9 @@
   </div>
 </div>
 
-<script
-  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-  integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-  crossorigin="anonymous"
-  referrerpolicy="no-referrer"
-></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
+<%- include('../partials/footer') %>
 
 <script>
 $(document).ready(function () {
@@ -81,9 +73,7 @@ $(document).ready(function () {
                 </div>
                 <div class="coupon-price">$${item.priceOfItem}</div>
                 <div class="coupon-brand">${item.nameOfItem}</div>
-                <div class="coupon-desc">
-                  Buy now and stand a chance to ...
-                </div>
+                
                 <br>
                 <a class="btn btn-blue btn-take-coupon" href="#" data-item-id="${item._id}">Purchase</a>
               </div>
@@ -150,5 +140,3 @@ $(document).ready(function () {
 });
 </script>
 
-
-<%- include('../partials/footer') %>

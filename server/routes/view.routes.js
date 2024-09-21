@@ -2,9 +2,9 @@ import express from "express";
 import { redirectIfAuthenticated } from "../middleware/redirectIfAuthenticated.js";
 const router = express.Router();
 
-router.get("/home", async function (req, res) {
+router.get("/", async function (req, res) {
   console.log(req.token);
-  res.render("home", );
+  res.render("home",);
 });
 
 router.get("/register", redirectIfAuthenticated, async function (req, res) {
