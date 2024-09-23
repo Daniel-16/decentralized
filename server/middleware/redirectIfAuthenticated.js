@@ -6,7 +6,7 @@ export const redirectIfAuthenticated = (req, res, next) => {
     console.log("the token", token);
     
     if (token) {
-        return res.redirect("/home");
+        return res.redirect("/");
     }
     
     next();

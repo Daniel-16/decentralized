@@ -66,9 +66,7 @@
   </div>
 </div>
 
-
 <%- include('../partials/footer') %>
-
 
 <script>
   $(document).ready(function () {
@@ -77,9 +75,6 @@
 
       const email = $("#sys_email").val();
       const password = $("#sys_pass").val();
-
-
-
 
       $.ajax({
         url: "/api/loginUser",
@@ -92,8 +87,14 @@
             localStorage.setItem("token", response.token);
             localStorage.setItem("username", response.user.username);
             localStorage.setItem("email", response.user.email);
-            localStorage.setItem("accountAddress", response.user.accountAddress);
-            localStorage.setItem("hasReceivedToken", response.user.hasReceivedToken);
+            localStorage.setItem(
+              "accountAddress",
+              response.user.accountAddress
+            );
+            localStorage.setItem(
+              "hasReceivedToken",
+              response.user.hasReceivedToken
+            );
             // toastr.success("Login successfully!");
             Swal.fire({
               position: "center",
@@ -103,7 +104,7 @@
               timer: 1500,
             });
 
-            location.assign("/home");
+            location.assign("/");
           } else {
             Swal.fire({
               position: "center",

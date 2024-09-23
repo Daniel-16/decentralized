@@ -125,11 +125,12 @@ $(document).ready(function () {
                   <div class="wrap-img-thumb">
                     <span class="ver_hold"></span>
                     <a href="#" class="ver_container">
-                      <img src="${item.imageURL}" alt="${item.nameOfItem}" />
+                      <img src="${item.itemImage}" alt="${item.nameOfItem}" />
                     </a>
                   </div>
                 </div>
-                <div class="coupon-price">${item.nameOfItem}</div>
+                <div class="coupon-price">$${item.priceOfItem}</div>
+                <div class="coupon-brand">${item.nameOfItem}</div>
                 <hr>
                 <br>
                 <a class="btn btn-blue btn-take-coupon" href="#" data-item-id="${item._id}">Purchase Item</a>

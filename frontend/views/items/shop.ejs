@@ -67,7 +67,7 @@ $(document).ready(function () {
                   <div class="wrap-img-thumb">
                     <span class="ver_hold"></span>
                     <a href="#" class="ver_container">
-                      <img src="/assets/images/ex/01_01.jpg" alt="${item.nameOfItem}" />
+                      <img src="${item.itemImage}" alt="${item.nameOfItem}" />
                     </a>
                   </div>
                 </div>
@@ -121,7 +121,6 @@ $(document).ready(function () {
         },
         success: function(response) {
           if (response.success) {
-            // alert('Purchase successful!');
             toastr.success("Successfully purchased 1 unit!");
           } else {
             alert('Error: ' + response.error);
@@ -139,4 +138,3 @@ $(document).ready(function () {
   loadItems();
 });
 </script>
-

@@ -31,136 +31,170 @@
   }
 </style>
 
-
-
 <div class="grid_frame page-content">
-    <div class="container_grid">
-        <div class="mod-register">
-            <h3 class="rs title-mod">Hello there stranger! Welcome to KooponCraft</h3>
-            <div class="desc-reg">Sign up for free and get exclusive access to members-only savings, rewards and special promotions from KooponCraft. </div>
-            <div class="wrap-form-reg clearfix">
-                <form id="userForm">
-                    <div class="left-form">
-                        <label class="wrap-txt" for="sys_username">
-                            <input class="input-txt" id="sys_username" required type="text" placeholder="myusername"/>
-                        </label>
-                        <label class="wrap-txt" for="sys_email">
-                            <input class="input-txt" id="sys_email" required type="email" placeholder="you@mail.com"/>
-                        </label>
-                        <label class="wrap-txt" for="sys_pass">
-                            <input class="input-txt" id="sys_pass" required type="password" placeholder="password please!"/>
-                        </label>
-                        <label class="wrap-check" for="sys_chk_news">
-                            <input id="sys_chk_news" class="input-chk" type="checkbox"/> Send me the weekly KooponCraft’s offers.
-                            <i class="icon iUncheck"></i>
-                        </label>
-                        <label class="wrap-check" for="sys_chk_agree">
-                            <input id="sys_chk_agree" class="input-chk" type="checkbox"/> I agree to the <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.
-                            <i class="icon iUncheck"></i>
-                        </label>
-                    </div>
-                    <div class="right-connect">
-                        <button class="btn-flat yellow btn-submit-reg" type="submit">Create an account</button>
-                        <div class="sep-connect">
-                            <span>Or</span>
-                        </div>
-                        <div class="grp-connect">
-                            <p class="rs">Sign up using your account on:</p>
-                            <a class="btn-flat fb" href="#">Facebook</a>
-                            <a class="btn-flat gg" href="#">Google</a>
-                        </div>
-                    </div>
-                </form>
+  <div class="container_grid">
+    <div class="mod-register">
+      <h3 class="rs title-mod">Hello there stranger! Welcome to KooponCraft</h3>
+      <div class="desc-reg">
+        Sign up for free and get exclusive access to members-only savings,
+        rewards and special promotions from KooponCraft.
+      </div>
+      <div class="wrap-form-reg clearfix">
+        <form id="userForm">
+          <div class="left-form">
+            <label class="wrap-txt" for="sys_username">
+              <input
+                class="input-txt"
+                id="sys_username"
+                required
+                type="text"
+                placeholder="myusername"
+              />
+            </label>
+            <label class="wrap-txt" for="sys_email">
+              <input
+                class="input-txt"
+                id="sys_email"
+                required
+                type="email"
+                placeholder="you@mail.com"
+              />
+            </label>
+            <label class="wrap-txt" for="sys_pass">
+              <input
+                class="input-txt"
+                id="sys_pass"
+                required
+                type="password"
+                placeholder="password please!"
+              />
+            </label>
+            <label class="wrap-check" for="sys_chk_news">
+              <input id="sys_chk_news" class="input-chk" type="checkbox" /> Send
+              me the weekly KooponCraft’s offers.
+              <i class="icon iUncheck"></i>
+            </label>
+            <label class="wrap-check" for="sys_chk_agree">
+              <input id="sys_chk_agree" class="input-chk" type="checkbox" /> I
+              agree to the <a href="#">Terms of Use</a> and
+              <a href="#">Privacy Policy</a>.
+              <i class="icon iUncheck"></i>
+            </label>
+          </div>
+          <div class="right-connect">
+            <button class="btn-flat yellow btn-submit-reg" type="submit">
+              Create an account
+            </button>
+            <div class="sep-connect">
+              <span>Or</span>
             </div>
-            <p class="rs wrap-link-back">
-                <a href="/login" class="link-back">
-                    <i class="pick-r"></i>
-                    Back to login
-                </a>
-            </p>
-        </div><!--end: .mod-register -->
+            <div class="grp-connect">
+              <p class="rs">Sign up using your account on:</p>
+              <a class="btn-flat fb" href="#">Facebook</a>
+              <a class="btn-flat gg" href="#">Google</a>
+            </div>
+          </div>
+        </form>
+      </div>
+      <p class="rs wrap-link-back">
+        <a href="/login" class="link-back">
+          <i class="pick-r"></i>
+          Back to login
+        </a>
+      </p>
     </div>
+    <!--end: .mod-register -->
+  </div>
 </div>
-
 
 <!-- Mnemonic Modal -->
-<div id="mnemonicModal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Important: Backup Your Mnemonic</h2>
-        <p>Your mnemonic is used to access your account. Please save it securely and do not share it with anyone.</p>
-        <textarea id="mnemonicText" readonly></textarea>
-        <button id="copyMnemonicBtn">Copy to Clipboard</button>
-        <button id="mnemonicModalCloseBtn">Close</button>
-    </div>
+<div id="mnemonicModal" class="modal" style="display: none">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Important: Backup Your Mnemonic</h2>
+    <p>
+      Your mnemonic is used to access your account. Please save it securely and
+      do not share it with anyone.
+    </p>
+    <textarea id="mnemonicText" readonly></textarea>
+    <button id="copyMnemonicBtn">Copy to Clipboard</button>
+    <button id="mnemonicModalCloseBtn">Close</button>
+  </div>
 </div>
 
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+  integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
 <script>
-  $(document).ready(function() {
-    $('#userForm').on('submit', function(event) {
-      $('#cover-spin').show(0);
+  $(document).ready(function () {
+    $("#userForm").on("submit", function (event) {
+      $("#cover-spin").show(0);
       event.preventDefault();
 
-      const email = $('#sys_email').val();
-      const password = $('#sys_pass').val();
-      const username = $('#sys_username').val();
-    //   const agree = $('#sys_chk_agree').is(':checked');
+      const email = $("#sys_email").val();
+      const password = $("#sys_pass").val();
+      const username = $("#sys_username").val();
+      //   const agree = $('#sys_chk_agree').is(':checked');
 
-    //   if (!agree) {
-    //     toastr.error("You must agree to the Terms of Use and Privacy Policy.");
-    //     return;
-    //   }
+      //   if (!agree) {
+      //     toastr.error("You must agree to the Terms of Use and Privacy Policy.");
+      //     return;
+      //   }
 
       $.ajax({
-        url: '/api/createUser',
-        method: 'POST',
-        contentType: 'application/json',
+        url: "/api/createUser",
+        method: "POST",
+        contentType: "application/json",
         data: JSON.stringify({ email, password, username }),
-        success: function(response) {
+        success: function (response) {
           if (response.success) {
-            $('#cover-spin').hide(0)
-            console.log("response: ",response);
+            $("#cover-spin").hide(0);
+            console.log("response: ", response);
             localStorage.setItem("token", response.token);
             localStorage.setItem("username", response.user.username);
             localStorage.setItem("email", response.user.email);
             localStorage.setItem("accountAddress", response.account.address);
-            localStorage.setItem("hasReceivedToken", response.user.hasReceivedToken);
+            localStorage.setItem(
+              "hasReceivedToken",
+              response.user.hasReceivedToken
+            );
             // toastr.success('Account created successfully!');
-            // location.assign('/home');
-              $('#mnemonicText').val(response.mnemonic); // Set mnemonic text in the modal
-              $('#mnemonicModal').show(); // Show the modal
+            // location.assign('/');
+            $("#mnemonicText").val(response.mnemonic); // Set mnemonic text in the modal
+            $("#mnemonicModal").show(); // Show the modal
           } else {
-            $('#cover-spin').show(0)
-            toastr.error(response.error || 'An error occurred');
+            $("#cover-spin").show(0);
+            toastr.error(response.error || "An error occurred");
           }
         },
-        error: function(jqXHR) {
-          $('#cover-spin').show(0)
-          toastr.info(jqXHR.responseJSON?.error || 'An error occurred');
-        }
+        error: function (jqXHR) {
+          $("#cover-spin").show(0);
+          toastr.info(jqXHR.responseJSON?.error || "An error occurred");
+        },
       });
     });
 
     // Close modal on close button click
-    $('#mnemonicModalCloseBtn').on('click', function() {
-      $('#mnemonicModal').hide();
-      location.assign('/home');
+    $("#mnemonicModalCloseBtn").on("click", function () {
+      $("#mnemonicModal").hide();
+      location.assign("/");
     });
 
     // Close modal when clicking on the close "X"
-    $('.close').on('click', function() {
-      $('#mnemonicModal').hide();
-      location.assign('/home');
+    $(".close").on("click", function () {
+      $("#mnemonicModal").hide();
+      location.assign("/");
     });
 
     // Copy mnemonic to clipboard
-    $('#copyMnemonicBtn').on('click', function() {
-      const mnemonicText = $('#mnemonicText');
+    $("#copyMnemonicBtn").on("click", function () {
+      const mnemonicText = $("#mnemonicText");
       mnemonicText.select();
-      document.execCommand('copy');
-      toastr.success('Mnemonic copied to clipboard!');
+      document.execCommand("copy");
+      toastr.success("Mnemonic copied to clipboard!");
     });
   });
 </script>
