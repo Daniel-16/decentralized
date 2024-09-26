@@ -166,13 +166,13 @@
             $("#mnemonicText").val(response.mnemonic); // Set mnemonic text in the modal
             $("#mnemonicModal").show(); // Show the modal
           } else {
-            $("#cover-spin").show(0);
+            $("#cover-spin").hide(0);
             toastr.error(response.error || "An error occurred");
           }
         },
         error: function (jqXHR) {
-          $("#cover-spin").show(0);
-          toastr.info(jqXHR.responseJSON?.error || "An error occurred");
+          $("#cover-spin").hide(0);
+          toastr.error(jqXHR.responseJSON?.error || "An error occurred");
         },
       });
     });
