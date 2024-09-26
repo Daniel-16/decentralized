@@ -142,10 +142,10 @@
                       <li class="active">
                         <a href="/">Home</a>
                       </li>
-                      <li>
+                      <li id="shop">
                         <a href="/shop">Shop</a>
                       </li>
-                      <li id="my-coupons" style="display: none">
+                      <li id="my-coupons">
                         <a href="#">My coupons</a>
                         <i class="icon iPickRed lbl-count"><span>0</span></i>
                       </li>
@@ -181,7 +181,7 @@
               <li>
                 <a href="#">Coupons</a>
               </li>
-              <li id="my-coupons-mobile">
+              <li>
                 <a href="#">My coupons</a>
                 <i class="icon iPickRed lbl-count"><span>12</span></i>
               </li>
@@ -196,14 +196,14 @@
             var token = localStorage.getItem("token");
 
             if (token) {
-              console.log("Token exists:", token);
+              // console.log("Token exists:", token);
               // hide the login button
               var loginButton = document.getElementById("sys_head_login");
               if (loginButton) {
                 loginButton.style.display = "none";
               }
 
-              // iff token exists, add the "My Account" dropdown menu
+              // if token exists, add the "My Account" dropdown menu
               var mainMenu = document.getElementById("main-menu");
 
               // "My Account" dropdown menu
@@ -222,18 +222,6 @@
 
               // add the account menu to the main menu
               mainMenu.innerHTML += accountMenu;
-
-              // show the "My Coupons" section if the user is logged in
-              var myCoupons = document.getElementById("my-coupons");
-              if (myCoupons) {
-                myCoupons.style.display = "block";
-              }
-
-              var myCouponsMobile =
-                document.getElementById("my-coupons-mobile");
-              if (myCouponsMobile) {
-                myCouponsMobile.style.display = "block";
-              }
             }
           });
         </script>
@@ -266,9 +254,17 @@
             var token = localStorage.getItem("token");
             if (!token) {
               var userBalance = document.getElementById("user_balance");
+              var myCoupons = document.getElementById("my-coupons");
+              var shop = document.getElementById("shop");
               if (userBalance) {
                 userBalance.style.display = "none";
               }
+              // if (myCoupons) {
+              //   myCoupons.style.display = "none";
+              // }
+              // if (shop) {
+              //   shop.style.display = "none";
+              // }
             }
             function fetchUserBalance() {
               //   const token = localStorage.getItem("token");
