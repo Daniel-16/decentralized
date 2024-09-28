@@ -26,19 +26,24 @@ jobs:
 
       - name: Start the application
         run: |
-          npm start &
+          cd server && npm start &
+          echo $! > .pidfile
           sleep 30
 
       - name: Check if application is running
         run: |
-          if ! curl -s http://localhost:5500 > /dev/null; then
-            echo "Application is not running"
+          if ! curl -s http://127.0.0.1:5500 > /dev/null; then
+            echo "Server is not running"
             exit 1
           fi
 
       - name: Check for frontend load
         run: |
-          if ! curl -s http://localhost:5500 | grep -q "<div class="welcome-area pt-120">"; then
+          if ! curl -s http://127.0.0.1:5500 | grep -q '<div class="welcome-area pt-120">'; then
             echo "Frontend not loaded properly"
             exit 1
           fi
+
+      - name: Stop the application
+        if: always()
+        run: kill $(cat .pidfile)
