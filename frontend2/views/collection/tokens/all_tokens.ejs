@@ -1,0 +1,263 @@
+<%- include('../../partials/admin/header') %>
+
+
+
+
+
+
+<div class="admin-wrapper">
+    <div class="container">
+        <h5 class="mb-3">All My Tokens</h5>
+        <div class="row g-4" id="collections-container">
+            
+                
+
+
+        </div>
+    </div>
+</div>
+
+
+
+<!-- modal for transfer Token -->
+<div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="transferModalLabel">Transfer Token to another UNQ wallet beneficiary.</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="transferForm">
+                    <div class="mb-3">
+                        <label for="mnemonic" class="form-label">Mnemonic:</label>
+                        <textarea id="mnemonic" name="mnemonic" class="form-control" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="collectionId" class="form-label">Collection ID:</label>
+                        <input type="text" id="collectionId" class="form-control" readonly name="collectionId" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="tokenId" class="form-label">Token ID:</label>
+                        <input type="text" id="tokenId" class="form-control" name="tokenId" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="tokenDescription1" class="form-label">Recipient Wallet Address :</label>
+                        <input type="text" id="recipient" class="form-control" name="recipient" required>
+                    </div>
+
+                    <button id="submitTransferButton" type="submit" onclick="return confirm('Are you sure you want to proceed with this transfer? This action is irreversible!')" class="btn btn-danger w-100">Complete Transfer</button>
+                    <button id="pleaseWaitButton"  type="submit" class="btn btn-danger w-100" disabled style="display:none;">Please Wait...</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end:modal for transfer -->
+
+
+
+
+<!-- get collections -->
+<script>
+$(document).ready(function() {
+    function fetchUserCollections() {
+        const token = localStorage.getItem('token');
+        $.ajax({
+            url: '/api/getCollections',  
+            type: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            },
+            success: function(response) {
+                $('#collections-container').empty();  // Clear existing content
+                if (response && response.success) {
+                    console.log('Collections:', response.collections);
+                    if (response.collections && response.collections.length > 0) {
+                        response.collections.forEach(function(collection) {
+                            let tokensHtml = '';
+                            let tokenCount = 0;
+
+                            if (collection.token && collection.token.length > 0) {
+                                tokenCount = collection.token.length;
+                                collection.token.forEach(function(tokenItem) {
+                                    tokensHtml += `<div>Token ID: #${tokenItem.substring(0, 10) + '...'}</div>`;
+                                });
+                            } else {
+                                tokensHtml = '<div>No tokens available for this collection.</div>';
+                            }
+
+                            const collectionItem = `
+                            <div class="col-12 col-sm-6 col-xl-4 col-xxl-4">
+                                <div class="nft-card card border-0">
+                                    <div class="card-body">
+                                        <!-- Others Info -->
+                                        <div class="row gx-2 align-items-center mt-3">
+                                            <div class="col-8">
+                                                <span class="d-block fz-12"><i class="bi bi-bag me-1"></i>${tokenCount} token(s) available in parent collection</span>
+                                            </div>
+                                        </div>
+                                        <!-- Meta Info -->
+                                        <div class="row gx-2 align-items-center mt-2">
+                                            <div class="col-12">
+                                                <div class="name-info d-flex align-items-center">
+                                                    <div class="name-author">
+                                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Fancy Car">Collection ID: #${collection.collectionId}</a>
+                                                        <a class="author d-block fz-12 hover-primary text-truncate" href="#">Token ID: #${collection.tokenId}</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-12">
+                                                <a class="btn btn-danger rounded-pill btn-sm mt-3 w-100 btn-mint-token" href="#" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#transferModal" 
+                                                    data-token-id="${collection.tokenId}" 
+                                                    data-collection-id="${collection.collectionId}">
+                                                    <i class="me-1 bi bi-box-arrow-up-right"></i>Transfer Token
+                                                </a>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            `;
+
+                            $('#collections-container').append(collectionItem);
+
+                            // Attach click event handler for mint buttons
+                            $('.btn-mint-token').on('click', function(e) {
+                                e.preventDefault();
+                                // Get token ID and collection ID from data attributes
+                                const tokenId = $(this).data('token-id');
+                                const collectionId = $(this).data('collection-id');
+                                // Pre-populate the modal form fields
+                                $('#tokenId').val(tokenId);
+                                $('#collectionId').val(collectionId);
+                                // Show the modal for token transfer/minting
+                                $('#transferModal').fadeIn();
+                            });
+                        });
+                    } else {
+                        $('#collections-container').append('<p>No collections created for this user.</p>');
+                    }
+                } else {
+                    $('#collections-container').append('<p>Error fetching collections.</p>');
+                }
+            },
+            error: function(xhr) {
+                console.error('An error occurred:', xhr.responseText);
+                $('#collections-container').append('<p>Failed to fetch collections. Please try again later.</p>');
+            }
+        });
+    }
+
+    // Call the function to fetch collections
+    fetchUserCollections();
+
+    // Close the modal when the close button is clicked
+    $('.close-button').on('click', function() {
+        $('#transferModal').fadeOut();
+    });
+
+    // Close the modal when clicking outside of it
+    $(window).on('click', function(event) {
+        if (event.target === $('#transferModal')[0]) {
+            $('#transferModal').fadeOut();
+        }
+    });
+});
+</script>
+<!-- end: get collections -->
+
+
+
+
+
+<!-- modal; -->
+<script>
+$(document).ready(function() {
+    $('#transferForm').on('submit', function(e) {
+        e.preventDefault(); 
+        $('#cover-spin').show(0);
+
+        // Hide the "Mint New Token" button and show the "Please wait" button
+        $('#submitTransferButton').hide();
+        $('#pleaseWaitButton').show();
+
+        const formData = {
+            mnemonic: $('#mnemonic').val(),
+            collectionId: $('#collectionId').val(),
+            tokenId: $('#tokenId').val(),
+            toAddress: $('#recipient').val()
+        };
+
+        const token = localStorage.getItem('token');
+
+        $.ajax({
+            url: '/api/transferToken', 
+            type: 'POST',
+            data: JSON.stringify(formData),
+            contentType: 'application/json',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            success: function(response) {
+                $('#cover-spin').hide(0);
+                
+                if (response.success) {
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: response.message || "Token transferred successfully!",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
+                    $('#transferModal').modal('hide');  // Close the modal
+                } else {
+                    Swal.fire({
+                        position: "center",
+                        icon: "error",
+                        title: "An error occurred!",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
+                    console.error('Failed to transfer token:', response.message);
+                }
+
+                // After success or failure, restore the original buttons and reload the page after a delay
+                setTimeout(function() {
+                    $('#submitTransferButton').show();  // Show the transfer button again
+                    $('#pleaseWaitButton').hide(); // Hide the "Please wait" button
+                    location.reload();
+                }, 1500);
+            },
+            error: function(xhr) {
+                $('#cover-spin').hide(0);
+                alert('An error occurred: ' + xhr.responseText);
+
+                // In case of error, show the "transfer New Token" button and hide the "Please wait" button
+                $('#submitTransferButton').show();
+                $('#pleaseWaitButton').hide();
+            }
+        });
+    });
+});
+</script>
+
+
+
+
+<%- include('../../partials/admin/footer') %>
+
+
+
+
+
+
+
+

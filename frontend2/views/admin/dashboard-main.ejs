@@ -1,0 +1,83 @@
+<%- include('../partials/admin/header') %>
+
+
+
+
+
+
+
+
+
+<div class="admin-wrapper">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-12 col-xxl-6">
+                <div class="row g-4">
+                    <!-- Welcome Card -->
+                    <div class="col-12">
+                        <div class="card dashboard-hero-card p-2 border-0 bg-img shadow-sm" style="background-image: url('img/bg-img/44.jpg')">
+                            <div class="card-body p-4">
+                                <h3 class="mb-3 text-white">Explore, trade, and redeem exceptional digital coupons.</h3>
+                                <p class="mb-4 text-white">KooponCraft combines innovative technology with a unique trading experience.</p>
+                                <div class="button-groups">
+                                    <a class="btn btn-sm btn-warning rounded-pill me-3" href="#">Discover Coupons</a>
+                                    <a class="btn btn-sm btn-dark rounded-pill" href="/tokens">Create Your Token</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Statistic Card -->
+                    <div class="col-12 col-sm-6">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h5 class="mb-2">Coupons Sold</h5><span>Last 10 days</span>
+                                    </div>
+                                    <div class="ms-auto" id="chart-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Statistic Card -->
+                    <div class="col-12 col-sm-6">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h5 class="mb-2">Revenue Generated</h5><span>Last 10 days</span>
+                                    </div>
+                                    <div class="ms-auto" id="chart-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xxl-6">
+                <!-- Monthly Visitor -->
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4 pb-0">
+                            <h5 class="ms-3">Monthly Active Users</h5>
+                            <div id="chart-timeline"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<%- include('../partials/admin/footer') %>

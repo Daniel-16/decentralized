@@ -1,0 +1,194 @@
+<!-- Admin Sidebar Wrap -->
+<div class="admin-sidebar-wrap">
+  <div class="overflowY-scroll">
+    <!-- User Profile -->
+    <div class="user-profile">
+      <!-- User Name -->
+      <div class="user-name mb-5">
+        <div class="d-flex align-items-center">
+          <img src="/assets/img/bg-img/u2.jpg" alt="profile-user-pic" />
+            <div class="ms-3">
+                <h6 class="lh-1 text-dark fz-18" id="usernameDisplay">Designing W.</h6>
+                <span class="badge bg-primary fz-12">Premium User</span>
+            </div>
+        </div>
+      </div>
+      <!-- Balance -->
+      <div class="card shadow mb-5" id="user_balance">
+
+      </div>
+    </div>
+    <!-- Sidenav -->
+    <div class="sidenav">
+    <ul id="menuList">
+        <li>Menu</li>
+        <li>
+            <a href="/dashboard" class="menu-link"><i class="bi bi-speedometer"></i>Dashboard</a>
+        </li>
+        <li>
+            <a href="/transactions" class="menu-link"><i class="bi bi-receipt"></i>My Transactions</a>
+        </li>
+        <li>
+            <a href="/collection/my-collections" class="menu-link"
+            ><i class="bi bi-columns-gap"></i>My Collections</a
+            >
+        </li>
+        <li>
+            <a href="/tokens" class="menu-link"><i class="bi bi-coin"></i>My Tokens</a>
+        </li>
+        <li>
+            <a href="/my-wallet" class="menu-link"
+            ><i class="bi bi-wallet2"></i>My Wallet</a
+            >
+        </li>
+        <li>
+            <a href="/my-store" class="menu-link"><i class="bi bi-shop"></i>My Store</a>
+        </li>
+        <br>
+        <hr>
+        <br>
+        <!-- <div class="divider"></div> -->
+        <li>
+            <a id="logout" href="#" class="menu-link"><i class="bi bi-power"></i><span class="text-danger">Logout</span></a>
+        </li>
+    </ul>
+    </div>
+    <div class="mt-auto">
+      <div class="mt-5"></div>
+      <!-- Mode Switching -->
+      <div class="dark-light-mode">
+        <input id="darkLightSwitch" type="checkbox" />
+        <label class="shadow" for="darkLightSwitch">Toggle</label>
+      </div>
+      <div class="copywrite-text mt-4">
+        <p class="mb-0 fz-14">
+          2024 &copy; All rights reserved by
+          <a class="fz-14" href="#" target="_blank">ADODASS Community</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Create New Button -->
+<div class="create-new-button">
+  <a
+    class="shadow-lg btn btn-warning"
+    href="/collection/create"
+    data-bs-toggle="tooltip"
+    data-bs-placement="left"
+    title="Create New Token"
+    ><i class="fz-18 bi bi-plus-lg"></i
+  ></a>
+</div>
+
+
+<!-- for avail bal -->
+<script>
+  $(document).ready(function () {
+    var token = localStorage.getItem("token");
+    
+    // Hide balance and other sections if no token
+    if (!token) {
+      var userBalance = document.getElementById("user_balance");
+      var myCoupons = document.getElementById("my-coupons");
+      var shop = document.getElementById("shop");
+      if (userBalance) {
+        userBalance.style.display = "none";
+      }
+      if (myCoupons) {
+        myCoupons.style.display = "none";
+      }
+      if (shop) {
+        shop.style.display = "none";
+      }
+    } else {
+      fetchUserBalance(); // Only call fetchUserBalance if the user is logged in
+    }
+
+    function fetchUserBalance() {
+      const wallet_address = localStorage.getItem("accountAddress");
+      const apiUrl = `/api/getUserBalance?wallet_address=${wallet_address}`;
+
+      $.ajax({
+        url: apiUrl,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        success: function (response) {
+          if (response.success) {
+            // Update the balance card with the new balance structure
+            const balanceHTML = `
+                <div class="card-body text-center p-4">
+                  <h6 class="mb-1">Your current balance</h6>
+                  <h5 class="mb-0 text-dark d-flex align-items-center justify-content-center">
+                    <span class="ms-2 px-2 text-danger">UNQ</span> <br>
+                    <span class="counter">${parseFloat(response.availableBalance.amount).toFixed(5)}</span>
+                    
+                  </h5>
+                  <a class="btn btn-warning rounded-pill btn-sm w-100 mt-3" href="#">Recharge</a>
+                </div>
+            `;
+
+            // Update the balance section in the DOM
+            $("#user_balance").html(balanceHTML);
+          } else {
+            console.error("Failed to fetch user balance:", response.error);
+          }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.error("Error fetching user balance:", errorThrown);
+        },
+      });
+    }
+
+
+    // Retrieve the username from session storage
+    const username = localStorage.getItem("username"); // Assuming the username is stored here
+
+    // Check if the username exists
+    if (username) {
+        // Update the HTML with the username
+        $("#usernameDisplay").text(username);
+    } else {
+        // Set a default value or handle the absence of a username
+        $("#usernameDisplay").text("Guest"); // Default display if no username is found
+    }
+
+  });
+  
+</script>
+<!-- end: for avail bal -->
+
+
+
+<!-- active link -->
+ <script>
+  // Get the current URL path
+  const currentPath = window.location.pathname;
+
+  // Get all menu links
+  const menuLinks = document.querySelectorAll('#menuList .menu-link');
+
+  // Loop through the links and add 'active' class to the one that matches the current path
+  menuLinks.forEach(link => {
+    if (link.getAttribute('href') === currentPath) {
+      link.classList.add('active');
+    }
+  });
+</script>
+<!-- end: active link -->
+
+
+<!-- logout event handler -->
+<script>
+    $(document).ready(function () {
+        $("#logout").on("click", function (e) {
+            e.preventDefault();
+            // clear the token from localStorage
+            localStorage.removeItem("token");
+
+            window.location.href = "/";
+        });
+    });
+</script>

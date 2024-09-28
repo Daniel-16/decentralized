@@ -1,0 +1,186 @@
+<%- include('../partials/admin/header') %>
+
+
+
+
+<div class="admin-wrapper">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            <div class="col-12 col-lg-10 col-xl-9 col-xxl-9">
+            <ul class="nav nav-tabs border-0 mb-3" role="tablist">
+            </ul>
+                <div class="tab-content">
+                    <!-- Tab Pane-->
+                    <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab--1">
+                    <div class="card">
+                        <div class="card-body p-4 p-sm-5">
+                        <form id="create-collection-form">
+                            <div class="row align-items-center">
+                                <div class="col-12">
+                                <h4>Create Collection</h4>
+                                <div class="col-12">
+                                    <div class="form-group mb-4">
+                                        <label class="mb-2 fz-16" for="title">Mnemonic (Secret Phrase) <span class="text-danger">*</span></label>
+                                        <textarea name="mnemonic" id="mnemonic" class="form-control"></textarea>
+                                        <!-- <input class="form-control" id="title" type="text" placeholder="Macaw Bird"> -->
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group mb-4">
+                                            <label class="mb-2 fz-16" for="name">Name</label>
+                                            <input class="form-control" name="name" id="name" type="text" placeholder="Enter a name">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group mb-4">
+                                            <label class="mb-2 fz-16" for="description">Description</label>
+                                            <textarea name="description" id="description" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h4>Token Details</h4>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group mb-4">
+                                            <label class="mb-2 fz-16" for="tokenPrefix">Token prefix</label>
+                                            <input class="form-control" name="tokenPrefix" id="tokenPrefix" type="text" placeholder="Enter a prefix">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group mb-4">
+                                            <label class="mb-2 fz-16" for="tokenName">Token name</label>
+                                            <input name="tokenName" id="tokenName" class="form-control" placeholder="Enter a name">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="form-group mb-4">
+                                        <label class="mb-2 fz-16" for="price">Description</label>
+                                        <textarea name="tokenDescription" id="tokenDescription" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 col-md-12">
+                                    <button class="btn btn-primary rounded-pill w-100" type="submit" id="createButton">Create</button>
+                                </div>
+                                <div class="col-12 col-md-12">
+                                    <button class="btn btn-primary rounded-pill w-100" disabled id="loadingMessage">Please wait...</button>
+                                </div>
+                            </div>
+                        </form>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<%- include('../partials/admin/footer') %>
+
+<!-- store the collection and token -->
+<script>
+    $(document).ready(function() {
+        $('#loadingMessage').hide();
+    $('#create-collection-form').submit(function(event) {
+        event.preventDefault(); 
+        $('#cover-spin').show(0);
+
+        // Hide the Create button and show the loading message
+        $('#createButton').hide();
+        $('#loadingMessage').show();
+        // $('#loadingMessage').removeClass('d-none');
+
+        const mnemonic = $('#mnemonic').val();
+        const collectionName = $('#name').val();
+        const description = $('#description').val();
+        const tokenPrefix = $('#tokenPrefix').val();
+        const tokenDescription = $('#tokenDescription').val();
+        const tokenName = $('#tokenName').val();
+
+        const token = localStorage.getItem('token');
+
+        $.ajax({
+            url: '/api/createAndMint',
+            method: 'POST',
+            contentType: 'application/json',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            data: JSON.stringify({
+                mnemonic: mnemonic,
+                name: collectionName,
+                description: description,
+                tokenPrefix: tokenPrefix,
+                tokenName: tokenName,
+                tokenDescription: tokenDescription
+            }),
+            success: function(response) {
+                $('#cover-spin').hide(0);
+                if (response.success) {
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
+                    $('#response').html(
+                        `
+                        <div class="alert">
+                        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                        ${response.message} <br> Collection ID: ${response.collectionPayload.collectionId} <br> Token ID: ${response.collectionPayload.tokenId}
+                        </div>
+                        `
+                    );
+                    // Refresh user balance after creating a collection
+                    fetchUserBalance();
+
+                    location.reload();
+                } else {
+                    $('#response').html(`<p class="error">Error: ${response.error}</p>`);
+                }
+            },
+            error: function(jqXHR) {
+                $('#cover-spin').hide(0);
+                $('#response').html(`<p class="error">An error occurred: ${jqXHR.responseText}</p>`);
+            }
+        });
+    });
+
+    // Function to fetch user balance
+    function fetchUserBalance() {
+        const wallet_address = localStorage.getItem("accountAddress");
+        const apiUrl = `/api/getUserBalance?wallet_address=${wallet_address}`;
+        $.ajax({
+            url: apiUrl,
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            success: function (response) {
+                if (response.success) {
+                    $("#availableBalance").text(`UNQ${parseFloat(response.availableBalance.amount).toFixed(2)}`);
+                    $("#lockedBalance").text(`UNQ${response.lockedBalance.amount.toLocaleString()}`);
+                    $("#freeBalance").text(`UNQ${response.freeBalance.amount.toLocaleString()}`);
+                } else {
+                    console.error("Failed to fetch user balance:", response.error);
+                }
+            },
+            error: function(jqXHR) {
+                console.log(jqXHR);
+            }
+        });
+    }
+});
+</script>
+<!-- end: store the collection and token -->

@@ -1,0 +1,76 @@
+<%- include('../partials/header') %>
+
+
+
+
+<!-- Breadcrumb -->
+<div class="breadcrumb-wrapper">
+    <div class="container">
+    <div class="breadcrumb-content">
+        <h2 class="breadcrumb-title">Register</h2>
+        <nav aria-label="breadcrumb">
+        <ol class="breadcrumb justify-content-center">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Register</li>
+        </ol>
+        </nav>
+    </div>
+    </div>
+</div>
+<div class="divider"></div>
+<!-- Register -->
+<div class="register-area">
+    <div class="container">
+    <div class="row g-4 g-lg-5 align-items-center justify-content-between">
+        <div class="col-12 col-md-6 col-xl-5">
+        <div class="register-card">
+            <h2>Create your free account</h2>
+            <p>Already have an account?<a class="ms-1 hover-primary" href="login.html">Log In</a></p>
+            <!-- Register Form-->
+            <div class="register-form mt-5">
+            <form action="#" method="post">
+                <div class="form-group mb-4">
+                <input class="form-control" type="email" placeholder="Email" required>
+                </div>
+                <div class="form-group mb-4">
+                <input class="form-control" type="text" placeholder="Username" required>
+                </div>
+                <div class="form-group mb-4">
+                <input class="form-control" type="text" placeholder="Full Name" required>
+                </div>
+                <div class="form-group mb-4">
+                <label class="label-psswd" for="registerPassword">Show</label>
+                <input class="form-control" id="registerPassword" type="password" placeholder="Password" required>
+                </div>
+                <div class="form-check mb-4">
+                <input class="form-check-input" id="rememberMe" type="checkbox" value="" checked>
+                <label class="form-check-label" for="rememberMe">I agree to all terms &amp; conditions.</label>
+                </div>
+                <button class="btn btn-primary w-100" type="submit">Register Now</button>
+            </form>
+            </div>
+        </div>
+        </div>
+        <div class="col-12 col-md-6">
+        <div class="register-thumbnail mt-5 mt-md-0"><img src="img/illustrator/4.png" alt=""></div>
+        </div>
+    </div>
+    </div>
+</div>
+<div class="divider"></div>
+<!-- Dark Light Wrapper -->
+<div class="dark-light-wrapper" data-aos="zoom-in" data-aos-duration="750" data-aos-delay="200">
+    <div class="container">
+    <div class="d-flex align-items-center justify-content-between">
+        <h5 class="mb-0 text-white" data-aos="fade-up" data-aos-duration="750" data-aos-delay="500">Light mode is available!</h5>
+        <!-- Switch -->
+        <div class="dark-light-mode" data-aos="fade-up" data-aos-duration="750" data-aos-delay="800">
+        <input id="darkLightSwitch" type="checkbox">
+        <label class="shadow" for="darkLightSwitch">Toggle</label>
+        </div>
+    </div>
+    </div>
+</div>
+
+
+<%- include('../partials/footer') %>

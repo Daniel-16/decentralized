@@ -1,0 +1,172 @@
+<%- include('../partials/home/header') %>
+
+
+
+
+<!-- Breadcrumb -->
+<div class="breadcrumb-wrapper">
+    <div class="container">
+    <div class="breadcrumb-content">
+        <div class="d-flex align-items-center justify-content-center">
+        <!-- <div class="spinner-grow text-danger me-1" role="status"><span class="visually-hidden">Loading...</span></div> -->
+        <h2 class="breadcrumb-title mb-0">KooponCraft Marketplace</h2>
+        </div>
+        <nav aria-label="breadcrumb">
+        <ol class="breadcrumb justify-content-center">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">KooponCraft Marketplace</li>
+        </ol>
+        </nav>
+    </div>
+    </div>
+</div>
+<div class="divider"></div>
+<div class="live-bids-wrapper">
+    <div class="container">
+    <div class="row g-4 justify-content-center" id="itemsContainer">
+        
+    </div>
+    </div>
+    <div class="container">
+    <div class="text-center mt-70"><a class="btn btn-primary btn-sm rounded-pill" href="#">Load more<i class="ms-1 bi bi-arrow-repeat"></i></a></div>
+    </div>
+</div>
+<div class="divider"></div>
+<!-- Dark Light Wrapper -->
+<div class="dark-light-wrapper" data-aos="zoom-in" data-aos-duration="750" data-aos-delay="200">
+    <div class="container">
+    <div class="d-flex align-items-center justify-content-between">
+        <h5 class="mb-0 text-white" data-aos="fade-up" data-aos-duration="750" data-aos-delay="500">Light mode is available!</h5>
+        <!-- Switch -->
+        <div class="dark-light-mode" data-aos="fade-up" data-aos-duration="750" data-aos-delay="800">
+        <input id="darkLightSwitch" type="checkbox">
+        <label class="shadow" for="darkLightSwitch">Toggle</label>
+        </div>
+    </div>
+    </div>
+</div>
+
+
+
+
+
+<%- include('../partials/home/footer') %>
+
+
+<script>
+    $(document).ready(function () {
+        // Fetch and display items
+        function loadItems() {
+            $.ajax({
+            url: "/api/getItems",
+            method: "GET",
+            success: function (response) {
+                if (response.success) {
+                const items = response.items;
+                let itemsHTML = "";
+                items.forEach((item) => {
+                    itemsHTML += `
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                        <div class="nft-card card shadow-sm">
+                        <div class="card-body">
+                            <div class="img-wrap">
+                            <img src="${item.itemImage}" alt="${item.nameOfItem}">
+                            <!-- Badge (you can uncomment and adjust as needed) -->
+                            <!-- <div class="badge bg-dark position-absolute"><img src="/assets/img/core-img/fire.png" alt="">New Bid</div> -->
+                            </div>
+                            <!-- Others Info -->
+                            <div class="row gx-2 align-items-center mt-3">
+                            <div class="col-8">
+                                <span class="d-block fz-12"><i class="bi bi-bag me-1"></i>Available</span>
+                            </div>
+                            <div class="col-4 text-end">
+                                <button class="wishlist-btn" type="button"><i class="bi"></i></button>
+                            </div>
+                            </div>
+                            <!-- Meta Info -->
+                            <div class="row gx-2 align-items-center mt-2">
+                            <div class="col-8">
+                                <div class="name-info d-flex align-items-center">
+                                <div class="author-img position-relative">
+                                    <img class="shadow" src="/assets/img/bg-img/u4.jpg" alt="">
+                                    <i class="bi bi-check position-absolute bg-success"></i>
+                                </div>
+                                <div class="name-author">
+                                    <a class="name d-block hover-primary fw-bold text-truncate" href="item-details.html" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.nameOfItem}">${item.nameOfItem}</a>
+                                    <a class="author d-block fz-12 hover-primary text-truncate" href="author.html">@${item.author}</a>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="price text-end">
+                                <span class="fz-12 d-block">Current Price</span>
+                                <h6 class="mb-0">${item.priceOfItem} UNQ</h6>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="#" data-item-id="${item._id}">Purchase Now</a>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    `;
+                });
+
+                // Populate items into the #itemsContainer
+                $("#itemsContainer").html(itemsHTML);
+
+                // Connect click handler to dynamically created buttons
+                attachPurchaseHandlers();
+                } else {
+                $("#itemsContainer").html("<p>No items found.</p>");
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                $("#itemsContainer").html("<p>Error fetching items.</p>");
+            },
+            });
+        }
+        // End: fetch and display items
+
+        // Handle purchase 
+        function attachPurchaseHandlers() {
+            $('.btn-primary').off('click').on('click', function(event) {
+            event.preventDefault(); 
+
+            const itemId = $(this).data('item-id'); // Get the item id from data attribute
+            const quantity = 1; // Assume quantity is always 1 for simplicity
+
+            // Get the token from localStorage
+            const token = localStorage.getItem("token");
+
+            $.ajax({
+                url: '/api/purchaseItem', 
+                method: 'POST',
+                contentType: 'application/json', // Very important!
+                data: JSON.stringify({
+                itemId: itemId,
+                quantity: quantity
+                }),
+                headers: {
+                Authorization: `Bearer ${token}` 
+                },
+                success: function(response) {
+                if (response.success) {
+                    toastr.success("Successfully purchased 1 unit!");
+                } else {
+                    alert('Error: ' + response.error);
+                }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                alert('Error: ' + errorThrown);
+                }
+            });
+            });
+        }
+        // End: handle purchase 
+
+        // Load items when ready
+        loadItems();
+    });
+</script>

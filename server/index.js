@@ -16,11 +16,11 @@ const app = express();
 app.use(cors());
 
 // view engine to ejs
-app.set("views", path.join(__dirname, "../frontend/views"));
+app.set("views", path.join(__dirname, "../frontend2/views"));
 app.set("view engine", "ejs");
 
 // render static files from the public folder
-app.use(express.static(path.join(__dirname, "../frontend/public")));
+app.use(express.static(path.join(__dirname, "../frontend2/public")));
 
 // Rate limit
 app.use(express.json({ limit: "30mb" }));
