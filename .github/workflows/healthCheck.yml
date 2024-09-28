@@ -2,43 +2,43 @@ name: KooponCraft Health Check
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   health-check:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Use Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18.x'
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm install
 
-    # - name: Run linter
-    #   run: npm run lint
+      # - name: Run linter
+      #   run: npm run lint
 
-    - name: Start the application
-      run: |
-        npm start &
-        sleep 30
+      - name: Start the application
+        run: |
+          npm start &
+          sleep 30
 
-    - name: Check if application is running
-      run: |
-        if ! curl -s http://localhost:5500 > /dev/null; then
-          echo "Application is not running"
-          exit 1
-        fi
+      - name: Check if application is running
+        run: |
+          if ! curl -s http://localhost:5500 > /dev/null; then
+            echo "Application is not running"
+            exit 1
+          fi
 
-    - name: Check for frontend load
-      run: |
-        if ! curl -s http://localhost:5500 | grep -q "<div class="welcome-area pt-120">"; then
-          echo "Frontend not loaded properly"
-          exit 1
-        fi
+      - name: Check for frontend load
+        run: |
+          if ! curl -s http://localhost:5500 | grep -q "<div class="welcome-area pt-120">"; then
+            echo "Frontend not loaded properly"
+            exit 1
+          fi
