@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="KooponCraft - Admin - NFT Marketplace">
+<!-- Title-->
+<title>KooponCraft - Admin - NFT Marketplace</title>
+<!-- Favicon-->
+<link rel="shortcut icon" href="/assets/img/core-img/favicon.ico" type="image/x-icon">
+<!-- All CSS Stylesheet-->
+<link rel="stylesheet" href="/assets/css/all-css-libraries.css">
+<!-- Core Stylesheet-->
+<link rel="stylesheet" href="/assets/style.css">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"/>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+  integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+</head>
+<body>
+<!-- Preloader-->
+<div class="preloader" id="preloader">
+    <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+</div>
+<!-- Header Wrapper -->
+<header class="header-area dashboard-header px-0 px-sm-0">
+    <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <div class="d-flex align-items-center">
+        <!-- Brand Logo -->
+        <div class="admin-logo me-1 me-sm-3"><img src="/assets/img/core-img/dashboard-logo.png" alt=""></div>
+        <!-- Search Form -->
+        <div class="search-form position-relative d-flex align-items-center">
+            <input class="form-control" type="text" placeholder="Search">
+            <button class="position-absolute" type="submit"><i class="bi bi-search"></i></button>
+        </div>
+        </div>
+        <!-- Header Meta -->
+        <div class="header-meta d-flex align-items-center">
+        <!-- Notification -->
+
+        <!-- User Dropdown -->
+        <div class="user-dropdown dropdown">
+            <button class="btn dropdown-toggle user-btn" id="dd20" type="button" data-bs-toggle="dropdown" aria-expanded="false"><img src="/assets/img/core-img/user.png" alt=""></button>
+            <ul class="dropdown-menu dropdown-menu-end mt-3" aria-labelledby="dd20">
+            <li><a id="logout" class="dropdown-item" href="#"><i class="me-2 bi bi-power"></i>Logout</a></li>
+            </ul>
+        </div>
+        <!-- Menu Toggler -->
+        <div class="menu-toggler ms-2 ms-sm-3" id="dashboardMenuTrigger"><i class="bi bi-list"></i></div>
+        <!-- Button --><a class="btn btn-sm btn-danger rounded-pill ms-2 ms-sm-3 d-none d-sm-block" href="/"><i class="bi bi-eye me-1"></i>Go Back Home</a>
+        </div>
+    </div>
+    </nav>
+</header>
+
+<%- include('sidebar') %>
+
+
+<!-- logout event handler -->
+<script>
+    $(document).ready(function () {
+    $("#logout").on("click", function (e) {
+        e.preventDefault();
+        // clear the token from localStorage
+        localStorage.removeItem("token");
+
+        window.location.href = "/";
+    });
+    });
+</script>
