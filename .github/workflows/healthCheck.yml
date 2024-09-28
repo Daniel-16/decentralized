@@ -9,6 +9,9 @@ on:
 jobs:
   health-check:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
 
     steps:
       - uses: actions/checkout@v3
@@ -19,31 +22,13 @@ jobs:
           node-version: "18.x"
 
       - name: Install dependencies
-        run: cd server && npm install
+        run: npm install
+
+      - name: Run build
+        run: npm run build --if-present
+
+      - name: Run tests
+        run: npm run test
 
       # - name: Run linter
       #   run: npm run lint
-
-      - name: Start the application
-        run: |
-          cd server && npm start &
-          echo $! > .pidfile
-          sleep 30
-
-      - name: Check if application is running
-        run: |
-          if ! curl -s http://127.0.0.1:5500 > /dev/null; then
-            echo "Server is not running"
-            exit 1
-          fi
-
-      - name: Check for frontend load
-        run: |
-          if ! curl -s http://127.0.0.1:5500 | grep -q '<div class="welcome-area pt-120">'; then
-            echo "Frontend not loaded properly"
-            exit 1
-          fi
-
-      - name: Stop the application
-        if: always()
-        run: kill $(cat .pidfile)
