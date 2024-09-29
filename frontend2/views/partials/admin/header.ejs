@@ -7,7 +7,7 @@
 <!-- Title-->
 <title>KooponCraft - Admin - NFT Marketplace</title>
 <!-- Favicon-->
-<link rel="shortcut icon" href="/assets/img/core-img/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="/assets/img/kooponcraft-logo3.png" type="image/x-icon">
 <!-- All CSS Stylesheet-->
 <link rel="stylesheet" href="/assets/css/all-css-libraries.css">
 <!-- Core Stylesheet-->
@@ -37,7 +37,8 @@
     <div class="container-fluid">
         <div class="d-flex align-items-center">
         <!-- Brand Logo -->
-        <div class="admin-logo me-1 me-sm-3"><img src="/assets/img/core-img/dashboard-logo.png" alt=""></div>
+        <div class="admin-logo me-1 me-sm-3">
+            <img src="/assets/img/kooponcraft-logo3.png" alt=""></div>
         <!-- Search Form -->
         <div class="search-form position-relative d-flex align-items-center">
             <input class="form-control" type="text" placeholder="Search">
@@ -72,7 +73,8 @@
     $("#logout").on("click", function (e) {
         e.preventDefault();
         // clear the token from localStorage
-        localStorage.removeItem("token");
+        // localStorage.removeItem("token");
+        localStorage.clear();
 
         window.location.href = "/";
     });

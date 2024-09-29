@@ -33,7 +33,7 @@
                 </div>
                 <div class="form-group mb-4">
                 <label class="label-psswd" for="registerPassword">Show</label>
-                <input id="sys_pass" class="form-control" type="password" placeholder="Password" required>
+                <input id="registerPassword" class="form-control" type="password" placeholder="Password" required>
                 </div>
                 <button class="btn btn-success w-100" type="submit">Log In</button>
             </form>
@@ -79,7 +79,7 @@
             event.preventDefault();
 
             const email = $("#sys_email").val();
-            const password = $("#sys_pass").val();
+            const password = $("#registerPassword").val();
 
             const loginButton = $("button[type=submit]");
             loginButton.prop("disabled", true).text("Please wait...");

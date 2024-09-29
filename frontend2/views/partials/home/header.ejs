@@ -7,7 +7,7 @@
 <!-- Title-->
 <title>KooponCraft - NFT Marketplace</title>
 <!-- Favicon-->
-<link rel="shortcut icon" href="/assets/img/core-img/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="/assets/img/kooponcraft-logo3.png" type="image/x-icon">
 <!-- All CSS Stylesheet-->
 <link rel="stylesheet" href="/assets/css/all-css-libraries.css">
 <!-- Core Stylesheet-->
@@ -33,7 +33,10 @@
     <nav class="navbar navbar-expand-lg">
     <div class="container">
         <!-- Navbar Brand -->
-         <a class="navbar-brand" href="/"><img class="light-logo" src="/assets/img/core-img/logo.png" alt=""><img class="dark-logo" src="/assets/img/core-img/logo-white.png" alt=""></a>
+        <a class="navbar-brand" href="/">
+          <img height="500px" class="light-logo" src="/assets/img/kooponcraft-logo3.png" alt="KooponCraft-logo">
+          <img height="500px" class="dark-logo" src="/assets/img/kooponcraft-logo3.png" alt="KooponCraft-logo">
+        </a>
         <!-- Navbar Toggler -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#funtoNav" aria-controls="funtoNav" aria-expanded="false" aria-label="Toggle navigation"><i class="bi bi-grid"></i></button>
         <!-- Navbar -->
@@ -42,7 +45,7 @@
             <li><a href="/">Home</a></li>
             <li><a href="/shop">Explore Marketplace</a></li>
             
-            <li><a href="help-center.html">Help Center</a></li>
+            <li><a href="/help-center">Help Center</a></li>
         </ul>
         <!-- Header Meta -->
         <div class="header-meta d-flex align-items-center ms-lg-auto">
@@ -109,7 +112,8 @@
     $("#logout").on("click", function (e) {
         e.preventDefault();
         // clear the token from localStorage
-        localStorage.removeItem("token");
+        // localStorage.removeItem("token");
+        localStorage.clear();
 
         window.location.href = "/";
     });
