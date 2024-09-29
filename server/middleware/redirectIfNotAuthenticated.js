@@ -2,7 +2,10 @@ import jwt from "jsonwebtoken";
 
 // redirecting if user is not authenticated
 export const redirectIfNotAuthenticated = (req, res, next) => {
-  console.log(req.session);
+  // console.log(req.session);
+  if (req.path === "/login" || req.path === "/register") {
+    return next();
+  }
   const token = req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
@@ -11,12 +14,10 @@ export const redirectIfNotAuthenticated = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; 
-    next(); 
+    req.user = decoded;
+    next();
   } catch (error) {
-
     console.error("Token verification error:", error);
-
     return res.redirect("/login");
   }
 };
