@@ -1,16 +1,16 @@
 import express from "express";
-import { redirectIfAuthenticated } from "../middleware/redirectIfAuthenticated.js";
+import { redirectIfNotAuthenticated } from "../middleware/redirectIfNotAuthenticated.js";
 const router = express.Router();
 
 router.get("/", async function (req, res) {
   res.render("home",);
 });
 
-router.get("/register", redirectIfAuthenticated, async function (req, res) {
+router.get("/register", redirectIfNotAuthenticated, async function (req, res) {
   res.render("auth/register");
 });
 
-router.get("/login", redirectIfAuthenticated, async function (req, res) {
+router.get("/login", redirectIfNotAuthenticated, async function (req, res) {
   res.render("auth/login");
 });
 
@@ -40,12 +40,12 @@ router.get("/shop", async function (req, res) {
 
 // collection, mint
 // create collection
-router.get("/collection/create", redirectIfAuthenticated, async function (req, res) {
+router.get("/collection/create", redirectIfNotAuthenticated, async function (req, res) {
   res.render("collection/create_collection");
 });
 
 
-router.get("/collection/my-collections", redirectIfAuthenticated, async function (req, res) {
+router.get("/collection/my-collections", redirectIfNotAuthenticated, async function (req, res) {
   res.render("collection/my-collections");
 });
 
@@ -66,23 +66,23 @@ router.get("/tokens", async function (req, res) {
 
 
 // admin panel
-router.get("/my-store", redirectIfAuthenticated, async function (req, res) {
+router.get("/my-store", redirectIfNotAuthenticated, async function (req, res) {
   res.render("admin/transactions/my_store_transactions");
 });
 
 
-router.get("/items/create", redirectIfAuthenticated, async function (req, res) {
+router.get("/items/create", redirectIfNotAuthenticated, async function (req, res) {
   res.render("admin/items/create_item");
 });
 
 
 
-router.get("/dashboard", redirectIfAuthenticated, async function (req, res) {
+router.get("/dashboard", redirectIfNotAuthenticated, async function (req, res) {
   res.render("admin/dashboard-main");
 });
 
 
-router.get("/my-wallet", redirectIfAuthenticated, async function (req, res) {
+router.get("/my-wallet", redirectIfNotAuthenticated, async function (req, res) {
   res.render("admin/wallet");
 });
 
