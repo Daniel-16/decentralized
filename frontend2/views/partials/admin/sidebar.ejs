@@ -186,7 +186,8 @@
         $("#logout").on("click", function (e) {
             e.preventDefault();
             // clear the token from localStorage
-            localStorage.removeItem("token");
+            // localStorage.removeItem("token");
+            localStorage.clear();
 
             window.location.href = "/";
         });
