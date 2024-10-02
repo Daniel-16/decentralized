@@ -1,6 +1,9 @@
 import express from "express";
 import { redirectIfNotAuthenticated } from "../middleware/redirectIfNotAuthenticated.js";
+import { checkAuth } from "../middleware/checkAuth.js";
 const router = express.Router();
+
+router.use(checkAuth);
 
 router.get("/", async function (req, res) {
   res.render("home");
@@ -38,21 +41,13 @@ router.get("/shop", async function (req, res) {
 
 // collection, mint
 // create collection
-router.get(
-  "/collection/create",
-  redirectIfNotAuthenticated,
-  async function (req, res) {
-    res.render("collection/create_collection");
-  }
-);
+router.get("/collection/create", async function (req, res) {
+  res.render("collection/create_collection");
+});
 
-router.get(
-  "/collection/my-collections",
-  redirectIfNotAuthenticated,
-  async function (req, res) {
-    res.render("collection/my-collections");
-  }
-);
+router.get("/collection/my-collections", async function (req, res) {
+  res.render("collection/my-collections");
+});
 
 // tranfer token
 // router.get("/token/transfer", async function (req, res) {
@@ -65,23 +60,19 @@ router.get("/tokens", async function (req, res) {
 });
 
 // admin panel
-router.get("/my-store", redirectIfNotAuthenticated, async function (req, res) {
+router.get("/my-store", async function (req, res) {
   res.render("admin/transactions/my_store_transactions");
 });
 
-router.get(
-  "/items/create",
-  redirectIfNotAuthenticated,
-  async function (req, res) {
-    res.render("admin/items/create_item");
-  }
-);
+router.get("/items/create", async function (req, res) {
+  res.render("admin/items/create_item");
+});
 
-router.get("/dashboard", redirectIfNotAuthenticated, async function (req, res) {
+router.get("/dashboard", async function (req, res) {
   res.render("admin/dashboard-main");
 });
 
-router.get("/my-wallet", redirectIfNotAuthenticated, async function (req, res) {
+router.get("/my-wallet", async function (req, res) {
   res.render("admin/wallet");
 });
 

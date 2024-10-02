@@ -67,6 +67,21 @@
 <%- include('sidebar') %>
 
 
+<script>
+    (function() {
+      const authRequired = <%- JSON.stringify(locals.authRequired) %>;
+      if (authRequired) {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          window.location.href = '/login';
+        } else {
+          $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+            jqXHR.setRequestHeader('Authorization', 'Bearer ' + token);
+          });
+        }
+      }
+    })();
+  </script>
 <!-- logout event handler -->
 <script>
     $(document).ready(function () {
