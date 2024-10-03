@@ -275,6 +275,7 @@ $(document).ready(function () {
                 </div>
                 <div class="col-12">
                   <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="#" data-item-id="${item._id}">Purchase Now</a>
+                  <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" style="display: none;" href="#">Please wait...</a>
                 </div>
               </div>
               </div>
@@ -311,10 +312,16 @@ $(document).ready(function () {
     $('.btn-primary').off('click').on('click', function(event) {
       event.preventDefault(); 
 
-      const itemId = $(this).data('item-id'); // get the item id from data attribute
-      const quantity = 1; // say quantity is always 1 for simplicity
+      const purchaseButton = $(this); // Reference to the purchase button
+      const pleaseWaitButton = purchaseButton.next(); // Reference to the "Please wait..." button
+      const itemId = purchaseButton.data('item-id'); // Get the item id from data attribute
+      const quantity = 1; // Assume quantity is always 1 for simplicity
 
-      // get the token from localStorage
+      // Show the "Please wait..." button and disable it, hide the "Purchase Now" button
+      purchaseButton.hide();
+      pleaseWaitButton.show().prop('disabled', true);
+
+      // fetch the token from localStorage
       const token = localStorage.getItem("token");
 
       $.ajax({
@@ -330,7 +337,6 @@ $(document).ready(function () {
         },
         success: function(response) {
           if (response.success) {
-            // showSuccessToast("Successfully purchased 1 unit!");
             toastr.success("Successfully purchased 1 unit!");
           } else {
             alert('Error: ' + response.error);
@@ -338,11 +344,15 @@ $(document).ready(function () {
         },
         error: function(jqXHR, textStatus, errorThrown) {
           alert('Error: ' + errorThrown);
+        },
+        complete: function() {
+          // After the request is complete (either success or failure), revert the buttons
+          pleaseWaitButton.hide();
+          purchaseButton.show();
         }
       });
     });
   }
-  
   // End: handle purchase 
 
   // Load initial items
@@ -354,4 +364,19 @@ $(document).ready(function () {
     loadItems(currentLimit); // Load more items
   });
 });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@3.0.3/tsparticles.confetti.bundle.min.js"></script>
+<script>
+    $('document').ready(function(){
+      const token = localStorage.getItem("token");
+      
+      
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+      });
+    })
 </script>

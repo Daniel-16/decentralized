@@ -1,1 +1,5 @@
 push.sh
+.DS_Store
+frontend2/.DS_Store
+frontend2/public/assets/.DS_Store
+node_modules
