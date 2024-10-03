@@ -6,8 +6,10 @@ export const redirectIfNotAuthenticated = (req, res, next) => {
   if (req.path === "/login" || req.path === "/register") {
     return next();
   }
-  const token = req.header("Authorization")?.replace("Bearer ", "");
-
+  console.log("cookieess: ", req.cookies);
+const token =
+  req.headers["authorization"]?.replace("Bearer ", "") ||
+  req.headers["Authorization"]?.replace("Bearer ", "");
   if (!token) {
     return res.redirect("/login");
   }

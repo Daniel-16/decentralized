@@ -34,68 +34,69 @@
 <!-- get all transactions -->
 <script>
   $(document).ready(function () {
-    function loadTransactions() {
-      const token = localStorage.getItem("token");
+  function loadTransactions() {
+    const token = localStorage.getItem("token");
 
-      // Array of icon and message templates
-      const icons = [
-        { icon: '<i class="me-1 bi bi-percent"></i>', message: 'You have an offer!' },
-        { icon: '<i class="bg-info me-1 bi bi-tags"></i>', message: 'Congratulations! You sold an item.' },
-        { icon: '<i class="bg-danger me-1 bi bi-gift"></i>', message: 'January freebies have arrived.' },
-        { icon: '<i class="bg-warning me-1 bi bi-star"></i>', message: 'A new rating has been received.' }
-      ];
+    // Array of icon and message templates
+    const icons = [
+      { icon: '<i class="me-1 bi bi-percent"></i>', message: 'You have an offer!' },
+      { icon: '<i class="bg-info me-1 bi bi-tags"></i>', message: 'Congratulations! You sold an item.' },
+      { icon: '<i class="bg-danger me-1 bi bi-gift"></i>', message: 'January freebies have arrived.' },
+      { icon: '<i class="bg-warning me-1 bi bi-star"></i>', message: 'A new rating has been received.' }
+    ];
 
-      $.ajax({
-        url: "/api/buyerPurchases",
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        success: function (response) {
-          if (response.success) {
-            const transactions = response.purchases;
-            let transactionsHTML = "";
+    $.ajax({
+      url: "/api/buyerPurchases",
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      success: function (response) {
+        if (response.success && response.purchases && response.purchases.length > 0) {
+          const transactions = response.purchases;
+          let transactionsHTML = "";
 
-            transactions.forEach((transaction) => {
-              const purchaseDate = new Date(transaction.purchaseDate);
-              const day = purchaseDate.getDate();
-              const monthYear = purchaseDate.toLocaleDateString("en-GB", {
-                month: "short",
-                year: "numeric",
-              });
-              const time = purchaseDate.toLocaleTimeString("en-GB", {
-                hour: "2-digit",
-                minute: "2-digit",
-              });
-
-              // Randomly select an icon and message from the array
-              const randomIcon = icons[Math.floor(Math.random() * icons.length)];
-
-              transactionsHTML += `
-                <li>
-                  <a href="#">
-                    ${randomIcon.icon} ${transaction.itemName}
-                    <span class=" mx-4 badge bg-dark fz-12 rounded-pill ms-auto">Total: $${transaction.totalPrice.toFixed(2)}</span>
-                    <small class="text-muted">Purchased on ${day} ${monthYear}, ${time}</small>
-                  </a>
-                </li>
-              `;
+          transactions.forEach((transaction) => {
+            const purchaseDate = new Date(transaction.purchaseDate);
+            const day = purchaseDate.getDate();
+            const monthYear = purchaseDate.toLocaleDateString("en-GB", {
+              month: "short",
+              year: "numeric",
+            });
+            const time = purchaseDate.toLocaleTimeString("en-GB", {
+              hour: "2-digit",
+              minute: "2-digit",
             });
 
-            // Set the new HTML content in the container
-            $("#transactionsContainer").html(transactionsHTML);
-          } else {
-            $("#transactionsContainer").html("<p>No transactions found.</p>");
-          }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          $("#transactionsContainer").html("<p>Error fetching transactions.</p>");
-        },
-      });
-    }
+            // Randomly select an icon and message from the array
+            const randomIcon = icons[Math.floor(Math.random() * icons.length)];
 
-    loadTransactions();
-  });
+            transactionsHTML += `
+              <li>
+                <a href="#">
+                  ${randomIcon.icon} ${transaction.itemName}
+                  <span class=" mx-4 badge bg-dark fz-12 rounded-pill ms-auto">Total: $${transaction.totalPrice.toFixed(2)}</span>
+                  <small class="text-muted">Purchased on ${day} ${monthYear}, ${time}</small>
+                </a>
+              </li>
+            `;
+          });
+
+          // Set the new HTML content in the container
+          $("#transactionsContainer").html(transactionsHTML);
+        } else {
+          // Handle case where no purchases are found
+          $("#transactionsContainer").html("<p>No transactions found.</p>");
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        $("#transactionsContainer").html("<p>Error fetching transactions.</p>");
+      },
+    });
+  }
+
+  loadTransactions();
+});
 </script>
 <!-- end: get all transactions -->
 

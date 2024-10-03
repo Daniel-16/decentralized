@@ -62,8 +62,8 @@
       </div>
       <div class="copywrite-text mt-4">
         <p class="mb-0 fz-14">
-          2024 &copy; All rights reserved by
-          <a class="fz-14" href="#" target="_blank">ADODASS Community</a>
+          2024 &copy; All rights reserved 
+          <!-- <a class="fz-14" href="#" target="_blank">Community</a> -->
         </p>
       </div>
     </div>
@@ -188,6 +188,7 @@
             // clear the token from localStorage
             // localStorage.removeItem("token");
             localStorage.clear();
+            toastr.info("Logout successful");
 
             window.location.href = "/";
         });

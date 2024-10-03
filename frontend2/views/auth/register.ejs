@@ -74,22 +74,45 @@
 </div>
 
 
+<!-- modal for transfer Token -->
+<div class="modal fade" id="mnemonicModal" tabindex="-1" aria-labelledby="mnemonicModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mnemonicModalLabel">Copy and Store your mnemonic safely.</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="mnemonic" class="form-label">Mnemonic:</label>
+                    <textarea id="mnemonicText" class="form-control" readonly></textarea>
+                </div>
+
+                <button id="copyMnemonicBtn" class="btn btn-primary w-100">Copy Token</button>
+                <button id="mnemonicModalCloseBtn" class="btn btn-danger w-100">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end:modal for transfer -->
+
+
 <%- include('../partials/home/footer') %>
 
 
 <script>
     $(document).ready(function () {
-        $("#registerUserForm").on("submit", function (event) {
-            event.preventDefault();
+    $("#registerUserForm").on("submit", function (event) {
+        event.preventDefault();
 
-            const email = $("#email").val();
-            const username = $("#username").val();
-            const password = $("#registerPassword").val();
+        const email = $("#email").val();
+        const username = $("#username").val();
+        const password = $("#registerPassword").val();
 
-            const loginButton = $("button[type=submit]");
-            loginButton.prop("disabled", true).text("Please wait...");
+        const loginButton = $("button[type=submit]");
+        loginButton.prop("disabled", true).text("Please wait...");
 
-            $.ajax({
+        $.ajax({
             url: "/api/createUser",
             method: "POST",
             contentType: "application/json",
@@ -97,30 +120,32 @@
             success: function (response) {
                 console.log(response);
                 if (response.success) {
-                localStorage.setItem("token", response.token);
-                localStorage.setItem("username", response.user.username);
-                localStorage.setItem("email", response.user.email);
-                localStorage.setItem("accountAddress", response.user.accountAddress);
-                localStorage.setItem("hasReceivedToken", response.user.hasReceivedToken);
+                    localStorage.setItem("token", response.token);
+                    localStorage.setItem("username", response.user.username);
+                    localStorage.setItem("email", response.user.email);
+                    localStorage.setItem("accountAddress", response.user.accountAddress);
+                    localStorage.setItem("hasReceivedToken", response.user.hasReceivedToken);
 
-                Swal.fire({
-                    position: "center",
-                    icon: "success",
-                    title: "Registration Successful",
-                    showConfirmButton: false,
-                    timer: 1500,
-                });
+                    $("#mnemonicText").val(response.mnemonic); 
 
-                location.assign("/");
+                    $("#mnemonicModal").modal('show');
+                    toastr.success("Registration Successful!");
+                    // Swal.fire({
+                    //     position: "center",
+                    //     icon: "success",
+                    //     title: "Registration Successful",
+                    //     showConfirmButton: false,
+                    //     timer: 1500,
+                    // });
                 } else {
-                Swal.fire({
-                    position: "center",
-                    icon: "error",
-                    title: "Oops...",
-                    showConfirmButton: false,
-                    timer: 1500,
-                    text: response.error || "An error occurred",
-                });
+                    Swal.fire({
+                        position: "center",
+                        icon: "error",
+                        title: "Oops...",
+                        showConfirmButton: false,
+                        timer: 1500,
+                        text: response.error || "An error occurred",
+                    });
                 }
             },
             error: function (jqXHR) {
@@ -129,7 +154,26 @@
             complete: function () {
                 loginButton.prop("disabled", false).text("Register Now");
             },
-            });
         });
     });
+
+    // copy mnemonic to clipboard
+    $("#copyMnemonicBtn").on("click", function () {
+        const mnemonicText = $("#mnemonicText");
+        mnemonicText.select();
+        document.execCommand("copy");
+        toastr.success("Mnemonic copied to clipboard!");
+
+        // slight delay to ensure that the toastr is shown before redirect
+        // setTimeout(function () {
+        //     location.assign("/");
+        // }, 1500); 
+    });
+
+    // close modal 
+    $("#mnemonicModalCloseBtn, .btn-close").on("click", function () {
+        $("#mnemonicModal").modal('hide'); 
+        location.assign("/");
+    });
+});
 </script>
