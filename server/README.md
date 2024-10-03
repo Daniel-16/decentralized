@@ -87,6 +87,11 @@
   - Authorization: Not required
   - Description: Fetches all items stored in the database
 
+- `GET /api/getStoreItems`: Retrieve all items for a specific store
+
+  - Authorization required: `Bearer <token>`
+  - Description: Fetches all items for a specific store
+
 - `POST /api/purchaseItem`: Purchase an existing item
 
   - Authorization required: `Bearer <token>`

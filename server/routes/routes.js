@@ -10,7 +10,11 @@ import {
   getUser,
   loginUser,
 } from "../controllers/UserController.js";
-import { createItem, getAllItems } from "../controllers/ItemsController.js";
+import {
+  createItem,
+  getAllItems,
+  getStoreItems,
+} from "../controllers/ItemsController.js";
 import { verifyToken } from "../middleware/generateToken.js";
 import {
   checkBuyerPurchases,
@@ -131,5 +135,7 @@ router.get("/checkStorePurchases", verifyToken, checkStorePurchases);
 router.get("/getCollections", verifyToken, getUserCollections);
 
 router.get("/getUserTokensAndPrizes", verifyToken, getUserTokensAndPrizes);
+
+router.get("/getStoreItems", verifyToken, getStoreItems);
 
 export default router;
