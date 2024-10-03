@@ -45,3 +45,19 @@ export const getAllItems = async (req, res) => {
     });
   }
 };
+
+export const getStoreItems = async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const items = await ItemModel.find({ itemOwnerId: userId });
+    res.status(200).json({
+      success: true,
+      items,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+}
