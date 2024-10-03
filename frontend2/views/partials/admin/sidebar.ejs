@@ -49,7 +49,10 @@
         <br>
         <!-- <div class="divider"></div> -->
         <li>
-            <a id="logout" href="#" class="menu-link"><i class="bi bi-power"></i><span class="text-danger">Logout</span></a>
+            <a id="logoutButton" href="#" class="menu-link">
+              <i class="bi bi-power"></i>
+              <span class="text-danger">Logout</span>
+            </a>
         </li>
     </ul>
     </div>
@@ -183,7 +186,8 @@
 <!-- logout event handler -->
 <script>
     $(document).ready(function () {
-        $("#logout").on("click", function (e) {
+      console.log("working")
+        $("#logoutButton").on("click", function (e) {
             e.preventDefault();
             // clear the token from localStorage
             // localStorage.removeItem("token");
