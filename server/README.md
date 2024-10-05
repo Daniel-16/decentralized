@@ -98,7 +98,8 @@
   - Required fields:
     - `itemId`: ID of the item to purchase
     - `quantity`: Number of items to purchase
-  - Description: Processes the purchase of an item for the authenticated user
+  - Description: Processes the purchase of an item for the authenticated user.
+    - For every purchase the user makes, you'd need to call the `POST /api/transferToken` endpoint to transfer the token to the seller.
 
 - `GET /api/buyerPurchases`: Retrieve user's purchase history
 

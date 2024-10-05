@@ -20,6 +20,10 @@ const UserSchema = new mongoose.Schema({
     required: true,
     minLength: 6,
   },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
   accountAddress: {
     type: String,
   },
@@ -29,12 +33,6 @@ const UserSchema = new mongoose.Schema({
       ref: "Token",
     },
   ],
-  // wonPrizes: [
-  //   {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: "Prize",
-  //   },
-  // ],
 });
 
 UserSchema.pre("save", async function (next) {
