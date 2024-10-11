@@ -10,22 +10,22 @@ const CollecionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  tokenId: {
-    type: String,
-    required: true,
-  },
+  // tokenId: {
+  //   type: String,
+  //   required: true,
+  // },
   collectionUrl: String,
-  tokenUrl: String,
+  // tokenUrl: String,
   walletAddress: {
     type: String,
     required: true,
   },
-  token: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Token",
-    },
-  ],
+  // token: [
+  //   {
+  //     type: mongoose.Schema.Types.ObjectId,
+  //     ref: "Token",
+  //   },
+  // ],
 });
 
 const CollectionModel = mongoose.model("Collection", CollecionSchema);

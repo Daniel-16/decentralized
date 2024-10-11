@@ -4,6 +4,7 @@ const TokenSchema = new mongoose.Schema({
   tokenId: String,
   collectionId: Number,
   tokenName: String,
+  tokenImageUrl: String,
   tokenOwnerAddress: String,
   tokenOwnerId: {
     type: mongoose.Schema.Types.ObjectId,

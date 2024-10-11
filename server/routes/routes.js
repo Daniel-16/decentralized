@@ -84,7 +84,7 @@ router.post("/purchaseItem", verifyToken, purchaseItem);
  * @description Get user's balance
  * @access Private
  */
-router.get("/getUserBalance", verifyToken, getUserBalance);
+router.get("/getUserBalance/:wallet_address", verifyToken, getUserBalance);
 
 /**
  * @route POST /api/createCollection

@@ -60,4 +60,4 @@ export const getStoreItems = async (req, res) => {
       error: error.message,
     });
   }
-}
+};
