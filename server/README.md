@@ -116,9 +116,10 @@
   - Required fields: `mnemonic`, `tokenName`, `tokenDescription`, `tokenPrefix`, `name`, `description`.
     It then gets user account from the mnemonic and creates a unique network collection and token.
   - Authorization required: `Bearer <token>`.
-- `GET /api/getUserBalance`: This gets a user's current balance in the form of tokens/NFT acquired.
-  - Required fields: `walletAddress`.
-  - Authorization required: `Bearer <token>`.
+- `GET /api/getUserBalance/:wallet_address`: This gets a user's current balance from their UNQ wallet.
+  - Required parameters: `wallet_address` (as part of the URL)
+  - Authorization required: `Bearer <token>`
+  - Description: Retrieves the balance information for the specified wallet address, including available balance, locked balance, and free balance.
 - `POST /api/transferToken`: Transfer a token from one user to another.
   - Required fields:
     - `mnemonic`: The mnemonic of the signed-in user (token sender).
@@ -138,5 +139,11 @@
   - Description: This endpoint creates a new token and adds it to the specified collection. It uses the provided mnemonic to authenticate the user and perform the minting process.
 
 - `GET /api/getCollections`: Retrieve all collections owned by the authenticated user
+
   - Authorization required: `Bearer <token>`
   - Description: This endpoint returns a list of all collections associated with the currently authenticated user. No additional parameters are required.
+
+- `DELETE /api/burnToken`: Burn a token
+  - Authorization required: `Bearer <token>`
+  - Required fields: `collectionId`, `tokenId`
+  - Description: This endpoint allows the store owners (admins) to burn a token from a user's account.

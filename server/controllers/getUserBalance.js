@@ -24,7 +24,7 @@ import Sdk from "@unique-nft/sdk";
  * }
  */
 export const getUserBalance = async (req, res) => {
-  const { wallet_address } = req.query;
+  const { wallet_address } = req.params;
 
   if (!wallet_address) {
     return res.status(400).json({

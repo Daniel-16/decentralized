@@ -14,6 +14,7 @@ export const createCollectionAndTokenController = async (req, res) => {
     collectionName,
     name,
     description,
+    tokenImageUrl,
   } = req.body;
   const userId = req.user.id;
 
@@ -49,50 +50,53 @@ export const createCollectionAndTokenController = async (req, res) => {
       throw new Error(`Create collection error: ${error}`);
     }
 
-    const collectionId = parsed?.collectionId;
+    const { collectionId } = parsed;
 
-    // Create the first token in the collection
-    const tokenResult = await sdk.token.create.submitWaitResult({
-      address,
-      collectionId,
-      data: {
-        image: {
-          ipfsCid: "QmcAcH4F9HYQtpqKHxBFwGvkfKb8qckXj2YWUrcc8yd24G/image1.png",
-        },
-        name: {
-          _: tokenName,
-        },
-        description: {
-          _: tokenDescription,
-        },
-        // attributes: {
+    sdk.collection.get({ collectionId });
 
-        // }
-      },
-    });
+    // // Create the first token in the collection
+    // const tokenResult = await sdk.token.create.submitWaitResult({
+    //   address,
+    //   collectionId,
+    //   data: {
+    //     image: {
+    //       url: tokenImageUrl
+    //     },
+    //     name: {
+    //       _: tokenName,
+    //     },
+    //     description: {
+    //       _: tokenDescription,
+    //     },
+    //     // attributes: {
 
-    const tokenId = tokenResult.parsed?.tokenId;
+    //     // }
+    //   },
+    // });
 
-    // Create a new token document in the database
-    const createToken = await TokenModel.create({
-      tokenName,
-      tokenId,
-      collectionId,
-      tokenOwnerAddress: address,
-      tokenOwnerId: user._id,
-      tokenDescription,
-      tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
-    });
+    // const tokenId = tokenResult.parsed?.tokenId;
+
+    // // Create a new token document in the database
+    // const createToken = await TokenModel.create({
+    //   tokenName,
+    //   tokenId,
+    //   collectionId,
+    //   tokenImageUrl,
+    //   tokenOwnerAddress: address,
+    //   tokenOwnerId: user._id,
+    //   tokenDescription,
+    //   tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
+    // });
 
     // Create a new collection document in the database
     const collectionPayload = await CollectionModel.create({
       collectionOwner: user._id,
       collectionId,
-      tokenId,
+      // tokenId,
       collectionUrl: `https://uniquescan.io/opal/collections/${collectionId}`,
-      tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
+      // tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
       walletAddress: address,
-      token: createToken._id,
+      // token: createToken._id,
     });
 
     res.status(200).json({
@@ -137,7 +141,7 @@ export const mintToken = async (req, res) => {
       collectionId,
       data: {
         image: {
-          ipfsCid: "QmcAcH4F9HYQtpqKHxBFwGvkfKb8qckXj2YWUrcc8yd24G/image1.png",
+          url: tokenImageUrl,
         },
         name: {
           _: tokenName,
@@ -160,6 +164,7 @@ export const mintToken = async (req, res) => {
         tokenName,
         tokenId,
         collectionId,
+        tokenImageUrl,
         tokenOwnerAddress: address,
         tokenOwnerId: user._id,
         tokenDescription,
