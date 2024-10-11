@@ -116,9 +116,10 @@
   - Required fields: `mnemonic`, `tokenName`, `tokenDescription`, `tokenPrefix`, `name`, `description`.
     It then gets user account from the mnemonic and creates a unique network collection and token.
   - Authorization required: `Bearer <token>`.
-- `GET /api/getUserBalance`: This gets a user's current balance in the form of tokens/NFT acquired.
-  - Required fields: `walletAddress`.
-  - Authorization required: `Bearer <token>`.
+- `GET /api/getUserBalance/:wallet_address`: This gets a user's current balance from their UNQ wallet.
+  - Required parameters: `wallet_address` (as part of the URL)
+  - Authorization required: `Bearer <token>`
+  - Description: Retrieves the balance information for the specified wallet address, including available balance, locked balance, and free balance.
 - `POST /api/transferToken`: Transfer a token from one user to another.
   - Required fields:
     - `mnemonic`: The mnemonic of the signed-in user (token sender).
