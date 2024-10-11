@@ -24,6 +24,7 @@ import {
 import { getUserBalance } from "../controllers/getUserBalance.js";
 import { createTestCollection } from "../controllers/CreateCollection.js";
 import { transferTokenController } from "../controllers/TransferToken.js";
+import { burnToken } from "../controllers/BurnToken.js";
 const router = express.Router();
 
 /**
@@ -134,8 +135,25 @@ router.get("/checkStorePurchases", verifyToken, checkStorePurchases);
  */
 router.get("/getCollections", verifyToken, getUserCollections);
 
+/**
+ * @route GET /api/getUserTokensAndPrizes
+ * @description Get user's tokens and prizes
+ * @access Private
+ */
 router.get("/getUserTokensAndPrizes", verifyToken, getUserTokensAndPrizes);
 
+/**
+ * @route GET /api/getStoreItems
+ * @description Get store items
+ * @access Private
+ */
 router.get("/getStoreItems", verifyToken, getStoreItems);
+
+/**
+ * @route DELETE /api/burnToken
+ * @description Burn a token
+ * @access Private
+ */
+router.delete("/burnToken", verifyToken, burnToken);
 
 export default router;
