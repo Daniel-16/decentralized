@@ -138,5 +138,11 @@
   - Description: This endpoint creates a new token and adds it to the specified collection. It uses the provided mnemonic to authenticate the user and perform the minting process.
 
 - `GET /api/getCollections`: Retrieve all collections owned by the authenticated user
+
   - Authorization required: `Bearer <token>`
   - Description: This endpoint returns a list of all collections associated with the currently authenticated user. No additional parameters are required.
+
+- `DELETE /api/burnToken`: Burn a token
+  - Authorization required: `Bearer <token>`
+  - Required fields: `collectionId`, `tokenId`
+  - Description: This endpoint allows the store owners (admins) to burn a token from a user's account.
