@@ -111,9 +111,9 @@
 
 ### Tokens and Collections
 
-- `POST /api/createAndMint`: This is for creating a new collection alongside the collection's token.
-  - Required fields: `mnemonic`, `tokenName`, `tokenDescription`, `tokenPrefix`, `name`, `description`.
-    It then gets user account from the mnemonic and creates a unique network collection and token.
+- `POST /api/createCollection`: This is for creating a new collection.
+  - Required fields: `mnemonic`, `name`, `description`, `tokenPrefix`.
+    It then gets user account from the mnemonic and creates a unique network collection.
   - Authorization required: `Bearer <token>`.
 - `GET /api/getUserBalance/:wallet_address`: This gets a user's current balance from their UNQ wallet.
   - Required parameters: `wallet_address` (as part of the URL)
@@ -130,10 +130,11 @@
 - `POST /api/mintToken`: Mint a new token and add it to an existing collection
 
   - Required fields:
-    - `collectionId`: ID of the collection to add the token to
-    - `mnemonic`: Mnemonic phrase of the authenticated user
-    - `tokenName`: Name of the new token
-    - `tokenDescription`: Description of the new token
+    - `collectionId`: ID of the collection to add the token to.
+    - `mnemonic`: Mnemonic phrase of the authenticated user.
+    - `tokenName`: Name of the new token.
+    - `tokenImageUrl`: URL of the token's image.
+    - `tokenDescription`: Description of the new token.
   - Authorization required: `Bearer <token>`
   - Description: This endpoint creates a new token and adds it to the specified collection. It uses the provided mnemonic to authenticate the user and perform the minting process.
 
