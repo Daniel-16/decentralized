@@ -111,10 +111,14 @@
 
 ### Tokens and Collections
 
-- `POST /api/createCollection`: This is for creating a new collection.
-  - Required fields: `mnemonic`, `name`, `description`, `tokenPrefix`.
-    It then gets user account from the mnemonic and creates a unique network collection.
-  - Authorization required: `Bearer <token>`.
+- `POST /api/createCollection`: Create a new collection
+  - Authorization required: `Bearer <token>`
+  - Required fields:
+    - `mnemonic`: Mnemonic phrase for the user's account
+    - `name`: Name of the collection
+    - `description`: Description of the collection
+    - `tokenPrefix`: Prefix for tokens in this collection
+  - Description: This endpoint creates a new unique network collection. It uses the provided mnemonic to retrieve the user's account, then creates the collection with the specified name, description, and token prefix. The newly created collection is associated with the authenticated user.
 - `GET /api/getUserBalance/:wallet_address`: This gets a user's current balance from their UNQ wallet.
   - Required parameters: `wallet_address` (as part of the URL)
   - Authorization required: `Bearer <token>`
