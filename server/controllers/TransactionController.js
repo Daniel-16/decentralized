@@ -2,10 +2,20 @@ import TransactionModel from "../models/TransactionModel.js";
 import ItemModel from "../models/ItemsModel.js";
 import UserModel from "../models/UserModel.js";
 import Sdk, { CHAIN_CONFIG } from "@unique-nft/sdk";
+import { KeyringProvider } from "@unique-nft/accounts/keyring";
 
 export const purchaseItem = async (req, res) => {
-  const { itemId, quantity } = req.body;
+  const { itemId, quantity, mnemonic } = req.body;
   const userId = req.user.id;
+
+  // Check if required fields are provided
+  if (!itemId || !quantity || !mnemonic) {
+    return res.status(400).json({
+      success: false,
+      error:
+        "Missing required fields: itemId, quantity, and mnemonic must be provided",
+    });
+  }
 
   try {
     const user = await UserModel.findById(userId);
@@ -26,21 +36,28 @@ export const purchaseItem = async (req, res) => {
 
     const totalPrice = item.priceOfItem * quantity;
 
+    const account = await KeyringProvider.fromMnemonic(mnemonic);
+    const address = account.address;
+
     // Check if wallet has enough balance
-    // const balance = await sdk.balance.get({ address: item.itemOwnerAddress });
-    // const { availableBalance } = balance;
-    // if (availableBalance < totalPrice) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     error: "Insufficient balance",
-    //   });
-    // }
+    const balance = await sdk.balance.get({ address });
+    const { availableBalance } = balance;
+    if (availableBalance < totalPrice) {
+      return res.status(400).json({
+        success: false,
+        error: "Insufficient balance",
+      });
+    }
 
     // Pay for item with UNQ balance
-    const transferPayload = await sdk.balance.transfer({
-      amount: `${totalPrice}`,
-      to: `${item.itemOwnerAddress}`,
-    });
+    const transferPayload = await sdk.balance.transfer.submit(
+      {
+        destination: item.itemOwnerAddress,
+        amount: totalPrice,
+        address,
+      },
+      { signer: account }
+    );
 
     const transaction = new TransactionModel({
       buyerId: userId,
@@ -69,7 +86,9 @@ export const purchaseItem = async (req, res) => {
       // transferPayload,
     });
   } catch (error) {
-    res.status(500).json({ success: false, error });
+    res
+      .status(500)
+      .json({ success: false, error: error.message ? error.message : error });
   }
 };
 

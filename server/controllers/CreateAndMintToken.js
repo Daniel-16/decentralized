@@ -115,7 +115,8 @@ export const createCollectionAndTokenController = async (req, res) => {
 
 // Controller to mint a new token in an existing collection
 export const mintToken = async (req, res) => {
-  const { collectionId, mnemonic, tokenName, tokenDescription } = req.body;
+  const { collectionId, mnemonic, tokenName, tokenDescription, tokenImageUrl } =
+    req.body;
   const userId = req.user.id;
   try {
     const user = await UserModel.findById(userId);
@@ -141,7 +142,7 @@ export const mintToken = async (req, res) => {
       collectionId,
       data: {
         image: {
-          url: tokenImageUrl,
+          ipfsCid: tokenImageUrl,
         },
         name: {
           _: tokenName,
@@ -165,6 +166,7 @@ export const mintToken = async (req, res) => {
         tokenId,
         collectionId,
         tokenImageUrl,
+        tokenImageUrl,
         tokenOwnerAddress: address,
         tokenOwnerId: user._id,
         tokenDescription,
@@ -186,7 +188,7 @@ export const mintToken = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error,
+      error: error.message ? error.message : error,
     });
   }
 };
