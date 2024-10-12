@@ -92,14 +92,13 @@
   - Authorization required: `Bearer <token>`
   - Description: Fetches all items for a specific store
 
-- `POST /api/purchaseItem`: Purchase an existing item
+- `POST /api/purchaseItem`: Purchase an existing item with UNQ balance
 
   - Authorization required: `Bearer <token>`
   - Required fields:
     - `itemId`: ID of the item to purchase
     - `quantity`: Number of items to purchase
-  - Description: Processes the purchase of an item for the authenticated user.
-    - For every purchase the user makes, you'd need to call the `POST /api/transferToken` endpoint to transfer the token to the seller.
+  - Description: Gets the item details and pays for it with UNQ balance.
 
 - `GET /api/buyerPurchases`: Retrieve user's purchase history
 
