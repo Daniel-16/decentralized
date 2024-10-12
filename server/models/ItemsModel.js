@@ -17,9 +17,14 @@ const ItemSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  itemOwnerAddress: {
+    type: mongoose.Schema.Types.String,
+    ref: "User",
+    required: true,
+  },
   itemOwner: {
     type: mongoose.Schema.Types.String,
-    ref: "Store",
+    ref: "User",
     required: true,
   },
   attachedToken: {

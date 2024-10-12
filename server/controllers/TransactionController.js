@@ -1,6 +1,7 @@
 import TransactionModel from "../models/TransactionModel.js";
 import ItemModel from "../models/ItemsModel.js";
 import UserModel from "../models/UserModel.js";
+import Sdk, { CHAIN_CONFIG } from "@unique-nft/sdk";
 
 export const purchaseItem = async (req, res) => {
   const { itemId, quantity } = req.body;
@@ -8,18 +9,38 @@ export const purchaseItem = async (req, res) => {
 
   try {
     const user = await UserModel.findById(userId);
+    const sdk = new Sdk({
+      baseUrl: CHAIN_CONFIG.opal.restUrl,
+    });
     if (!user) {
       return res.status(404).json({
         success: false,
         error: "User not found",
       });
     }
+
     const item = await ItemModel.findById(itemId);
     if (!item) {
       return res.status(404).json({ success: false, error: "Item not found" });
     }
 
     const totalPrice = item.priceOfItem * quantity;
+
+    // Check if wallet has enough balance
+    // const balance = await sdk.balance.get({ address: item.itemOwnerAddress });
+    // const { availableBalance } = balance;
+    // if (availableBalance < totalPrice) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     error: "Insufficient balance",
+    //   });
+    // }
+
+    // Pay for item with UNQ balance
+    const transferPayload = await sdk.balance.transfer({
+      amount: `${totalPrice}`,
+      to: `${item.itemOwnerAddress}`,
+    });
 
     const transaction = new TransactionModel({
       buyerId: userId,
@@ -28,7 +49,6 @@ export const purchaseItem = async (req, res) => {
       itemOwner: item.itemOwner,
       storeOwnerId: item.itemOwnerId,
       itemName: item.nameOfItem,
-      // store: item.itemOwnerId,
       quantity,
       totalPrice,
     });
@@ -43,9 +63,13 @@ export const purchaseItem = async (req, res) => {
       );
     }
 
-    res.status(201).json({ success: true, transaction });
+    res.status(201).json({
+      success: true,
+      transaction,
+      // transferPayload,
+    });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error });
   }
 };
 
