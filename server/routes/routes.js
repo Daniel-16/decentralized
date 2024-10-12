@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  createCollectionAndTokenController,
+  createCollectionController,
   getUserCollections,
   getUserTokensAndPrizes,
   mintToken,
@@ -88,17 +88,10 @@ router.get("/getUserBalance/:wallet_address", verifyToken, getUserBalance);
 
 /**
  * @route POST /api/createCollection
- * @description Create a test collection
- * @access Public
- */
-router.post("/createCollection", createTestCollection);
-
-/**
- * @route POST /api/createAndMint
- * @description Create a collection and mint a token
+ * @description Create a collection
  * @access Private
  */
-router.post("/createAndMint", verifyToken, createCollectionAndTokenController);
+router.post("/createCollection", verifyToken, createCollectionController);
 
 /**
  * @route POST /api/transferToken

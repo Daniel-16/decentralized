@@ -4,8 +4,8 @@ import CollectionModel from "../models/CollectionModel.js";
 import TokenModel from "../models/TokenModel.js";
 import UserModel from "../models/UserModel.js";
 
-// Controller to create a new collection and mint its first token
-export const createCollectionAndTokenController = async (req, res) => {
+// Controller to create a new collection
+export const createCollectionController = async (req, res) => {
   const {
     mnemonic,
     tokenName,
