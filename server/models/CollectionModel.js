@@ -7,7 +7,7 @@ const CollecionSchema = new mongoose.Schema({
     required: true,
   },
   collectionId: {
-    type: String,
+    type: Number,
     required: true,
   },
   // tokenId: {

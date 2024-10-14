@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const TokenSchema = new mongoose.Schema({
-  tokenId: String,
+  tokenId: Number,
   collectionId: Number,
   tokenName: String,
   tokenImageUrl: String,
@@ -13,6 +13,15 @@ const TokenSchema = new mongoose.Schema({
   tokenDescription: String,
   tokenUrl: String,
   isWinningToken: {
+    type: Boolean,
+    default: false,
+  },
+  priceOfCoupon: {
+    type: Number,
+    default: 0,
+    required: true,
+  },
+  isPurchased: {
     type: Boolean,
     default: false,
   },

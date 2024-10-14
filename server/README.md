@@ -71,7 +71,7 @@
   - Response:
     - JSON object containing user details
 
-### Items
+### Items (Ignore for now)
 
 - `POST /api/createItem`: Create a new item
 
@@ -92,13 +92,13 @@
   - Authorization required: `Bearer <token>`
   - Description: Fetches all items for a specific store
 
-- `POST /api/purchaseItem`: Purchase an existing item with UNQ balance
+<!-- - `POST /api/purchaseItem`: Purchase an existing item with UNQ balance
 
   - Authorization required: `Bearer <token>`
   - Required fields:
     - `itemId`: ID of the item to purchase
     - `quantity`: Number of items to purchase
-  - Description: Gets the item details and pays for it with UNQ balance.
+  - Description: Gets the item details and pays for it with UNQ balance. -->
 
 - `GET /api/buyerPurchases`: Retrieve user's purchase history
 
@@ -114,16 +114,15 @@
 - `POST /api/createCollection`: Create a new collection
   - Authorization required: `Bearer <token>`
   - Required fields:
-    - `mnemonic`: Mnemonic phrase for the user's account
     - `name`: Name of the collection
     - `description`: Description of the collection
     - `tokenPrefix`: Prefix for tokens in this collection
-  - Description: This endpoint creates a new unique network collection. It uses the provided mnemonic to retrieve the user's account, then creates the collection with the specified name, description, and token prefix. The newly created collection is associated with the authenticated user.
+  - Description: This endpoint creates a new unique network collection. It uses the authenticated user's mnemonic to retrieve the user's account, then creates the collection with the specified name, description, and token prefix. The newly created collection is associated with the authenticated user.
 - `GET /api/getUserBalance/:wallet_address`: This gets a user's current balance from their UNQ wallet.
   - Required parameters: `wallet_address` (as part of the URL)
   - Authorization required: `Bearer <token>`
-  - Description: Retrieves the balance information for the specified wallet address, including available balance, locked balance, and free balance.
-- `POST /api/transferToken`: Transfer a token from one user to another.
+  - Description: Retrieves the balance information for the specified wallet address and updates the user's balance in the database.
+- `POST /api/transferToken`(Obsolete for now): Transfer a token from one user to another.
   - Required fields:
     - `mnemonic`: The mnemonic of the signed-in user (token sender).
     - `collectionId`: The ID of the collection containing the token.
@@ -135,19 +134,31 @@
 
   - Required fields:
     - `collectionId`: ID of the collection to add the token to.
-    - `mnemonic`: Mnemonic phrase of the authenticated user.
     - `tokenName`: Name of the new token.
     - `tokenImageUrl`: URL of the token's image.
     - `tokenDescription`: Description of the new token.
   - Authorization required: `Bearer <token>`
-  - Description: This endpoint creates a new token and adds it to the specified collection. It uses the provided mnemonic to authenticate the user and perform the minting process.
+  - Description: This endpoint creates a new token and adds it to the specified collection. It gets the mnemonic from the authenticated user and mints the token.
 
 - `GET /api/getCollections`: Retrieve all collections owned by the authenticated user
 
   - Authorization required: `Bearer <token>`
   - Description: This endpoint returns a list of all collections associated with the currently authenticated user. No additional parameters are required.
 
+- `POST /api/purchaseCoupon`: Purchase a coupon
+
+  - Authorization required: `Bearer <token>`
+  - Required fields:
+    - `tokenId`: ID of the coupon to purchase
+    - `collectionId`: ID of the collection containing the coupon
+  - Description: This endpoint allows the user to purchase a coupon with their UNQ balance. It updates the coupon's purchase status and adds the coupon to the user's collection.
+
 - `DELETE /api/burnToken`: Burn a token
   - Authorization required: `Bearer <token>`
   - Required fields: `collectionId`, `tokenId`
   - Description: This endpoint allows the store owners (admins) to burn a token from a user's account.
+
+## Marketplace
+
+- `GET /api/getAllCoupons`: Retrieve all coupons
+  - Description: Fetches all coupons available for purchase. Returns only coupons that have not been purchased.

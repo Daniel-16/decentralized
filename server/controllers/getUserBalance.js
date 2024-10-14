@@ -1,5 +1,5 @@
 import Sdk from "@unique-nft/sdk";
-
+import UserModel from "../models/UserModel.js";
 /**
  * Get the balance of a user's wallet
  * @param {Object} req - Express request object
@@ -40,13 +40,27 @@ export const getUserBalance = async (req, res) => {
     const sdk = new Sdk(options);
     const result = await sdk.balance.get({ address: wallet_address });
 
-    const { address, availableBalance, lockedBalance, freeBalance } = result;
+    const { address, availableBalance } = result;
+
+    // Find the user with the given wallet address and update their wallet balance
+    const updatedUser = await UserModel.findOneAndUpdate(
+      { accountAddress: wallet_address },
+      { walletBalance: availableBalance.amount },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found with the given wallet address",
+      });
+    }
+
     res.status(200).json({
       success: true,
       address,
       availableBalance,
-      lockedBalance,
-      freeBalance,
+      userBalance: updatedUser.walletBalance,
     });
   } catch (error) {
     res.status(500).json({
