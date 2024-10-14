@@ -28,6 +28,11 @@ router.get("/shop", async function (req, res) {
   res.render("items/shop");
 });
 
+// my store items
+router.get("/my-store-items", async function (req, res) {
+  res.render("admin/items/my_store_items");
+});
+
 // for transactions
 // view transactions -frontend1
 // router.get("/transactions", async function (req, res) {
