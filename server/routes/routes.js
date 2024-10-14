@@ -19,12 +19,13 @@ import { verifyToken } from "../middleware/generateToken.js";
 import {
   checkBuyerPurchases,
   checkStorePurchases,
-  purchaseItem,
+  purchaseCoupon,
 } from "../controllers/TransactionController.js";
 import { getUserBalance } from "../controllers/getUserBalance.js";
 import { createTestCollection } from "../controllers/CreateCollection.js";
 import { transferTokenController } from "../controllers/TransferToken.js";
 import { burnToken } from "../controllers/BurnToken.js";
+import { getAllCoupons } from "../controllers/MarketPlace.js";
 const router = express.Router();
 
 /**
@@ -73,11 +74,11 @@ router.post("/createItem", verifyToken, createItem);
 router.get("/getItems", getAllItems);
 
 /**
- * @route POST /api/purchaseItem
- * @description Purchase an item
+ * @route POST /api/purchaseCoupon
+ * @description Purchase a coupon
  * @access Private
  */
-router.post("/purchaseItem", verifyToken, purchaseItem);
+router.post("/purchaseCoupon", verifyToken, purchaseCoupon);
 
 /**
  * @route GET /api/getUserBalance
@@ -148,5 +149,12 @@ router.get("/getStoreItems", verifyToken, getStoreItems);
  * @access Private
  */
 router.delete("/burnToken", verifyToken, burnToken);
+
+/**
+ * @route GET /api/getAllCoupons
+ * @description Get all coupons
+ * @access Private
+ */
+router.get("/getAllCoupons", getAllCoupons);
 
 export default router;

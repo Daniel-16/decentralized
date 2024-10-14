@@ -21,6 +21,7 @@ export const createUser = async (req, res) => {
       email,
       password,
       accountAddress: account.address,
+      mnemonic,
     });
 
     const token = generateToken(user);

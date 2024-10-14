@@ -33,6 +33,14 @@ const UserSchema = new mongoose.Schema({
       ref: "Token",
     },
   ],
+  mnemonic: {
+    type: String,
+    required: true,
+  },
+  walletBalance: {
+    type: Number,
+    default: 0,
+  },
 });
 
 UserSchema.pre("save", async function (next) {

@@ -6,16 +6,7 @@ import UserModel from "../models/UserModel.js";
 
 // Controller to create a new collection
 export const createCollectionController = async (req, res) => {
-  const {
-    mnemonic,
-    tokenName,
-    tokenDescription,
-    tokenPrefix,
-    collectionName,
-    name,
-    description,
-    tokenImageUrl,
-  } = req.body;
+  const { tokenPrefix, name, description } = req.body;
   const userId = req.user.id;
 
   try {
@@ -28,7 +19,16 @@ export const createCollectionController = async (req, res) => {
       });
     }
 
-    // Find an account from the provided mnemonic
+    // Get the mnemonic from the user
+    const mnemonic = user.mnemonic;
+    if (!mnemonic) {
+      return res.status(400).json({
+        success: false,
+        message: "User mnemonic not found",
+      });
+    }
+
+    // Find an account from the user's mnemonic
     const account = await KeyringProvider.fromMnemonic(mnemonic);
     const address = account.address;
 
@@ -39,85 +39,68 @@ export const createCollectionController = async (req, res) => {
     });
 
     // Create a new collection
-    const { parsed, error } = await sdk.collection.create.submitWaitResult({
-      address,
-      name,
-      description,
-      tokenPrefix,
-    });
+    const { parsed, isCompleted } =
+      await sdk.collection.create.submitWaitResult({
+        address,
+        name,
+        description,
+        tokenPrefix,
+      });
 
-    if (error) {
-      throw new Error(`Create collection error: ${error}`);
+    console.log(isCompleted);
+
+    // if (error) {
+    //   return res.status(500).json({
+    //     success: false,
+    //     message: "An error occurred while creating the collection",
+    //     error: error,
+    //   });
+    // }
+
+    if (!isCompleted) {
+      return res.status(500).json({
+        success: false,
+        message: "Collection creation failed",
+      });
     }
 
     const { collectionId } = parsed;
 
-    sdk.collection.get({ collectionId });
-
-    // // Create the first token in the collection
-    // const tokenResult = await sdk.token.create.submitWaitResult({
-    //   address,
-    //   collectionId,
-    //   data: {
-    //     image: {
-    //       url: tokenImageUrl
-    //     },
-    //     name: {
-    //       _: tokenName,
-    //     },
-    //     description: {
-    //       _: tokenDescription,
-    //     },
-    //     // attributes: {
-
-    //     // }
-    //   },
-    // });
-
-    // const tokenId = tokenResult.parsed?.tokenId;
-
-    // // Create a new token document in the database
-    // const createToken = await TokenModel.create({
-    //   tokenName,
-    //   tokenId,
-    //   collectionId,
-    //   tokenImageUrl,
-    //   tokenOwnerAddress: address,
-    //   tokenOwnerId: user._id,
-    //   tokenDescription,
-    //   tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
-    // });
+    const collection = await sdk.collection.get({ collectionId });
 
     // Create a new collection document in the database
     const collectionPayload = await CollectionModel.create({
       collectionOwner: user._id,
       collectionId,
-      // tokenId,
       collectionUrl: `https://uniquescan.io/opal/collections/${collectionId}`,
-      // tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
       walletAddress: address,
-      // token: createToken._id,
     });
 
     res.status(200).json({
       success: true,
-      message: "Collection and token created successfully",
+      message: "Collection created successfully",
       collectionPayload,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "An error occurred while creating the collection and token",
-      error: error,
+      message: "An error occurred while creating the collection",
+      error: error.message,
     });
   }
 };
 
 // Controller to mint a new token in an existing collection
 export const mintToken = async (req, res) => {
-  const { collectionId, mnemonic, tokenName, tokenDescription, tokenImageUrl } =
-    req.body;
+  const {
+    collectionId,
+    tokenName,
+    tokenDescription,
+    tokenImageUrl,
+    priceOfCoupon,
+  } = req.body;
   const userId = req.user.id;
+
   try {
     const user = await UserModel.findById(userId);
     if (!user) {
@@ -126,7 +109,15 @@ export const mintToken = async (req, res) => {
         message: "User not found",
       });
     }
-    // Find an account from the provided mnemonic
+    // Get mnemonic from logged in user
+    const mnemonic = user.mnemonic;
+    if (!mnemonic) {
+      return res.status(400).json({
+        success: false,
+        message: "User mnemonic not found",
+      });
+    }
+    // Find an account from the user's mnemonic
     const account = await KeyringProvider.fromMnemonic(mnemonic);
     const address = account.address;
 
@@ -153,37 +144,46 @@ export const mintToken = async (req, res) => {
       },
     });
 
-    const tokenId = result.parsed?.tokenId;
+    const tokenId = result.parsed.tokenId;
+    console.log(`This is the tokenId: ${tokenId}`);
+    const mintTokenCompleted = result.isCompleted;
+    console.log(`Token minting completed: ${mintTokenCompleted}`);
+
+    if (!mintTokenCompleted) {
+      return res.status(400).json({
+        success: false,
+        message: "Failed to mint token. No tokenId received.",
+      });
+    }
+
+    if (!tokenId) {
+      return res.status(400).json({
+        success: false,
+        message: "Failed to mint token. No tokenId received.",
+      });
+    }
 
     // Find the collection and add the new token
-    const findCollection = await CollectionModel.findOne({ collectionId });
     const isWinningToken = Math.random() < 0.1;
     console.log(isWinningToken);
 
-    if (findCollection) {
-      const mintToken = await TokenModel.create({
-        tokenName,
-        tokenId,
-        collectionId,
-        tokenImageUrl,
-        tokenImageUrl,
-        tokenOwnerAddress: address,
-        tokenOwnerId: user._id,
-        tokenDescription,
-        tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
-        isWinningToken,
-      });
-      findCollection.token.push(mintToken._id);
-      await findCollection.save();
-      return res.status(200).json({
-        success: true,
-        message: "Token minted successfully",
-        mintToken,
-      });
-    }
-    res.status(404).json({
-      success: false,
-      message: "Collection not found",
+    const mintToken = await TokenModel.create({
+      tokenName,
+      tokenId,
+      collectionId,
+      tokenImageUrl,
+      tokenOwnerAddress: address,
+      tokenOwnerId: user._id,
+      tokenDescription,
+      priceOfCoupon,
+      tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
+      isWinningToken,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Token minted successfully",
+      mintToken,
     });
   } catch (error) {
     res.status(500).json({
