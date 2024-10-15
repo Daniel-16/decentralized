@@ -29,10 +29,6 @@
             </div>
             <div class="modal-body">
                 <form id="transferForm">
-                    <div class="mb-3">
-                        <label for="mnemonic" class="form-label">Mnemonic:</label>
-                        <textarea id="mnemonic1" name="mnemonic" class="form-control" required></textarea>
-                    </div>
 
                     <div class="mb-3">
                         <label for="collectionId" class="form-label">Collection ID:</label>
@@ -45,8 +41,26 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="priceOfCoupon" class="form-label">Price of Coupon:</label>
+                        <input type="text" id="priceOfCoupon" class="form-control" name="priceOfCoupon" required>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="tokenDescription1" class="form-label">Token Description:</label>
                         <input type="text" id="tokenDescription1" class="form-control" name="tokenDescription" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="imageUpload" class="form-label">Upload Image:</label>
+                        <input type="file" id="imageUpload" class="form-control" accept="image/*" onchange="previewImage(event)" required>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <div id="imagePreview" class="border rounded" style="width: 150px; height: 150px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                <img id="selectedImage" src="" alt="Image Preview" style="max-width: 100%; max-height: 100%; display: none;">
+                            </div>
+                        </div>
                     </div>
 
                     <button id="mintTokenButton" type="submit" class="btn btn-danger w-100">Complete Mint</button>
@@ -73,8 +87,9 @@ $(document).ready(function() {
                 'Authorization': 'Bearer ' + token
             },
             success: function(response) {
-                $('#collections-container').empty();  // Clear existing content
+                $('#collections-container').empty();  
                 if (response && response.success) {
+                    console.log("collections", response);
                     if (response.collections && response.collections.length > 0) {
                         response.collections.forEach(function(collection) {
                             let tokensHtml = '';
@@ -96,10 +111,7 @@ $(document).ready(function() {
                                         <!-- Others Info -->
                                         <div class="row gx-2 align-items-center mt-3">
                                             <div class="col-8">
-                                                <span class="d-block fz-12"><i class="bi bi-bag me-1"></i>${tokenCount} tokens available</span>
-                                            </div>
-                                            <div class="col-4 text-end">
-                                                <button class="wishlist-btn" type="button"><i class="bi"></i></button>
+                                                <span class="d-block fz-12"><i class="bi bi-bag me-1"></i>Tokens available</span>
                                             </div>
                                         </div>
                                         <!-- Meta Info -->
@@ -107,8 +119,7 @@ $(document).ready(function() {
                                             <div class="col-12">
                                                 <div class="name-info d-flex align-items-center">
                                                     <div class="name-author">
-                                                        <a class="name d-block hover-primary fw-bold text-truncate" href="item-details.html" data-bs-toggle="tooltip" data-bs-placement="top" title="Fancy Car">${collection.collectionId}</a>
-                                                        <a class="author d-block fz-12 hover-primary text-truncate" href="author.html">${tokensHtml}</a>
+                                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Fancy Car">Collection ID: #${collection.collectionId}</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -187,69 +198,112 @@ $(document).ready(function() {
         e.preventDefault(); 
         $('#cover-spin').show(0);
 
-        // Hide the "Mint New Token" button and show the "Please wait" button
         $('#mintTokenButton').hide();
         $('#pleaseWaitButton').show();
 
-        const formData = {
-            mnemonic: $('#mnemonic1').val(),
-            collectionId: $('#collectionId').val(),
-            tokenName: $('#tokenName1').val(),
-            tokenDescription: $('#tokenDescription1').val()
+        const fileInput = $("#imageUpload")[0].files[0];
+
+        if (!fileInput) {
+            alert("Please select an image file.");
+            $('#cover-spin').hide(0);
+            return;
+        }
+
+        const reader = new FileReader();
+        
+        reader.readAsDataURL(fileInput);
+        
+        reader.onload = function () {
+            const base64Image = reader.result; 
+
+            const formData = {
+                collectionId: $('#collectionId').val(),
+                tokenName: $('#tokenName1').val(),
+                tokenDescription: $('#tokenDescription1').val(),
+                tokenImageUrl: base64Image, 
+                priceOfCoupon: $('#priceOfCoupon').val(),
+            };
+
+            const token = localStorage.getItem('token');
+
+            $.ajax({
+                url: '/api/mintToken', 
+                type: 'POST',
+                data: JSON.stringify(formData),
+                contentType: 'application/json',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                success: function(response) {
+                    $('#cover-spin').hide(0);
+                    
+                    if (response.success) {
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                        $('#transferModal').modal('hide');  
+                    } else {
+                        Swal.fire({
+                            position: "center",
+                            icon: "error",
+                            title: "An error occurred!",
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                        console.error('Failed to mint token:', response.message);
+                    }
+
+                    setTimeout(function() {
+                        $('#mintTokenButton').show();  
+                        $('#pleaseWaitButton').hide(); 
+                        location.reload();
+                    }, 1500);
+                },
+                error: function(xhr) {
+                    $('#cover-spin').hide(0);
+                    alert('An error occurred: ' + xhr.responseText);
+
+                    $('#mintTokenButton').show();
+                    $('#pleaseWaitButton').hide();
+                }
+            });
         };
 
-        const token = localStorage.getItem('token');
-
-        $.ajax({
-            url: '/api/mintToken', 
-            type: 'POST',
-            data: JSON.stringify(formData),
-            contentType: 'application/json',
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            success: function(response) {
-                $('#cover-spin').hide(0);
-                
-                if (response.success) {
-                    Swal.fire({
-                        position: "center",
-                        icon: "success",
-                        title: response.message,
-                        showConfirmButton: false,
-                        timer: 1500,
-                    });
-                    $('#transferModal').modal('hide');  // Close the modal
-                } else {
-                    Swal.fire({
-                        position: "center",
-                        icon: "error",
-                        title: "An error occurred!",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    });
-                    console.error('Failed to mint token:', response.message);
-                }
-
-                // After success or failure, restore the original buttons and reload the page after a delay
-                setTimeout(function() {
-                    $('#mintTokenButton').show();  // Show the Mint button again
-                    $('#pleaseWaitButton').hide(); // Hide the "Please wait" button
-                    location.reload();
-                }, 1500);
-            },
-            error: function(xhr) {
-                $('#cover-spin').hide(0);
-                alert('An error occurred: ' + xhr.responseText);
-
-                // In case of error, show the "Mint New Token" button and hide the "Please wait" button
-                $('#mintTokenButton').show();
-                $('#pleaseWaitButton').hide();
-            }
-        });
+        reader.onerror = function() {
+            alert("There was an error reading the file.");
+            $('#cover-spin').hide(0);
+            $('#mintTokenButton').show();
+            $('#pleaseWaitButton').hide();
+        };
     });
 });
 </script>
+
+
+<!-- preview image on upload -->
+<script>
+    function previewImage(event) {
+        const imagePreview = document.getElementById('selectedImage');
+        const file = event.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block'; // Show the image
+            };
+            reader.readAsDataURL(file);
+        } else {
+            imagePreview.src = '';
+            imagePreview.style.display = 'none'; // Hide the image
+        }
+    }
+</script>
+<!-- end: preview image on upload -->
 
 
 

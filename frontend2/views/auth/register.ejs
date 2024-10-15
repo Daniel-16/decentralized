@@ -88,7 +88,7 @@
                     <textarea id="mnemonicText" class="form-control" readonly></textarea>
                 </div>
 
-                <button id="copyMnemonicBtn" class="btn btn-primary w-100">Copy Token</button>
+                <button id="copyMnemonicBtn" class="btn btn-primary w-100">Copy Mnemonic</button>
                 <button id="mnemonicModalCloseBtn" class="btn btn-danger w-100">Close</button>
             </div>
         </div>
@@ -123,7 +123,7 @@
                     localStorage.setItem("token", response.token);
                     localStorage.setItem("username", response.user.username);
                     localStorage.setItem("email", response.user.email);
-                    localStorage.setItem("accountAddress", response.user.accountAddress);
+                    localStorage.setItem("accountAddress", response.user.account.address);
                     localStorage.setItem("hasReceivedToken", response.user.hasReceivedToken);
 
                     $("#mnemonicText").val(response.mnemonic); 

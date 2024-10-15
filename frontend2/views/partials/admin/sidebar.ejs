@@ -9,7 +9,9 @@
           <img src="/assets/img/bg-img/u2.jpg" alt="profile-user-pic" />
             <div class="ms-3">
                 <h6 class="lh-1 text-dark fz-18" id="usernameDisplay">Designing W.</h6>
-                <span class="badge bg-primary fz-12">Premium User</span>
+                <span class="badge bg-primary fz-12" id="userType">
+
+                </span>
             </div>
         </div>
       </div>
@@ -110,7 +112,7 @@
 
     function fetchUserBalance() {
       const wallet_address = localStorage.getItem("accountAddress");
-      const apiUrl = `/api/getUserBalance?wallet_address=${wallet_address}`;
+      const apiUrl = `/api/getUserBalance/${wallet_address}`;
 
       $.ajax({
         url: apiUrl,
@@ -178,16 +180,33 @@
         Authorization: `Bearer ${token}`,
       },
       success: function (response) {
-        if (response.success) {
-          // console.log(response);
+        if(response.success){
           if (!response.user.isAdmin) {
+            console.log('user. happening');
             $("#myCollectionsLink").hide();
             $("#myStoreLink").hide();
             $(".create-new-button").hide();
+            $("#userType").text("Premium User");
+          } else {
+            console.log('admin. happening')
+            $("#userType").text("Store Owner");
+            console.error("Failed to fetch user details:", response.error);
           }
-        } else {
-          console.error("Failed to fetch user details:", response.error);
         }
+        // if (response.success) {
+        //   console.log(response.user.isAdmin);
+        //   if (!response.user.isAdmin) {
+        //     console.log('user. happening');
+        //     $("#myCollectionsLink").hide();
+        //     $("#myStoreLink").hide();
+        //     $(".create-new-button").hide();
+        //     $("#userType").text("Premium User");
+        //   }
+        // } else {
+        //   console.log('admin. happening')
+        //   $("#userType").text("Store Owner");
+        //   console.error("Failed to fetch user details:", response.error);
+        // }
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.error("Error fetching user details:", errorThrown);

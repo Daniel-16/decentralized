@@ -7,8 +7,9 @@
 
 <div class="admin-wrapper">
     <div class="container">
-        <h5 class="mb-3">All My Tokens</h5>
+        <h3 class="mb-3">All My Tokens</h3>
         <div class="row g-4" id="collections-container">
+        <!-- <div class="row g-4"> -->
             
                 
 
@@ -67,64 +68,87 @@ $(document).ready(function() {
     function fetchUserCollections() {
         const token = localStorage.getItem('token');
         $.ajax({
-            url: '/api/getCollections',  
+            url: '/api/getUserToken',  
             type: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + token
             },
             success: function(response) {
-                $('#collections-container').empty();  // Clear existing content
+                $('#collections-container').empty();  
                 if (response && response.success) {
-                    console.log('Collections:', response.collections);
-                    if (response.collections && response.collections.length > 0) {
-                        response.collections.forEach(function(collection) {
+                    console.log('Response:', response);
+                    console.log('Collections:', response.tokens);
+                    if (response.tokens && response.tokens.length > 0) {
+                        response.tokens.forEach(function(token) {
                             let tokensHtml = '';
                             let tokenCount = 0;
 
-                            if (collection.token && collection.token.length > 0) {
-                                tokenCount = collection.token.length;
-                                collection.token.forEach(function(tokenItem) {
-                                    tokensHtml += `<div>Token ID: #${tokenItem.substring(0, 10) + '...'}</div>`;
-                                });
-                            } else {
-                                tokensHtml = '<div>No tokens available for this collection.</div>';
-                            }
+                            // if (collection.token && collection.token.length > 0) {
+                            //     tokenCount = collection.token.length;
+                            //     collection.token.forEach(function(tokenItem) {
+                            //         tokensHtml += `<div>Token ID: #${tokenItem.substring(0, 10) + '...'}</div>`;
+                            //     });
+                            // } else {
+                            //     tokensHtml = '<div>No tokens available for this collection.</div>';
+                            // }
 
                             const collectionItem = `
                             <div class="col-12 col-sm-6 col-xl-4 col-xxl-4">
-                                <div class="nft-card card border-0">
-                                    <div class="card-body">
-                                        <!-- Others Info -->
-                                        <div class="row gx-2 align-items-center mt-3">
-                                            <div class="col-8">
-                                                <span class="d-block fz-12"><i class="bi bi-bag me-1"></i>${tokenCount} token(s) available in parent collection</span>
-                                            </div>
+                    <!-- Featured Card -->
+                    <div class="nft-card card border-0">
+                        <div class="card-body">
+                            <div class="img-wrap">
+                                <img style="height: 200px; width: auto; object-fit: cover;" src="${token.tokenImageUrl}" alt="${token.tokenName}">                                
+                                <div class="badge bg-dark position-absolute">
+                                    <img src="/assets/img/core-img/fire.png" alt="">
+                                    New Listing
+                                </div>
+                            </div>
+                            <!-- Others Info -->
+                            <div class="row gx-2 align-items-center mt-3">
+                                <div class="col-12">
+                                    <span class="d-block fz-12"><i class="bi bi-bag me-1"></i>Available</span>
+                                </div>
+                            </div>
+                            <div class="row gx-2 align-items-center mt-2">
+                                <div class="col-7">
+                                    <div class="name-info d-flex align-items-center">
+                                        <div class="author-img position-relative">
+                                            <img class="shadow" src="/assets/img/bg-img/u2.jpg" alt="">
+                                            <i class="bi bi-check position-absolute bg-success"></i>
                                         </div>
-                                        <!-- Meta Info -->
-                                        <div class="row gx-2 align-items-center mt-2">
-                                            <div class="col-12">
-                                                <div class="name-info d-flex align-items-center">
-                                                    <div class="name-author">
-                                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Fancy Car">Collection ID: #${collection.collectionId}</a>
-                                                        <a class="author d-block fz-12 hover-primary text-truncate" href="#">Token ID: #${collection.tokenId}</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="col-12">
-                                                <a class="btn btn-danger rounded-pill btn-sm mt-3 w-100 btn-mint-token" href="#" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#transferModal" 
-                                                    data-token-id="${collection.tokenId}" 
-                                                    data-collection-id="${collection.collectionId}">
-                                                    <i class="me-1 bi bi-box-arrow-up-right"></i>Transfer Token
-                                                </a>
-
-                                            </div>
+                                        <div class="name-author">
+                                            <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Fancy Car">
+                                                ${token.tokenName}
+                                            </a>
+                                            <a class="author d-block fz-12 hover-primary text-truncate" href="author.html">
+                                                #${token.tokenId}-${token.collectionId}
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-5">
+                                    <div class="price text-end"><span class="fz-12 d-block">Current Price</span>
+                                    <h6 class="mb-0">UNQ ${new Intl.NumberFormat('en-US', { 
+                                        minimumFractionDigits: 2, 
+                                        maximumFractionDigits: 2 
+                                    }).format(token.priceOfCoupon)}</h6>                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <a class="btn btn-danger rounded-pill btn-md mt-3 w-100 btn-mint-token" href="#" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#transferModal" 
+                                        data-token-id="${token.tokenId}" 
+                                        data-collection-id="${token.collectionId}">
+                                        <i class="me-1 bi bi-arrow-left-right"></i>
+                                        Swap Token                                    
+                                        <i class="me-1 bi bi-arrow-left-right"></i>
+                                        </a>
+                                </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
                             `;
 
                             $('#collections-container').append(collectionItem);

@@ -23,26 +23,26 @@
 <div class="divider"></div>
 <div class="live-bids-wrapper">
     <div class="container">
-    <div class="row g-4 justify-content-center" id="itemsContainer">
-        
-    </div>
+        <div class="row g-4 justify-content-center" id="itemsContainer">
+            
+        </div>
     </div>
     <div class="container">
-    <div class="text-center mt-70"><a class="btn btn-primary btn-sm rounded-pill" href="#">Load more<i class="ms-1 bi bi-arrow-repeat"></i></a></div>
+        <div class="text-center mt-70"><a class="btn btn-primary btn-sm rounded-pill" href="#">Load more<i class="ms-1 bi bi-arrow-repeat"></i></a></div>
     </div>
 </div>
 <div class="divider"></div>
 <!-- Dark Light Wrapper -->
 <div class="dark-light-wrapper" data-aos="zoom-in" data-aos-duration="750" data-aos-delay="200">
     <div class="container">
-    <div class="d-flex align-items-center justify-content-between">
-        <h5 class="mb-0 text-white" data-aos="fade-up" data-aos-duration="750" data-aos-delay="500">Light mode is available!</h5>
-        <!-- Switch -->
-        <div class="dark-light-mode" data-aos="fade-up" data-aos-duration="750" data-aos-delay="800">
-        <input id="darkLightSwitch" type="checkbox">
-        <label class="shadow" for="darkLightSwitch">Toggle</label>
+        <div class="d-flex align-items-center justify-content-between">
+            <h5 class="mb-0 text-white" data-aos="fade-up" data-aos-duration="750" data-aos-delay="500">Light mode is available!</h5>
+            <!-- Switch -->
+            <div class="dark-light-mode" data-aos="fade-up" data-aos-duration="750" data-aos-delay="800">
+                <input id="darkLightSwitch" type="checkbox">
+                <label class="shadow" for="darkLightSwitch">Toggle</label>
+            </div>
         </div>
-    </div>
     </div>
 </div>
 
@@ -58,19 +58,20 @@ $(document).ready(function () {
     // Fetch and display items
     function loadItems() {
         $.ajax({
-            url: "/api/getItems",
+            url: "/api/getAllCoupons",
             method: "GET",
             success: function (response) {
+                console.log(response);
                 if (response.success) {
-                    const items = response.items;
+                    const coupons = response.coupons;
                     let itemsHTML = "";
-                    items.forEach((item) => {
+                    coupons.forEach((coupon) => {
                         itemsHTML += `
-                        <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                        <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
                             <div class="nft-card card shadow-sm">
                             <div class="card-body">
                                 <div class="img-wrap">
-                                <img src="${item.itemImage}" alt="${item.nameOfItem}">
+                                <img src="${coupon.tokenImageUrl}" alt="${coupon.tokenName}">
                                 </div>
                                 <!-- Others Info -->
                                 <div class="row gx-2 align-items-center mt-3">
@@ -86,24 +87,27 @@ $(document).ready(function () {
                                 <div class="col-8">
                                     <div class="name-info d-flex align-items-center">
                                     <div class="author-img position-relative">
-                                        <img class="shadow" src="/assets/img/bg-img/u4.jpg" alt="">
+                                        <img class="shadow" src="/assets/img/bg-img/u2.jpg" alt="">
                                         <i class="bi bi-check position-absolute bg-success"></i>
                                     </div>
                                     <div class="name-author">
-                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.nameOfItem}">${item.nameOfItem}</a>
-                                        <a class="author d-block fz-12 hover-primary text-truncate" href="#">@${item.itemOwner}</a>
+                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="${coupon.tokenName}">${coupon.tokenName}</a>
+                                        <a class="author d-block fz-12 hover-primary text-truncate" href="#">@${coupon.ownerName}</a>
                                     </div>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="price text-end">
                                     <span class="fz-12 d-block">Current Price</span>
-                                    <h6 class="mb-0">${item.priceOfItem} UNQ</h6>
+                                    <h6 class="mb-0">UNQ ${new Intl.NumberFormat('en-US', { 
+                                        minimumFractionDigits: 2, 
+                                        maximumFractionDigits: 2 
+                                    }).format(coupon.priceOfCoupon)}</h6>
                                     </div>
                                 </div>
                                 <div class="col-12">
-                                    <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 purchase-btn" href="#" data-item-id="${item._id}">Purchase Now</a>
-                                    <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 pleasewait-btn" id="pleaseWait-${item._id}" href="#" style="display: none;" disabled>Please wait...</a>
+                                    <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 purchase-btn" href="#" data-collection-id="${coupon.collectionId}" data-token-id="${coupon.tokenId}" data-item-id="${coupon._id}">Purchase Now</a>
+                                    <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 pleasewait-btn" id="pleaseWait-${coupon._id}" href="#" style="display: none;" disabled>Please wait...</a>
                                 </div>
                                 </div>
                             </div>
@@ -133,41 +137,62 @@ $(document).ready(function () {
         $('.purchase-btn').off('click').on('click', function(event) {
             event.preventDefault();
 
-            const purchaseButton = $(this); // Reference to the purchase button
-            const itemId = purchaseButton.data('item-id'); // Get the item id from data attribute
-            const pleaseWaitButton = $(`#pleaseWait-${itemId}`); // Target the "Please wait..." button by ID
-            const quantity = 1; // Assume quantity is always 1 for simplicity
+            const purchaseButton = $(this); 
+            const itemId = purchaseButton.data('item-id'); 
+            const tokenId = purchaseButton.data('token-id'); 
+            const collectionId = purchaseButton.data('collection-id'); 
+            const pleaseWaitButton = $(`#pleaseWait-${itemId}`);
 
-            // Show the "Please wait..." button and disable it, hide the "Purchase Now" button
             purchaseButton.hide();
             pleaseWaitButton.show().prop('disabled', true);
 
-            // Get the token from localStorage
             const token = localStorage.getItem("token");
 
             $.ajax({
-                url: '/api/purchaseItem',
+                url: '/api/purchaseCoupon',
                 method: 'POST',
-                contentType: 'application/json', // Important for sending JSON
+                contentType: 'application/json', 
                 data: JSON.stringify({
-                    itemId: itemId,
-                    quantity: quantity
+                    tokenId: tokenId,
+                    collectionId: collectionId
                 }),
                 headers: {
                     Authorization: `Bearer ${token}` 
                 },
                 success: function(response) {
                     if (response.success) {
-                        toastr.success("Successfully purchased 1 unit!");
+                        Swal.fire({
+                            title: "Purchase Successful!",
+                            text: "You have successfully purchased this coupon! Visit your KooponCraft dashboard to redeem it.",
+                            icon: "success"
+                        });
+                        // toastr.success("Successfully purchased 1 unit!");
                     } else {
                         alert('Error: ' + response.error);
                     }
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    alert('Error: ' + errorThrown);
+                    let errorResponse = jqXHR.responseJSON;
+                    if (errorResponse && errorResponse.error) {
+                        Swal.fire({
+                            title: "Oooops!",
+                            text: errorResponse.error,
+                            icon: "error"
+                        });
+                        if(errorResponse.error === 'Token is not valid') {
+                        Swal.fire({
+                            title: "Oooops!",
+                            text: "You have to be signed in to purchase a coupon.",
+                            icon: "error"
+                        });
+                    }
+                        // alert('Error: ' + errorResponse.error); 
+                    } 
+                    else {
+                        alert('Error: An unexpected error occurred.');
+                    }
                 },
                 complete: function() {
-                    // After the request is complete, revert buttons to their original state
                     pleaseWaitButton.hide();
                     purchaseButton.show();
                 }

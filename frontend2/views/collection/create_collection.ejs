@@ -18,46 +18,27 @@
                             <div class="row align-items-center">
                                 <div class="col-12">
                                 <h4>Create Collection</h4>
-                                <div class="col-12">
-                                    <div class="form-group mb-4">
-                                        <label class="mb-2 fz-16" for="title">Mnemonic (Secret Phrase) <span class="text-danger">*</span></label>
-                                        <textarea name="mnemonic" id="mnemonic" class="form-control"></textarea>
-                                        <!-- <input class="form-control" id="title" type="text" placeholder="Macaw Bird"> -->
-                                    </div>
-                                </div>
                                 <div class="row">
-                                    <div class="col-6">
+                                    <div class="col-12">
                                         <div class="form-group mb-4">
                                             <label class="mb-2 fz-16" for="name">Name</label>
                                             <input class="form-control" name="name" id="name" type="text" placeholder="Enter a name">
                                         </div>
                                     </div>
+                                </div>
+                                <br>
+                                <div class="row">
                                     <div class="col-6">
                                         <div class="form-group mb-4">
                                             <label class="mb-2 fz-16" for="description">Description</label>
                                             <textarea name="description" id="description" class="form-control"></textarea>
                                         </div>
                                     </div>
-                                </div>
-                                <h4>Token Details</h4>
-                                <div class="row">
                                     <div class="col-6">
                                         <div class="form-group mb-4">
                                             <label class="mb-2 fz-16" for="tokenPrefix">Token prefix</label>
                                             <input class="form-control" name="tokenPrefix" id="tokenPrefix" type="text" placeholder="Enter a prefix">
                                         </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group mb-4">
-                                            <label class="mb-2 fz-16" for="tokenName">Token name</label>
-                                            <input name="tokenName" id="tokenName" class="form-control" placeholder="Enter a name">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="form-group mb-4">
-                                        <label class="mb-2 fz-16" for="price">Description</label>
-                                        <textarea name="tokenDescription" id="tokenDescription" class="form-control"></textarea>
                                     </div>
                                 </div>
                                 
@@ -100,29 +81,25 @@
         $('#loadingMessage').show();
         // $('#loadingMessage').removeClass('d-none');
 
-        const mnemonic = $('#mnemonic').val();
         const collectionName = $('#name').val();
         const description = $('#description').val();
         const tokenPrefix = $('#tokenPrefix').val();
-        const tokenDescription = $('#tokenDescription').val();
-        const tokenName = $('#tokenName').val();
 
         const token = localStorage.getItem('token');
 
         $.ajax({
-            url: '/api/createAndMint',
+            // url: '/api/createAndMint',
+            // url: '/api/mintToken',
+            url: '/api/createCollection',
             method: 'POST',
             contentType: 'application/json',
             headers: {
                 Authorization: `Bearer ${token}`,
             },
             data: JSON.stringify({
-                mnemonic: mnemonic,
-                name: collectionName,
+                name: collectionName, 
                 description: description,
                 tokenPrefix: tokenPrefix,
-                tokenName: tokenName,
-                tokenDescription: tokenDescription
             }),
             success: function(response) {
                 $('#cover-spin').hide(0);
@@ -131,7 +108,7 @@
                         position: "center",
                         icon: "success",
                         title: response.message,
-                        showConfirmButton: false,
+                        showConfirmButton: true,
                         timer: 1500,
                     });
                     $('#response').html(
@@ -145,14 +122,25 @@
                     // Refresh user balance after creating a collection
                     fetchUserBalance();
 
-                    location.reload();
+                    // location.reload();
+                    location.assign('/collection/my-collections')
                 } else {
+                    $('#loadingMessage').hide();
                     $('#response').html(`<p class="error">Error: ${response.error}</p>`);
                 }
             },
             error: function(jqXHR) {
+                $('#loadingMessage').hide();
+                $('#createButton').show();
                 $('#cover-spin').hide(0);
                 $('#response').html(`<p class="error">An error occurred: ${jqXHR.responseText}</p>`);
+                Swal.fire({
+                    position: "center",
+                    icon: "error",
+                    title: response.message,
+                    showConfirmButton: true,
+                    timer: 1500,
+                });
             }
         });
     });
@@ -160,7 +148,7 @@
     // Function to fetch user balance
     function fetchUserBalance() {
         const wallet_address = localStorage.getItem("accountAddress");
-        const apiUrl = `/api/getUserBalance?wallet_address=${wallet_address}`;
+        const apiUrl = `/api/getUserBalance/${wallet_address}`;
         $.ajax({
             url: apiUrl,
             method: "GET",
