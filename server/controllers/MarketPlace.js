@@ -38,6 +38,7 @@ export const getStoreCoupons = async (req, res) => {
     }
     const coupons = await TokenModel.find({
       tokenOwnerAddress: accountAddress,
+      isPurchased: false,
     });
     res.status(200).json({
       success: true,

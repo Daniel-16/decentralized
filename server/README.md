@@ -70,6 +70,10 @@
   - Authorization required: `Bearer <token>`
   - Response:
     - JSON object containing user details
+- `GET /api/getStores`: Retrieve details of all stores
+  - Authorization required: `Bearer <token>`
+  - Response:
+    - JSON object containing all stores
 
 ### Items (Ignore for now)
 
@@ -153,12 +157,14 @@
     - `collectionId`: ID of the collection containing the coupon
   - Description: This endpoint allows the user to purchase a coupon with their UNQ balance. It updates the coupon's purchase status and adds the coupon to the user's collection.
 
-- `DELETE /api/burnToken`: Burn a token
+- `DELETE /api/burnToken`: Burn a token. Also used to redeem a coupon.
   - Authorization required: `Bearer <token>`
   - Required fields: `collectionId`, `tokenId`
-  - Description: This endpoint allows the store owners (admins) to burn a token from a user's account.
+  - Description: This endpoint allows the user to burn a token. If the token is a coupon, it will be redeemed.
 
 ## Marketplace
 
 - `GET /api/getAllCoupons`: Retrieve all coupons
   - Description: Fetches all coupons available for purchase. Returns only coupons that have not been purchased.
+- `GET /api/getStoreCoupons`: Retrieve all coupons for a specific store
+  - Description: Fetches all coupons available for purchase for a specific store. Returns only coupons that have not been purchased.
