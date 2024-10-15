@@ -11,11 +11,7 @@ import {
   getUser,
   loginUser,
 } from "../controllers/UserController.js";
-import {
-  createItem,
-  getAllItems,
-  getStoreItems,
-} from "../controllers/ItemsController.js";
+import { createItem, getAllItems } from "../controllers/ItemsController.js";
 import { verifyToken } from "../middleware/generateToken.js";
 import {
   checkBuyerPurchases,
@@ -23,10 +19,10 @@ import {
   purchaseCoupon,
 } from "../controllers/TransactionController.js";
 import { getUserBalance } from "../controllers/getUserBalance.js";
-import { createTestCollection } from "../controllers/CreateCollection.js";
 import { transferTokenController } from "../controllers/TransferToken.js";
 import { burnToken } from "../controllers/BurnToken.js";
-import { getAllCoupons } from "../controllers/MarketPlace.js";
+import { getAllCoupons, getStoreCoupons } from "../controllers/MarketPlace.js";
+import { getStores } from "../controllers/GetStores.js";
 const router = express.Router();
 
 /**
@@ -55,7 +51,7 @@ router.get("/getUser", verifyToken, getUser);
 // router.post("/createCoupon/:storeId", createCoupon); //Not in use for now
 // router.post("/createAccount", createAccount); //Not in use for now
 // router.get("/getAccount", getAccount); //Not in use for now
-// router.get("/getStores", getStores); //Not in use for now
+router.get("/getStores", verifyToken, getStores);
 // router.get("/getServices", getServices); //Not in use for now
 // router.get("/getCoupons", getCoupons); //Not in use for now
 // router.put("/redeemCoupon", redeemCoupon); //Not in use for now
@@ -139,12 +135,12 @@ router.get("/getUserToken", verifyToken, getUserToken);
  */
 router.get("/getUserTokensAndPrizes", verifyToken, getUserTokensAndPrizes);
 
-/**
- * @route GET /api/getStoreItems
- * @description Get store items
- * @access Private
- */
-router.get("/getStoreItems", verifyToken, getStoreItems);
+// /**
+//  * @route GET /api/getStoreItems
+//  * @description Get store items
+//  * @access Private
+//  */
+// router.get("/getStoreItems", verifyToken, getStoreItems);
 
 /**
  * @route DELETE /api/burnToken
@@ -159,5 +155,12 @@ router.delete("/burnToken", verifyToken, burnToken);
  * @access Private
  */
 router.get("/getAllCoupons", getAllCoupons);
+
+/**
+ * @route GET /api/getStoreCoupons/:accountAddress
+ * @description Get store coupons
+ * @access Private
+ */
+router.get("/getStoreCoupons/:accountAddress", verifyToken, getStoreCoupons);
 
 export default router;
