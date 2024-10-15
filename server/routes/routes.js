@@ -2,6 +2,7 @@ import express from "express";
 import {
   createCollectionController,
   getUserCollections,
+  getUserToken,
   getUserTokensAndPrizes,
   mintToken,
 } from "../controllers/CreateAndMintToken.js";
@@ -128,6 +129,8 @@ router.get("/checkStorePurchases", verifyToken, checkStorePurchases);
  * @access Private
  */
 router.get("/getCollections", verifyToken, getUserCollections);
+
+router.get("/getUserToken", verifyToken, getUserToken);
 
 /**
  * @route GET /api/getUserTokensAndPrizes
