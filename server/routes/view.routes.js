@@ -1,6 +1,7 @@
 import express from "express";
 import { redirectIfNotAuthenticated } from "../middleware/redirectIfNotAuthenticated.js";
 import { checkAuth } from "../middleware/checkAuth.js";
+import { getStoreCoupons } from "../controllers/MarketPlace.js";
 const router = express.Router();
 
 router.use(checkAuth);
@@ -83,6 +84,11 @@ router.get("/my-wallet", async function (req, res) {
 
 router.get("/transactions", async function (req, res) {
   res.render("admin/transactions/my_transactions");
+});
+
+// Assuming you have an express router
+router.get("/store/:accountAddress", async function (req, res) {
+  res.render("store/store-coupon");
 });
 
 export default router;
