@@ -123,7 +123,7 @@
                     localStorage.setItem("token", response.token);
                     localStorage.setItem("username", response.user.username);
                     localStorage.setItem("email", response.user.email);
-                    localStorage.setItem("accountAddress", response.user.account.address);
+                    localStorage.setItem("accountAddress", response.account.address);
                     localStorage.setItem("hasReceivedToken", response.user.hasReceivedToken);
 
                     $("#mnemonicText").val(response.mnemonic); 
