@@ -51,6 +51,7 @@
 
 
 <%- include('../partials/home/footer') %>
+<script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@3.0.3/tsparticles.confetti.bundle.min.js"></script>
 
 <!-- load items and handle purchase -->
 <script>
@@ -134,17 +135,16 @@ $(document).ready(function () {
     // End: fetch and display items
 
     // Handle purchase 
-    function attachPurchaseHandlers() {
+   function attachPurchaseHandlers() {
         $('.purchase-btn').off('click').on('click', function(event) {
             event.preventDefault();
 
-            const purchaseButton = $(this); 
+            const purchaseButton = $(this);
             const itemId = purchaseButton.data('item-id'); // Get the item id from data attribute
             const itemPrice = parseFloat(purchaseButton.data('item-price')); // Get the item price from data attribute
-            const storeOwner = parseFloat(purchaseButton.data('store-owner')); 
+            const storeOwner = purchaseButton.data('store-owner'); // Get the store owner address
             const quantity = 1; // Assume quantity is always 1 for simplicity
             const tokenId = purchaseButton.data('token-id'); 
-            const collectionId = purchaseButton.data('collection-id'); 
             const pleaseWaitButton = $(`#pleaseWait-${itemId}`);
 
             purchaseButton.hide();
@@ -164,39 +164,63 @@ $(document).ready(function () {
                     Authorization: `Bearer ${token}` 
                 },
                 success: function(response) {
-                    console.log('we are winning');
                     if (response.success) {
                         // Update quantity and total spent in localStorage
                         let purchasedItems = JSON.parse(localStorage.getItem("purchasedItems")) || {};
                         let totalSpent = parseFloat(localStorage.getItem("totalSpent")) || 0;
+                        let storeSpendings = JSON.parse(localStorage.getItem("storeSpendings")) || {};
 
+                        // Check if this store has any previous purchases
+                        if (!storeSpendings[storeOwner]) {
+                            storeSpendings[storeOwner] = 0;
+                        }
+
+                        // Add current item's price to store spending and total spent
+                        storeSpendings[storeOwner] += itemPrice * quantity;
+                        totalSpent += itemPrice * quantity;
+
+                        // Update purchased items
                         if (purchasedItems[itemId]) {
-                            // If the item already exists, increase the quantity
                             purchasedItems[itemId].quantity += quantity;
                             purchasedItems[itemId].totalPrice += itemPrice * quantity;
                         } else {
-                            // Otherwise, set the initial quantity and total price
                             purchasedItems[itemId] = {
                                 quantity: quantity,
                                 totalPrice: itemPrice * quantity
                             };
                         }
 
-                        // Update total spent based on the item price and quantity purchased
-                        totalSpent += itemPrice * quantity;
-
                         // Save updated data back to localStorage
                         localStorage.setItem("purchasedItems", JSON.stringify(purchasedItems));
                         localStorage.setItem("totalSpent", totalSpent.toFixed(2));
+                        localStorage.setItem("storeSpendings", JSON.stringify(storeSpendings));
+
+                        // Check if customer has spent more than 5000 in this store
+                        if (storeSpendings[storeOwner] > 5000) {
+                            console.log(`Customer has spent over 5000 in store: ${storeOwner}`);
+                                confetti({
+                                    particleCount: 100,
+                                    spread: 70,
+                                    origin: { y: 0.6 },
+                                });
+                                // toastr.success("Successfully purchased 1 unit!");
+                            Swal.fire({
+                                title: "Coupon won!",
+                                text: "You've won a coupon! Check your profile for more details!",
+                                icon: "success",
+                                timer: 1500,  
+                                showConfirmButton: false  
+                            });
+                        }
+
                         Swal.fire({
                             title: "Purchase Successful!",
                             text: "You have successfully purchased 1 unit of this item! Buy more and stand a chance to win exclusive coupons.",
                             icon: "success",
-                            timer: 1500,  
-                            showConfirmButton: false  
+                            timer: 1500,
+                            showConfirmButton: false
                         });
-                        // location.reload();
-                        // toastr.success("Successfully purchased 1 unit!");
+
                     } else {
                         alert('Error: ' + response.error);
                     }
@@ -209,16 +233,7 @@ $(document).ready(function () {
                             text: errorResponse.error,
                             icon: "error"
                         });
-                        if(errorResponse.error === 'Token is not valid') {
-                        Swal.fire({
-                            title: "Oooops!",
-                            text: "You have to be signed in to purchase a coupon.",
-                            icon: "error"
-                        });
-                    }
-                        // alert('Error: ' + errorResponse.error); 
-                    } 
-                    else {
+                    } else {
                         alert('Error: An unexpected error occurred.');
                     }
                 },
@@ -229,7 +244,6 @@ $(document).ready(function () {
             });
         });
     }
-    // End: handle purchase 
 
     // Load items when ready
     loadItems();
