@@ -25,7 +25,11 @@ router.get("/login", async function (req, res) {
 // });
 
 // shop/purchase items
-router.get("/shop", async function (req, res) {
+router.get("/shop/nft-marketplace", async function (req, res) {
+  res.render("items/marketplace");
+});
+
+router.get("/shop/items", async function (req, res) {
   res.render("items/shop");
 });
 

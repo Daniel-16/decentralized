@@ -5,7 +5,7 @@
 
 
 
-    <div class="welcome-area pt-120">
+<div class="welcome-area pt-120">
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-12 col-md-10 col-xl-8">
@@ -18,7 +18,7 @@
             you could redeem that for your drink—or, if coffee isn’t your thing, 
             you could sell it to someone else who really wants it. The possibilities are endless.
           </p>
-          <a class="btn btn-primary rounded-pill" href="/shop" data-aos="fade-up" data-aos-duration="750" data-aos-delay="800">
+          <a class="btn btn-warning rounded-pill" href="/shop" data-aos="fade-up" data-aos-duration="750" data-aos-delay="800">
             <i class="me-2 bi bi-grid-3x3-gap"></i> View All Items
           </a>
         </div>
@@ -38,7 +38,7 @@
               <h2 class="mb-0 ms-3">Latest Items in our stores</h2>
             </div>
           </div>
-          <div class="col-5 text-end"><a class="btn rounded-pill btn-outline-primary btn-sm border-2 mb-5" href="/shop">View All Items</a></div>
+          <div class="col-5 text-end"><a class="btn rounded-pill btn-outline-primary btn-sm border-2 mb-5" href="/shop/items">View All Items</a></div>
         </div>
       </div>
       <div class="container">
@@ -146,10 +146,12 @@
       <div class="cta-text bg-gradient p-4 p-sm-5 bg-primary" data-aos="zoom-in" data-aos-duration="750" data-aos-delay="300">
         <div class="row align-items-center">
           <div class="col-12 col-md-8 col-lg-9">
-            <h2 class="mb-3 mb-md-0" data-aos="fade-up" data-aos-duration="750" data-aos-delay="600">Resources for getting started with KooponCraft.</h2>
+            <h2 class="mb-3 mb-md-0" data-aos="fade-up" data-aos-duration="750" data-aos-delay="600">
+              Spare No More Time! Get Started With KooponCraft Right Away!
+            </h2>
           </div>
           <div class="col-12 col-md-4 col-lg-3">
-            <div class="text-md-end"><a class="btn btn-warning rounded-pill" href="#" data-aos="zoom-in" data-aos-duration="750" data-aos-delay="900">Get Started</a></div>
+            <div class="text-md-end"><a class="btn btn-warning rounded-pill" href="/register" data-aos="zoom-in" data-aos-duration="750" data-aos-delay="900">Get Started</a></div>
           </div>
         </div>
       </div>
@@ -206,6 +208,8 @@
 
 
 <%- include('partials/home/footer') %>
+<script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@3.0.3/tsparticles.confetti.bundle.min.js"></script>
+
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!-- handle list of items dynamically -->
@@ -337,7 +341,19 @@ $(document).ready(function () {
         },
         success: function(response) {
           if (response.success) {
-            toastr.success("Successfully purchased 1 unit!");
+            confetti({
+              particleCount: 100,
+              spread: 70,
+              origin: { y: 0.6 },
+            });
+            // toastr.success("Successfully purchased 1 unit!");
+            Swal.fire({
+              title: "Purchase Successful!",
+              text: "You have successfully purchased 1 unit of this item! Buy more and stand a chance to win exclusive coupons.",
+              icon: "success",
+              timer: 1500,  
+              showConfirmButton: false  
+          });
           } else {
             alert('Error: ' + response.error);
           }
@@ -367,16 +383,15 @@ $(document).ready(function () {
 </script>
 
 
-<script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@3.0.3/tsparticles.confetti.bundle.min.js"></script>
 <script>
     $('document').ready(function(){
       const token = localStorage.getItem("token");
       
       
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-      });
+      // confetti({
+      //   particleCount: 100,
+      //   spread: 70,
+      //   origin: { y: 0.6 },
+      // });
     })
 </script>
