@@ -107,7 +107,7 @@ $(document).ready(function () {
                                     </div>
                                 </div>
                                 <div class="col-12">
-                                    <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 purchase-btn" href="#" data-token-id="${item._id}" data-item-id="${item._id}" data-item-price="${item.priceOfItem}">Purchase Now</a>                                    
+                                    <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 purchase-btn" href="#" data-token-id="${item._id}" data-item-id="${item._id}" data-store-owner="${item.itemOwnerAddress}" data-item-price="${item.priceOfItem}">Purchase Now</a>                                    
                                     <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 pleasewait-btn" id="pleaseWait-${item._id}" href="#" style="display: none;" disabled>Please wait...</a>
                                 </div>
                                 </div>
@@ -141,6 +141,7 @@ $(document).ready(function () {
             const purchaseButton = $(this); 
             const itemId = purchaseButton.data('item-id'); // Get the item id from data attribute
             const itemPrice = parseFloat(purchaseButton.data('item-price')); // Get the item price from data attribute
+            const storeOwner = parseFloat(purchaseButton.data('store-owner')); 
             const quantity = 1; // Assume quantity is always 1 for simplicity
             const tokenId = purchaseButton.data('token-id'); 
             const collectionId = purchaseButton.data('collection-id'); 
