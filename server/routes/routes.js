@@ -22,6 +22,10 @@ import { transferTokenController } from "../controllers/TransferToken.js";
 import { burnToken } from "../controllers/BurnToken.js";
 import { getAllCoupons, getStoreCoupons } from "../controllers/MarketPlace.js";
 import { getStores } from "../controllers/GetStores.js";
+import {
+  acceptCouponSwap,
+  initiateCouponSwap,
+} from "../controllers/SwapCoupons.js";
 const router = express.Router();
 
 /**
@@ -159,5 +163,19 @@ router.get("/getAllCoupons", getAllCoupons);
  * @access Private
  */
 router.get("/getStoreCoupons/:accountAddress", verifyToken, getStoreCoupons);
+
+/**
+ * @route POST /api/initiateCouponSwap
+ * @description Initiate a coupon swap
+ * @access Private
+ */
+router.post("/initiateCouponSwap", verifyToken, initiateCouponSwap);
+
+/**
+ * @route POST /api/acceptCouponSwap
+ * @description Accept a coupon swap
+ * @access Private
+ */
+router.post("/acceptCouponSwap", verifyToken, acceptCouponSwap);
 
 export default router;

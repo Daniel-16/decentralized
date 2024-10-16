@@ -158,9 +158,27 @@
   - Description: This endpoint allows the user to purchase a coupon with their UNQ balance. It updates the coupon's purchase status and adds the coupon to the user's collection.
 
 - `DELETE /api/burnToken`: Burn a token. Also used to redeem a coupon.
+
   - Authorization required: `Bearer <token>`
   - Required fields: `collectionId`, `tokenId`
   - Description: This endpoint allows the user to burn a token. If the token is a coupon, it will be redeemed.
+
+- `POST /api/initiateCouponSwap`: Initiate a coupon swap with another user
+
+  - Authorization required: `Bearer <token>`
+  - Required fields:
+    - `ownCollectionId`: ID of the collection containing the coupon to swap from the coupon owner's collection
+    - `ownTokenId`: ID of the coupon to swap from the coupon owner's collection
+    - `desiredCollectionId`: ID of the collection containing the coupon to swap to the coupon owner's collection
+    - `desiredTokenId`: ID of the coupon to swap to the coupon owner's collection
+    - `recipientAddress`: Wallet address of the user to swap the coupon with
+  - Description: This endpoint allows the user to initiate a coupon swap with another user. It updates the coupon's swap status and adds the coupon to the user's collection.
+
+- `POST /api/acceptCouponSwap`: Accept a coupon swap with another user
+  - Authorization required: `Bearer <token>`
+  - Required fields:
+    - `swapOfferId`: ID of the swap offer to accept
+  - Description: This endpoint allows the user to accept a coupon swap with another user. It updates the coupon's swap status and adds the coupon to the user's collection.
 
 ## Marketplace
 
