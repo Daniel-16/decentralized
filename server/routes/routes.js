@@ -11,7 +11,7 @@ import {
   getUser,
   loginUser,
 } from "../controllers/UserController.js";
-import { createItem, getAllItems } from "../controllers/ItemsController.js";
+import { createItem, getAllItems, getStoreItems } from "../controllers/ItemsController.js";
 import { verifyToken } from "../middleware/generateToken.js";
 import {
   checkBuyerPurchases,
@@ -144,7 +144,7 @@ router.get("/getUserTokensAndPrizes", verifyToken, getUserTokensAndPrizes);
 //  * @description Get store items
 //  * @access Private
 //  */
-// router.get("/getStoreItems", verifyToken, getStoreItems);
+router.get("/getStoreItems", verifyToken, getStoreItems);
 
 /**
  * @route DELETE /api/burnToken

@@ -7,6 +7,26 @@
 
 <div class="admin-wrapper">
     <div class="container">
+        <div class="pb-4 row justify-content-center">
+            <!-- <div class="col-12 text-center">
+                <h4 class="mb-3">Your current wallet</h4>
+            </div> -->
+            <div class="col-12 col-xl-12 col-xxl-12">
+                <div class="card wallet-card shadow-sm">
+                    <div class="card-body px-4 text-center">
+                        <div class="d-flex align-items-center">
+                            <!-- <div class="img-wrap">
+                                </div> -->
+                            <h4 class="mb-0 me-3">Got a Coupon to Swap?</h4>
+                            <a class="btn btn-sm btn-warning rounded-pill ms-auto" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#acceptCouponModal"  href="#">Swap</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
         <h3 class="mb-3">All My Coupons</h3>
         <div class="row g-4" id="collections-container">
         <!-- <div class="row g-4"> -->
@@ -20,20 +40,16 @@
 
 
 
-<!-- modal for transfer Token -->
+<!-- modal for swap Token -->
 <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="transferModalLabel">Transfer Token to another UNQ wallet beneficiary.</h5>
+                <h5 class="modal-title" id="transferModalLabel">Swap Token with another UNQ wallet beneficiary.</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="transferForm">
-                    <div class="mb-3">
-                        <label for="mnemonic" class="form-label">Mnemonic:</label>
-                        <textarea id="mnemonic" name="mnemonic" class="form-control" required></textarea>
-                    </div>
 
                     <div class="mb-3">
                         <label for="collectionId" class="form-label">Collection ID:</label>
@@ -42,16 +58,58 @@
 
                     <div class="mb-3">
                         <label for="tokenId" class="form-label">Token ID:</label>
-                        <input type="text" id="tokenId" class="form-control" name="tokenId" required>
+                        <input type="text" id="tokenId" class="form-control" readonly name="tokenId" required>
+                    </div>
+
+                    <hr>
+                    <h4 class="text-dark">Recipient Details</h4>
+                    <div class="mb-3">
+                        <label for="desiredTokenId" class="form-label">Destination Token ID :</label>
+                        <input type="text" id="desiredTokenId" class="form-control" name="desiredTokenId" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="tokenDescription1" class="form-label">Recipient Wallet Address :</label>
-                        <input type="text" id="recipient" class="form-control" name="recipient" required>
+                        <label for="desiredCollectionId" class="form-label">Destination Collection ID :</label>
+                        <input type="text" id="desiredCollectionId" class="form-control" name="desiredCollectionId" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="recipientAddress" class="form-label">Destination Wallet Address:</label>
+                        <input type="text" id="recipientAddress" class="form-control" name="recipientAddress" required>
                     </div>
 
-                    <button id="submitTransferButton" type="submit" onclick="return confirm('Are you sure you want to proceed with this transfer? This action is irreversible!')" class="btn btn-danger w-100">Complete Transfer</button>
+                    <button id="submitTransferButton" type="submit" onclick="return confirm('Are you sure you want to proceed with this swap initiation?')" class="btn btn-danger w-100">Initiate Swap</button>
                     <button id="pleaseWaitButton"  type="submit" class="btn btn-danger w-100" disabled style="display:none;">Please Wait...</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end:modal for transfer -->
+
+
+<!-- modal for accept Token -->
+<div class="modal fade" id="acceptCouponModal" tabindex="-1" aria-labelledby="acceptCouponModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="acceptCouponModalLabel">Swap Token with another UNQ wallet beneficiary.</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="completeSwapForm">
+
+
+                    <div class="mb-3">
+                        <label for="swapOfferId" class="form-label">Coupon Swap Offer ID:</label>
+                        <input type="text" id="swapOfferId" class="form-control" name="swapOfferId" required>
+                    </div>
+
+                    
+                   
+
+                    <button id="submitAcceptButton" type="submit" onclick="return confirm('Are you sure you want to proceed with this swap?')" class="btn btn-danger w-100">Complete Swap</button>
+                    <button id="kindlyWaitButton"  type="submit" class="btn btn-danger w-100" disabled style="display:none;">Please Wait...</button>
                 </form>
             </div>
         </div>
@@ -101,6 +159,7 @@ $(document).ready(function() {
                                 <img style="height: 200px; width: auto; object-fit: cover;" src="${token.tokenImageUrl}" alt="${token.tokenName}">                                
                                 <div class="badge bg-dark position-absolute text-center">
                                     <img src="/assets/img/core-img/fire.png" alt="">
+                                    ${!token.isPurchased ? 'In Marketplace' : 'Redeemable'}
                                 </div>
                             </div>
                             <!-- Others Info -->
@@ -223,16 +282,17 @@ $(document).ready(function() {
         $('#pleaseWaitButton').show();
 
         const formData = {
-            mnemonic: $('#mnemonic').val(),
-            collectionId: $('#collectionId').val(),
-            tokenId: $('#tokenId').val(),
-            toAddress: $('#recipient').val()
+            ownTokenId: $('#tokenId').val(),
+            ownCollectionId: $('#collectionId').val(),
+            desiredTokenId: $('#desiredTokenId').val(),
+            desiredCollectionId: $('#desiredCollectionId').val(),
+            recipientAddress: $('#recipientAddress').val(),
         };
 
         const token = localStorage.getItem('token');
 
         $.ajax({
-            url: '/api/transferToken', 
+            url: '/api/initiateCouponSwap', 
             type: 'POST',
             data: JSON.stringify(formData),
             contentType: 'application/json',
@@ -246,7 +306,7 @@ $(document).ready(function() {
                     Swal.fire({
                         position: "center",
                         icon: "success",
-                        title: response.message || "Token transferred successfully!",
+                        title: response.message || "Swap Initiated Successfully!",
                         showConfirmButton: false,
                         timer: 1500,
                     });
@@ -259,7 +319,7 @@ $(document).ready(function() {
                         showConfirmButton: false,
                         timer: 1500,
                     });
-                    console.error('Failed to transfer token:', response.message);
+                    console.error('Failed to initiate swap:', response.message);
                 }
 
                 // After success or failure, restore the original buttons and reload the page after a delay
@@ -355,7 +415,71 @@ $(document).ready(function() {
     });
 </script>
 
+<script>
+$(document).ready(function() {
+    $('#completeSwapForm').on('submit', function(e) {
+        e.preventDefault();
 
+        const swapOfferId = $('#swapOfferId').val();
+        
+        if (!swapOfferId) {
+            Swal.fire('Error!', 'Swap Offer ID is required.', 'error');
+            return;
+        }
+
+        // Show confirmation using SweetAlert
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Are you sure you want to proceed with this swap?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $('#submitAcceptButton').hide();      // Hide the complete swap button
+                $('#kindlyWaitButton').show();        // Show the wait button
+
+                // Perform the AJAX request to complete the swap
+                $.ajax({
+                    url: '/api/acceptCouponSwap',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ swapOfferId: swapOfferId }),
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire('Success!', response.message, 'success');
+
+                            // Optionally reload or update the UI
+                            setTimeout(function() {
+                                location.reload();
+                            }, 2000); // Wait 2 seconds before reloading
+                        } else {
+                            Swal.fire('Error!', response.message, 'error');
+                        }
+
+                        // Re-enable the buttons
+                        $('#kindlyWaitButton').hide();
+                        $('#submitAcceptButton').show();
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire('Error!', 'An error occurred while processing the swap. Please try again.', 'error');
+                        
+                        // Re-enable the buttons
+                        $('#kindlyWaitButton').hide();
+                        $('#submitAcceptButton').show();
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
 
 
 <%- include('../../partials/admin/footer') %>

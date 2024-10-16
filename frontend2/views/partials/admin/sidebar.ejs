@@ -81,7 +81,7 @@
     href="/collection/create"
     data-bs-toggle="tooltip"
     data-bs-placement="left"
-    title="Create New Token"
+    title="Create New Collection"
     ><i class="fz-18 bi bi-plus-lg"></i
   ></a>
 </div>
@@ -188,7 +188,7 @@
             $(".create-new-button").hide();
             $("#userType").text("Premium User");
           } else {
-            console.log('admin. happening')
+            // console.log('admin. happening')
             $("#userType").text("Store Owner");
             console.error("Failed to fetch user details:", response.error);
           }

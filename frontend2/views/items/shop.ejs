@@ -52,7 +52,7 @@
 
 <%- include('../partials/home/footer') %>
 
-
+<!-- load items and handle purchase -->
 <script>
 $(document).ready(function () {
     // Fetch and display items
@@ -166,6 +166,7 @@ $(document).ready(function () {
                             text: "You have successfully purchased this coupon! Visit your KooponCraft dashboard to redeem it.",
                             icon: "success"
                         });
+                        location.reload();
                         // toastr.success("Successfully purchased 1 unit!");
                     } else {
                         alert('Error: ' + response.error);
