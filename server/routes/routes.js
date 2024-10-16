@@ -17,6 +17,7 @@ import {
   checkBuyerPurchases,
   checkStorePurchases,
   purchaseCoupon,
+  purchaseItem
 } from "../controllers/TransactionController.js";
 import { getUserBalance } from "../controllers/getUserBalance.js";
 import { transferTokenController } from "../controllers/TransferToken.js";
@@ -80,6 +81,13 @@ router.get("/getItems", getAllItems);
  * @access Private
  */
 router.post("/purchaseCoupon", verifyToken, purchaseCoupon);
+
+/**
+ * @route POST /api/purchaseItem
+ * @description Purchase an item
+ * @access Private
+ */
+router.post("/purchaseItem", verifyToken, purchaseItem);
 
 /**
  * @route GET /api/getUserBalance
