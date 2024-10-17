@@ -11,13 +11,17 @@ import {
   getUser,
   loginUser,
 } from "../controllers/UserController.js";
-import { createItem, getAllItems, getStoreItems } from "../controllers/ItemsController.js";
+import {
+  createItem,
+  getAllItems,
+  getStoreItems,
+} from "../controllers/ItemsController.js";
 import { verifyToken } from "../middleware/generateToken.js";
 import {
   checkBuyerPurchases,
   checkStorePurchases,
   purchaseCoupon,
-  purchaseItem
+  purchaseItem,
 } from "../controllers/TransactionController.js";
 import { getUserBalance } from "../controllers/getUserBalance.js";
 import { transferTokenController } from "../controllers/TransferToken.js";
@@ -94,7 +98,7 @@ router.post("/purchaseItem", verifyToken, purchaseItem);
  * @description Get user's balance
  * @access Private
  */
-router.get("/getUserBalance/:wallet_address", verifyToken, getUserBalance);
+router.get("/getUserBalance", verifyToken, getUserBalance);
 
 /**
  * @route POST /api/createCollection

@@ -98,6 +98,7 @@ export const mintToken = async (req, res) => {
     tokenDescription,
     tokenImageUrl,
     priceOfCoupon,
+    quantityAvailable,
   } = req.body;
   const userId = req.user.id;
 
@@ -176,6 +177,7 @@ export const mintToken = async (req, res) => {
       tokenOwnerId: user._id,
       tokenDescription,
       priceOfCoupon,
+      quantityAvailable,
       tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
       isWinningToken,
     });
@@ -248,8 +250,8 @@ export const getUserTokensAndPrizes = async (req, res) => {
   try {
     const user = await UserModel.findById(userId)
       .populate("collectedTokens")
-      .populate({ path: "wonPrizes", strictPopulate: false }); 
-      // .populate("wonPrizes");
+      .populate({ path: "wonPrizes", strictPopulate: false });
+    // .populate("wonPrizes");
     res.status(200).json({
       success: true,
       collectedTokens: user.collectedTokens,

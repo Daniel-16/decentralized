@@ -122,10 +122,9 @@
     - `description`: Description of the collection
     - `tokenPrefix`: Prefix for tokens in this collection
   - Description: This endpoint creates a new unique network collection. It uses the authenticated user's mnemonic to retrieve the user's account, then creates the collection with the specified name, description, and token prefix. The newly created collection is associated with the authenticated user.
-- `GET /api/getUserBalance/:wallet_address`: This gets a user's current balance from their UNQ wallet.
-  - Required parameters: `wallet_address` (as part of the URL)
+- `GET /api/getUserBalance`: This gets a user's current balance from their UNQ wallet.
   - Authorization required: `Bearer <token>`
-  - Description: Retrieves the balance information for the specified wallet address and updates the user's balance in the database.
+  - Description: Retrieves the balance information for the authenticated user's UNQ wallet and updates the user's balance in the database.
 - `POST /api/transferToken`(Obsolete for now): Transfer a token from one user to another.
   - Required fields:
     - `mnemonic`: The mnemonic of the signed-in user (token sender).
