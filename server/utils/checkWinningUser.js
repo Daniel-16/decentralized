@@ -14,7 +14,8 @@ export const checkWinningUser = async () => {
         console.log(`User ID: ${user._id}, Username: ${user.username}`);
       });
     } else {
-      console.log("No user has collected up to three tokens");
+      // No winning users found
+      return [];
     }
     return winningUsers;
   } catch (error) {
