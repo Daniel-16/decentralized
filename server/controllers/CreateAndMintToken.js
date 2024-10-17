@@ -216,12 +216,40 @@ export const getUserCollections = async (req, res) => {
   }
 };
 
+// controller to get all tokens owned by a user
+export const getUserToken = async (req, res) => {
+  const userId = req.user.id;
+
+  const user = await UserModel.find({ _id: userId });
+  const userAddress = user[0].accountAddress;
+  try {
+    const tokens = await TokenModel.find({ tokenOwnerAddress: userAddress });
+    if (tokens && tokens.length <= 0) {
+      return res.status(200).json({
+        success: true,
+        message: "No tokens created for this user",
+      });
+    }
+    // console.log("tokens: ", tokens);
+    res.status(200).json({
+      success: true,
+      tokens,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
 export const getUserTokensAndPrizes = async (req, res) => {
   const userId = req.user.id;
   try {
     const user = await UserModel.findById(userId)
       .populate("collectedTokens")
-      .populate("wonPrizes");
+      .populate({ path: "wonPrizes", strictPopulate: false }); 
+      // .populate("wonPrizes");
     res.status(200).json({
       success: true,
       collectedTokens: user.collectedTokens,

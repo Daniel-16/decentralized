@@ -7,8 +7,29 @@
 
 <div class="admin-wrapper">
     <div class="container">
-        <h5 class="mb-3">All My Tokens</h5>
+        <div class="pb-4 row justify-content-center">
+            <!-- <div class="col-12 text-center">
+                <h4 class="mb-3">Your current wallet</h4>
+            </div> -->
+            <div class="col-12 col-xl-12 col-xxl-12">
+                <div class="card wallet-card shadow-sm">
+                    <div class="card-body px-4 text-center">
+                        <div class="d-flex align-items-center">
+                            <!-- <div class="img-wrap">
+                                </div> -->
+                            <h4 class="mb-0 me-3">Got a Coupon to Swap?</h4>
+                            <a class="btn btn-sm btn-warning rounded-pill ms-auto" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#acceptCouponModal"  href="#">Swap</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+        <h3 class="mb-3">All My Coupons</h3>
         <div class="row g-4" id="collections-container">
+        <!-- <div class="row g-4"> -->
             
                 
 
@@ -19,20 +40,16 @@
 
 
 
-<!-- modal for transfer Token -->
+<!-- modal for swap Token -->
 <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="transferModalLabel">Transfer Token to another UNQ wallet beneficiary.</h5>
+                <h5 class="modal-title" id="transferModalLabel">Swap Token with another UNQ wallet beneficiary.</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="transferForm">
-                    <div class="mb-3">
-                        <label for="mnemonic" class="form-label">Mnemonic:</label>
-                        <textarea id="mnemonic" name="mnemonic" class="form-control" required></textarea>
-                    </div>
 
                     <div class="mb-3">
                         <label for="collectionId" class="form-label">Collection ID:</label>
@@ -41,16 +58,58 @@
 
                     <div class="mb-3">
                         <label for="tokenId" class="form-label">Token ID:</label>
-                        <input type="text" id="tokenId" class="form-control" name="tokenId" required>
+                        <input type="text" id="tokenId" class="form-control" readonly name="tokenId" required>
+                    </div>
+
+                    <hr>
+                    <h4 class="text-dark">Recipient Details</h4>
+                    <div class="mb-3">
+                        <label for="desiredTokenId" class="form-label">Destination Token ID :</label>
+                        <input type="text" id="desiredTokenId" class="form-control" name="desiredTokenId" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="tokenDescription1" class="form-label">Recipient Wallet Address :</label>
-                        <input type="text" id="recipient" class="form-control" name="recipient" required>
+                        <label for="desiredCollectionId" class="form-label">Destination Collection ID :</label>
+                        <input type="text" id="desiredCollectionId" class="form-control" name="desiredCollectionId" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="recipientAddress" class="form-label">Destination Wallet Address:</label>
+                        <input type="text" id="recipientAddress" class="form-control" name="recipientAddress" required>
                     </div>
 
-                    <button id="submitTransferButton" type="submit" onclick="return confirm('Are you sure you want to proceed with this transfer? This action is irreversible!')" class="btn btn-danger w-100">Complete Transfer</button>
+                    <button id="submitTransferButton" type="submit" onclick="return confirm('Are you sure you want to proceed with this swap initiation?')" class="btn btn-danger w-100">Initiate Swap</button>
                     <button id="pleaseWaitButton"  type="submit" class="btn btn-danger w-100" disabled style="display:none;">Please Wait...</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end:modal for transfer -->
+
+
+<!-- modal for accept Token -->
+<div class="modal fade" id="acceptCouponModal" tabindex="-1" aria-labelledby="acceptCouponModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="acceptCouponModalLabel">Swap Token with another UNQ wallet beneficiary.</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="completeSwapForm">
+
+
+                    <div class="mb-3">
+                        <label for="swapOfferId" class="form-label">Coupon Swap Offer ID:</label>
+                        <input type="text" id="swapOfferId" class="form-control" name="swapOfferId" required>
+                    </div>
+
+                    
+                   
+
+                    <button id="submitAcceptButton" type="submit" onclick="return confirm('Are you sure you want to proceed with this swap?')" class="btn btn-danger w-100">Complete Swap</button>
+                    <button id="kindlyWaitButton"  type="submit" class="btn btn-danger w-100" disabled style="display:none;">Please Wait...</button>
                 </form>
             </div>
         </div>
@@ -67,64 +126,97 @@ $(document).ready(function() {
     function fetchUserCollections() {
         const token = localStorage.getItem('token');
         $.ajax({
-            url: '/api/getCollections',  
+            url: '/api/getUserToken',  
             type: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + token
             },
             success: function(response) {
-                $('#collections-container').empty();  // Clear existing content
+                $('#collections-container').empty();  
                 if (response && response.success) {
-                    console.log('Collections:', response.collections);
-                    if (response.collections && response.collections.length > 0) {
-                        response.collections.forEach(function(collection) {
+                    console.log('Response:', response);
+                    console.log('Collections:', response.tokens);
+                    if (response.tokens && response.tokens.length > 0) {
+                        response.tokens.forEach(function(token) {
                             let tokensHtml = '';
                             let tokenCount = 0;
 
-                            if (collection.token && collection.token.length > 0) {
-                                tokenCount = collection.token.length;
-                                collection.token.forEach(function(tokenItem) {
-                                    tokensHtml += `<div>Token ID: #${tokenItem.substring(0, 10) + '...'}</div>`;
-                                });
-                            } else {
-                                tokensHtml = '<div>No tokens available for this collection.</div>';
-                            }
+                            // if (collection.token && collection.token.length > 0) {
+                            //     tokenCount = collection.token.length;
+                            //     collection.token.forEach(function(tokenItem) {
+                            //         tokensHtml += `<div>Token ID: #${tokenItem.substring(0, 10) + '...'}</div>`;
+                            //     });
+                            // } else {
+                            //     tokensHtml = '<div>No tokens available for this collection.</div>';
+                            // }
 
                             const collectionItem = `
                             <div class="col-12 col-sm-6 col-xl-4 col-xxl-4">
-                                <div class="nft-card card border-0">
-                                    <div class="card-body">
-                                        <!-- Others Info -->
-                                        <div class="row gx-2 align-items-center mt-3">
-                                            <div class="col-8">
-                                                <span class="d-block fz-12"><i class="bi bi-bag me-1"></i>${tokenCount} token(s) available in parent collection</span>
-                                            </div>
+                    <!-- Featured Card -->
+                    <div class="nft-card card border-0">
+                        <div class="card-body">
+                            <div class="img-wrap">
+                                <img style="height: 200px; width: auto; object-fit: cover;" src="${token.tokenImageUrl}" alt="${token.tokenName}">                                
+                                <div class="badge bg-dark position-absolute text-center">
+                                    <img src="/assets/img/core-img/fire.png" alt="">
+                                    ${!token.isPurchased ? 'In Marketplace' : 'Redeemable'}
+                                </div>
+                            </div>
+                            <!-- Others Info -->
+                            <div class="row gx-2 align-items-center mt-3">
+                                <div class="col-12">
+                                    <span class="d-block fz-12"><i class="bi bi-bag me-1"></i>Available</span>
+                                </div>
+                            </div>
+                            <div class="row gx-2 align-items-center mt-2">
+                                <div class="col-7">
+                                    <div class="name-info d-flex align-items-center">
+                                        <div class="author-img position-relative">
+                                            <img class="shadow" src="/assets/img/bg-img/u2.jpg" alt="">
+                                            <i class="bi bi-check position-absolute bg-success"></i>
                                         </div>
-                                        <!-- Meta Info -->
-                                        <div class="row gx-2 align-items-center mt-2">
-                                            <div class="col-12">
-                                                <div class="name-info d-flex align-items-center">
-                                                    <div class="name-author">
-                                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Fancy Car">Collection ID: #${collection.collectionId}</a>
-                                                        <a class="author d-block fz-12 hover-primary text-truncate" href="#">Token ID: #${collection.tokenId}</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="col-12">
-                                                <a class="btn btn-danger rounded-pill btn-sm mt-3 w-100 btn-mint-token" href="#" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#transferModal" 
-                                                    data-token-id="${collection.tokenId}" 
-                                                    data-collection-id="${collection.collectionId}">
-                                                    <i class="me-1 bi bi-box-arrow-up-right"></i>Transfer Token
-                                                </a>
-
-                                            </div>
+                                        <div class="name-author">
+                                            <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Fancy Car">
+                                                ${token.tokenName}
+                                            </a>
+                                            <a class="author d-block fz-12 hover-primary text-truncate" href="author.html">
+                                                #${token.tokenId}-${token.collectionId}
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-5">
+                                    <div class="price text-end"><span class="fz-12 d-block">Current Price</span>
+                                    <h6 class="mb-0">UNQ ${new Intl.NumberFormat('en-US', { 
+                                        minimumFractionDigits: 2, 
+                                        maximumFractionDigits: 2 
+                                    }).format(token.priceOfCoupon)}</h6>                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 btn-mint-token" href="#" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#transferModal" 
+                                            data-token-id="${token.tokenId}" 
+                                            data-collection-id="${token.collectionId}">
+                                            Swap Token                                    
+                                            <i class="me-1 bi bi-arrow-left-right"></i>
+                                            </a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a class="btn btn-danger rounded-pill btn-sm mt-3 w-100 redeem-coupon" href="#"  
+                                            data-token-id="${token.tokenId}" 
+                                            data-collection-id="${token.collectionId}"
+                                            >
+                                            Redeem Coupon                                    
+                                            <i class="me-1 bi bi-gift-fill"></i>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
                             `;
 
                             $('#collections-container').append(collectionItem);
@@ -190,16 +282,17 @@ $(document).ready(function() {
         $('#pleaseWaitButton').show();
 
         const formData = {
-            mnemonic: $('#mnemonic').val(),
-            collectionId: $('#collectionId').val(),
-            tokenId: $('#tokenId').val(),
-            toAddress: $('#recipient').val()
+            ownTokenId: $('#tokenId').val(),
+            ownCollectionId: $('#collectionId').val(),
+            desiredTokenId: $('#desiredTokenId').val(),
+            desiredCollectionId: $('#desiredCollectionId').val(),
+            recipientAddress: $('#recipientAddress').val(),
         };
 
         const token = localStorage.getItem('token');
 
         $.ajax({
-            url: '/api/transferToken', 
+            url: '/api/initiateCouponSwap', 
             type: 'POST',
             data: JSON.stringify(formData),
             contentType: 'application/json',
@@ -213,7 +306,7 @@ $(document).ready(function() {
                     Swal.fire({
                         position: "center",
                         icon: "success",
-                        title: response.message || "Token transferred successfully!",
+                        title: response.message || "Swap Initiated Successfully!",
                         showConfirmButton: false,
                         timer: 1500,
                     });
@@ -226,7 +319,7 @@ $(document).ready(function() {
                         showConfirmButton: false,
                         timer: 1500,
                     });
-                    console.error('Failed to transfer token:', response.message);
+                    console.error('Failed to initiate swap:', response.message);
                 }
 
                 // After success or failure, restore the original buttons and reload the page after a delay
@@ -249,7 +342,144 @@ $(document).ready(function() {
 });
 </script>
 
+<!-- redeem coupon -->
+ <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
 
+<script>
+    $(document).on('click', '.redeem-coupon', function(e) {
+        e.preventDefault();
+
+        const tokenId = $(this).data('token-id');
+        const collectionId = $(this).data('collection-id');
+        const $button = $(this);  // Store reference to the clicked button
+        var token = localStorage.getItem("token");
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You are about to redeem this token.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, redeem it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                // Change the button text to "Please wait..." and disable it
+                $button.html('Please wait...').attr('disabled', true);
+                $.ajax({
+                    url: '/api/burnToken',
+                    type: 'DELETE',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        tokenId: tokenId,
+                        collectionId: collectionId
+                    }),
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Redeemed!',
+                                response.message,
+                                'success'
+                            );
+                            // Optionally, refresh the page or update the UI
+                            setTimeout(function () {
+                                location.reload();
+                            }, 2000); 
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.message,
+                                'error'
+                            );
+                            // Restore the button in case of failure
+                            $button.html('Redeem Coupon <i class="me-1 bi bi-gift-fill"></i>').attr('disabled', false);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire(
+                            'Error!',
+                            'Failed to redeem the token. Please try again.',
+                            'error'
+                        );
+                        // Restore the button in case of error
+                        $button.html('Redeem Coupon <i class="me-1 bi bi-gift-fill"></i>').attr('disabled', false);
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+<script>
+$(document).ready(function() {
+    $('#completeSwapForm').on('submit', function(e) {
+        e.preventDefault();
+
+        const swapOfferId = $('#swapOfferId').val();
+        
+        if (!swapOfferId) {
+            Swal.fire('Error!', 'Swap Offer ID is required.', 'error');
+            return;
+        }
+
+        // Show confirmation using SweetAlert
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Are you sure you want to proceed with this swap?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $('#submitAcceptButton').hide();      // Hide the complete swap button
+                $('#kindlyWaitButton').show();        // Show the wait button
+
+                // Perform the AJAX request to complete the swap
+                $.ajax({
+                    url: '/api/acceptCouponSwap',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ swapOfferId: swapOfferId }),
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire('Success!', response.message, 'success');
+
+                            // Optionally reload or update the UI
+                            setTimeout(function() {
+                                location.reload();
+                            }, 2000); // Wait 2 seconds before reloading
+                        } else {
+                            Swal.fire('Error!', response.message, 'error');
+                        }
+
+                        // Re-enable the buttons
+                        $('#kindlyWaitButton').hide();
+                        $('#submitAcceptButton').show();
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire('Error!', 'An error occurred while processing the swap. Please try again.', 'error');
+                        
+                        // Re-enable the buttons
+                        $('#kindlyWaitButton').hide();
+                        $('#submitAcceptButton').show();
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
 
 
 <%- include('../../partials/admin/footer') %>

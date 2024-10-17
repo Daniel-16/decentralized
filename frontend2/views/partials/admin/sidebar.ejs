@@ -9,7 +9,9 @@
           <img src="/assets/img/bg-img/u2.jpg" alt="profile-user-pic" />
             <div class="ms-3">
                 <h6 class="lh-1 text-dark fz-18" id="usernameDisplay">Designing W.</h6>
-                <span class="badge bg-primary fz-12">Premium User</span>
+                <span class="badge bg-primary fz-12" id="userType">
+
+                </span>
             </div>
         </div>
       </div>
@@ -28,7 +30,7 @@
         <li>
             <a href="/transactions" class="menu-link"><i class="bi bi-receipt"></i>My Transactions</a>
         </li>
-        <li>
+        <li id="myCollectionsLink">
             <a href="/collection/my-collections" class="menu-link"
             ><i class="bi bi-columns-gap"></i>My Collections</a
             >
@@ -41,7 +43,7 @@
             ><i class="bi bi-wallet2"></i>My Wallet</a
             >
         </li>
-        <li>
+        <li id="myStoreLink">
             <a href="/my-store" class="menu-link"><i class="bi bi-shop"></i>My Store</a>
         </li>
         <br>
@@ -79,7 +81,7 @@
     href="/collection/create"
     data-bs-toggle="tooltip"
     data-bs-placement="left"
-    title="Create New Token"
+    title="Create New Collection"
     ><i class="fz-18 bi bi-plus-lg"></i
   ></a>
 </div>
@@ -110,7 +112,7 @@
 
     function fetchUserBalance() {
       const wallet_address = localStorage.getItem("accountAddress");
-      const apiUrl = `/api/getUserBalance?wallet_address=${wallet_address}`;
+      const apiUrl = `/api/getUserBalance/${wallet_address}`;
 
       $.ajax({
         url: apiUrl,
@@ -123,7 +125,7 @@
             // Update the balance card with the new balance structure
             const balanceHTML = `
                 <div class="card-body text-center p-4">
-                  <h6 class="mb-1">Your current balance</h6>
+                  <h6 class="mb-1">My current balance</h6>
                   <h5 class="mb-0 text-dark d-flex align-items-center justify-content-center">
                     <span class="ms-2 px-2 text-danger">UNQ</span> <br>
                     <span class="counter">${parseFloat(response.availableBalance.amount).toFixed(5)}</span>
@@ -164,9 +166,60 @@
 <!-- end: for avail bal -->
 
 
+<!-- script for conditional links -->
+<script>
+  $(document).ready(function () {
+    var token = localStorage.getItem("token");
+
+    const apiUrl = `/api/getUser`;
+
+      $.ajax({
+      url: apiUrl,
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      success: function (response) {
+        if(response.success){
+          if (!response.user.isAdmin) {
+            console.log('user. happening');
+            $("#myCollectionsLink").hide();
+            $("#myStoreLink").hide();
+            $(".create-new-button").hide();
+            $("#userType").text("Premium User");
+          } else {
+            // console.log('admin. happening')
+            $("#userType").text("Store Owner");
+            console.error("Failed to fetch user details:", response.error);
+          }
+        }
+        // if (response.success) {
+        //   console.log(response.user.isAdmin);
+        //   if (!response.user.isAdmin) {
+        //     console.log('user. happening');
+        //     $("#myCollectionsLink").hide();
+        //     $("#myStoreLink").hide();
+        //     $(".create-new-button").hide();
+        //     $("#userType").text("Premium User");
+        //   }
+        // } else {
+        //   console.log('admin. happening')
+        //   $("#userType").text("Store Owner");
+        //   console.error("Failed to fetch user details:", response.error);
+        // }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.error("Error fetching user details:", errorThrown);
+      },
+    });
+  });
+</script>
+<!-- end: script for conditional links -->
+
+
 
 <!-- active link -->
- <script>
+<script>
   // Get the current URL path
   const currentPath = window.location.pathname;
 

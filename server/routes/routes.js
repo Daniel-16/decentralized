@@ -2,6 +2,7 @@ import express from "express";
 import {
   createCollectionController,
   getUserCollections,
+  getUserToken,
   getUserTokensAndPrizes,
   mintToken,
 } from "../controllers/CreateAndMintToken.js";
@@ -10,12 +11,13 @@ import {
   getUser,
   loginUser,
 } from "../controllers/UserController.js";
-import { createItem, getAllItems } from "../controllers/ItemsController.js";
+import { createItem, getAllItems, getStoreItems } from "../controllers/ItemsController.js";
 import { verifyToken } from "../middleware/generateToken.js";
 import {
   checkBuyerPurchases,
   checkStorePurchases,
   purchaseCoupon,
+  purchaseItem
 } from "../controllers/TransactionController.js";
 import { getUserBalance } from "../controllers/getUserBalance.js";
 import { transferTokenController } from "../controllers/TransferToken.js";
@@ -81,6 +83,13 @@ router.get("/getItems", getAllItems);
 router.post("/purchaseCoupon", verifyToken, purchaseCoupon);
 
 /**
+ * @route POST /api/purchaseItem
+ * @description Purchase an item
+ * @access Private
+ */
+router.post("/purchaseItem", verifyToken, purchaseItem);
+
+/**
  * @route GET /api/getUserBalance
  * @description Get user's balance
  * @access Private
@@ -129,6 +138,8 @@ router.get("/checkStorePurchases", verifyToken, checkStorePurchases);
  */
 router.get("/getCollections", verifyToken, getUserCollections);
 
+router.get("/getUserToken", verifyToken, getUserToken);
+
 /**
  * @route GET /api/getUserTokensAndPrizes
  * @description Get user's tokens and prizes
@@ -141,7 +152,7 @@ router.get("/getUserTokensAndPrizes", verifyToken, getUserTokensAndPrizes);
 //  * @description Get store items
 //  * @access Private
 //  */
-// router.get("/getStoreItems", verifyToken, getStoreItems);
+router.get("/getStoreItems", verifyToken, getStoreItems);
 
 /**
  * @route DELETE /api/burnToken

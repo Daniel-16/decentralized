@@ -242,3 +242,56 @@ export const purchaseCoupon = async (req, res) => {
     });
   }
 };
+
+export const purchaseItem = async (req, res) => {
+  const { itemId, quantity } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
+    }
+    const item = await ItemModel.findById(itemId);
+    if (!item) {
+      return res.status(404).json({ success: false, error: "Item not found" });
+    }
+
+    const totalPrice = item.priceOfItem * quantity;
+
+    const transaction = new TransactionModel({
+      buyerId: userId,
+      buyerName: user.username || user.email,
+      item: itemId,
+      itemOwner: item.itemOwner,
+      storeOwnerId: item.itemOwnerId,
+      itemName: item.nameOfItem,
+      // store: item.itemOwnerId,
+      quantity,
+      totalPrice,
+    });
+
+    await transaction.save();
+
+    // const userTransactions = await TransactionModel.find({ user: userId })
+    // const totalItemsPurchased = userTransactions.reduce((total, t) => total + t.quantity, 0);
+
+    // if (totalItemsPurchased >= 4) {
+    //   try {
+    //     const user = await UserModel.findById(userId);
+    //     if (!user.hasReceivedToken) {
+
+    //     }
+    //   } catch (error) {
+
+    //   }
+    // }
+
+    res.json({ success: true, transaction });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};

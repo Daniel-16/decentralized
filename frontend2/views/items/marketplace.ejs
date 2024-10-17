@@ -9,12 +9,12 @@
     <div class="breadcrumb-content">
         <div class="d-flex align-items-center justify-content-center">
         <!-- <div class="spinner-grow text-danger me-1" role="status"><span class="visually-hidden">Loading...</span></div> -->
-        <h2 class="breadcrumb-title mb-0">Shop Items</h2>
+        <h2 class="breadcrumb-title mb-0">KooponCraft Marketplace</h2>
         </div>
         <nav aria-label="breadcrumb">
         <ol class="breadcrumb justify-content-center">
             <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Shop Items</li>
+            <li class="breadcrumb-item active" aria-current="page">KooponCraft Marketplace</li>
         </ol>
         </nav>
     </div>
@@ -51,7 +51,6 @@
 
 
 <%- include('../partials/home/footer') %>
-<script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@3.0.3/tsparticles.confetti.bundle.min.js"></script>
 
 <!-- load items and handle purchase -->
 <script>
@@ -59,21 +58,20 @@ $(document).ready(function () {
     // Fetch and display items
     function loadItems() {
         $.ajax({
-            url: "/api/getItems",
+            url: "/api/getAllCoupons",
             method: "GET",
             success: function (response) {
-                // console.log(response);
+                console.log(response);
                 if (response.success) {
-                    const items = response.items;
+                    const coupons = response.coupons;
                     let itemsHTML = "";
-                    // TODO: give item image a fixed height
-                    items.forEach((item) => {
+                    coupons.forEach((coupon) => {
                         itemsHTML += `
                         <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
                             <div class="nft-card card shadow-sm">
                             <div class="card-body">
                                 <div class="img-wrap">
-                                <img src="${item.itemImage}" alt="${item.nameOfItem}">
+                                <img src="${coupon.tokenImageUrl}" alt="${coupon.tokenName}">
                                 </div>
                                 <!-- Others Info -->
                                 <div class="row gx-2 align-items-center mt-3">
@@ -89,12 +87,12 @@ $(document).ready(function () {
                                 <div class="col-8">
                                     <div class="name-info d-flex align-items-center">
                                     <div class="author-img position-relative">
-                                        <img class="shadow" src="/assets/img/bg-img/u4.jpg" alt="">
+                                        <img class="shadow" src="/assets/img/bg-img/u2.jpg" alt="">
                                         <i class="bi bi-check position-absolute bg-success"></i>
                                     </div>
                                     <div class="name-author">
-                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.nameOfItem}">${item.nameOfItem}</a>
-                                        <a class="author d-block fz-12 hover-primary text-truncate" href="#">@${item.itemOwner}</a>
+                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="${coupon.tokenName}">${coupon.tokenName}</a>
+                                        <a class="author d-block fz-12 hover-primary text-truncate" href="#">@${coupon.ownerName}</a>
                                     </div>
                                     </div>
                                 </div>
@@ -104,12 +102,12 @@ $(document).ready(function () {
                                     <h6 class="mb-0">UNQ ${new Intl.NumberFormat('en-US', { 
                                         minimumFractionDigits: 2, 
                                         maximumFractionDigits: 2 
-                                    }).format(item.priceOfItem)}</h6>
+                                    }).format(coupon.priceOfCoupon)}</h6>
                                     </div>
                                 </div>
                                 <div class="col-12">
-                                    <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 purchase-btn" href="#" data-token-id="${item._id}" data-item-id="${item._id}" data-store-owner="${item.itemOwnerAddress}" data-item-price="${item.priceOfItem}">Purchase Now</a>                                    
-                                    <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 pleasewait-btn" id="pleaseWait-${item._id}" href="#" style="display: none;" disabled>Please wait...</a>
+                                    <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 purchase-btn" href="#" data-collection-id="${coupon.collectionId}" data-token-id="${coupon.tokenId}" data-item-id="${coupon._id}">Purchase Now</a>
+                                    <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 pleasewait-btn" id="pleaseWait-${coupon._id}" href="#" style="display: none;" disabled>Please wait...</a>
                                 </div>
                                 </div>
                             </div>
@@ -135,16 +133,14 @@ $(document).ready(function () {
     // End: fetch and display items
 
     // Handle purchase 
-   function attachPurchaseHandlers() {
+    function attachPurchaseHandlers() {
         $('.purchase-btn').off('click').on('click', function(event) {
             event.preventDefault();
 
-            const purchaseButton = $(this);
-            const itemId = purchaseButton.data('item-id'); // Get the item id from data attribute
-            const itemPrice = parseFloat(purchaseButton.data('item-price')); // Get the item price from data attribute
-            const storeOwner = purchaseButton.data('store-owner'); // Get the store owner address
-            const quantity = 1; // Assume quantity is always 1 for simplicity
+            const purchaseButton = $(this); 
+            const itemId = purchaseButton.data('item-id'); 
             const tokenId = purchaseButton.data('token-id'); 
+            const collectionId = purchaseButton.data('collection-id'); 
             const pleaseWaitButton = $(`#pleaseWait-${itemId}`);
 
             purchaseButton.hide();
@@ -153,74 +149,25 @@ $(document).ready(function () {
             const token = localStorage.getItem("token");
 
             $.ajax({
-                url: '/api/purchaseItem', 
+                url: '/api/purchaseCoupon',
                 method: 'POST',
                 contentType: 'application/json', 
                 data: JSON.stringify({
-                    itemId: itemId,
-                    quantity: quantity
+                    tokenId: tokenId,
+                    collectionId: collectionId
                 }),
                 headers: {
                     Authorization: `Bearer ${token}` 
                 },
                 success: function(response) {
                     if (response.success) {
-                        // Update quantity and total spent in localStorage
-                        let purchasedItems = JSON.parse(localStorage.getItem("purchasedItems")) || {};
-                        let totalSpent = parseFloat(localStorage.getItem("totalSpent")) || 0;
-                        let storeSpendings = JSON.parse(localStorage.getItem("storeSpendings")) || {};
-
-                        // Check if this store has any previous purchases
-                        if (!storeSpendings[storeOwner]) {
-                            storeSpendings[storeOwner] = 0;
-                        }
-
-                        // Add current item's price to store spending and total spent
-                        storeSpendings[storeOwner] += itemPrice * quantity;
-                        totalSpent += itemPrice * quantity;
-
-                        // Update purchased items
-                        if (purchasedItems[itemId]) {
-                            purchasedItems[itemId].quantity += quantity;
-                            purchasedItems[itemId].totalPrice += itemPrice * quantity;
-                        } else {
-                            purchasedItems[itemId] = {
-                                quantity: quantity,
-                                totalPrice: itemPrice * quantity
-                            };
-                        }
-
-                        // Save updated data back to localStorage
-                        localStorage.setItem("purchasedItems", JSON.stringify(purchasedItems));
-                        localStorage.setItem("totalSpent", totalSpent.toFixed(2));
-                        localStorage.setItem("storeSpendings", JSON.stringify(storeSpendings));
-
-                        // Check if customer has spent more than 5000 in this store
-                        if (storeSpendings[storeOwner] > 5000) {
-                            console.log(`Customer has spent over 5000 in store: ${storeOwner}`);
-                                confetti({
-                                    particleCount: 100,
-                                    spread: 70,
-                                    origin: { y: 0.6 },
-                                });
-                                // toastr.success("Successfully purchased 1 unit!");
-                            Swal.fire({
-                                title: "Coupon won!",
-                                text: "You've won a coupon! Check your profile for more details!",
-                                icon: "success",
-                                timer: 1500,  
-                                showConfirmButton: false  
-                            });
-                        }
-
                         Swal.fire({
                             title: "Purchase Successful!",
-                            text: "You have successfully purchased 1 unit of this item! Buy more and stand a chance to win exclusive coupons.",
-                            icon: "success",
-                            timer: 1500,
-                            showConfirmButton: false
+                            text: "You have successfully purchased this coupon! Visit your KooponCraft dashboard to redeem it.",
+                            icon: "success"
                         });
-
+                        location.reload();
+                        // toastr.success("Successfully purchased 1 unit!");
                     } else {
                         alert('Error: ' + response.error);
                     }
@@ -233,7 +180,16 @@ $(document).ready(function () {
                             text: errorResponse.error,
                             icon: "error"
                         });
-                    } else {
+                        if(errorResponse.error === 'Token is not valid') {
+                        Swal.fire({
+                            title: "Oooops!",
+                            text: "You have to be signed in to purchase a coupon.",
+                            icon: "error"
+                        });
+                    }
+                        // alert('Error: ' + errorResponse.error); 
+                    } 
+                    else {
                         alert('Error: An unexpected error occurred.');
                     }
                 },
@@ -244,6 +200,7 @@ $(document).ready(function () {
             });
         });
     }
+    // End: handle purchase 
 
     // Load items when ready
     loadItems();

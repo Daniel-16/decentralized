@@ -1,0 +1,142 @@
+<%- include('../../partials/admin/header') %>
+
+
+
+
+<div class="divider"></div>
+<div class="explore-items-2-wrapper">
+    <div class="container-fluid">
+        <div class="row g-4 g-xl-5 justify-content-center">
+            
+            <div class="col-12 col-md-7 col-lg-8 col-xxl-9">
+                <h3 class="mb-3">My Store Items</h3>
+                <div class="row g-4 justify-content-center" id="itemsContainer">
+
+                    <!-- append items here -->
+
+                </div>
+            <div class="row">
+                <div class="col-12">
+                <!-- Pagination -->
+                    <!-- <div class="funto-pagination mt-70">
+                        <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center mb-0">
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">4</a></li>
+                            <li class="page-item"><a class="page-link" href="#">...</a></li>
+                            <li class="page-item"><a class="page-link" href="#">9</a></li>
+                        </ul>
+                        </nav>
+                    </div> -->
+                </div>
+            </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<%- include('../../partials/admin/footer') %>
+
+
+<!-- get all my store items -->
+<script>
+$(document).ready(function () {
+//   console.log("Document ready");
+
+  // Function to fetch and display store items
+  function fetchStoreItems() {
+    const token = localStorage.getItem("token");
+
+    $.ajax({
+        url: "/api/getStoreItems", 
+        method: "GET",
+        headers: {
+        Authorization: `Bearer ${token}`, 
+        },
+        success: function (response) {
+        console.log(response);
+        if (response.success) {
+            // Check if there are items
+            if (response.items && response.items.length > 0) {
+            const items = response.items;
+            let itemsHTML = "";
+
+            items.forEach((item) => {
+                itemsHTML += `
+                <div class="col-12 col-sm-6 col-md-12 col-lg-6 col-xxl-4">
+                        <div class="nft-card card shadow-sm">
+                            <div class="card-body">
+                                <div class="img-wrap"><img src="${item.itemImage}" alt="${item.nameOfItem}">
+                                </div>
+                            <br>
+                            <div class="row gx-2 align-items-center mt-2">
+                                <div class="col-8">
+                                <div class="name-info d-flex align-items-center">
+                                    <div class="author-img position-relative">
+                                        <img class="shadow" src="/assets/img/bg-img/u2.jpg" alt="">
+                                        <i class="bi bi-check position-absolute bg-success"></i>
+                                    </div>
+                                    <div class="name-author">
+                                        <a class="name d-block hover-primary fw-bold text-truncate" 
+                                        href="#" 
+                                        data-bs-toggle="tooltip" 
+                                        data-bs-placement="top" 
+                                        title="${item.nameOfItem}">${item.nameOfItem}</a>
+                                        <a class="author d-block fz-12 hover-primary text-truncate" href="#">@${item.itemOwner}</a></div>
+                                </div>
+                                </div>
+                                <div class="col-4">
+                                <div class="price text-end"><span class="fz-12 d-block">Current Price</span>
+                                    <h6 class="mb-0">UNQ ${item.priceOfItem}</h6>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="row gx-2 align-items-center mt-3">
+                                <!-- 
+                                <div class="col-4"><a class="btn btn-primary btn-sm rounded-pill" href="#">View</a></div>
+                                <div class="col-4"><a class="btn btn-warning btn-sm rounded-pill" href="#">Couponize</a></div> 
+                                <div class="col-4 text-end"><a class="btn btn-minimal btn-sm hover-primary" href="#"> <i class="bi bi-activity me-1"></i>Activity</a></div>
+                                --!>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+
+            // Append items to the #itemsContainer
+            $("#itemsContainer").html(itemsHTML);
+
+
+
+            } else {
+            $("#itemsContainer").html("<li><p>No purchases have been made from your store yet.</p></li>");
+            }
+        } else {
+            $("#itemsContainer").html("<li><p>No items found.</p></li>");
+        }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+        $("#itemsContainer").html("<li><p>Error fetching items.</p></li>");
+        },
+    });
+    }
+
+  // Load items when the document is ready
+  fetchStoreItems();
+});
+</script>
+<!-- end: get all my store items -->
