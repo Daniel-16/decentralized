@@ -150,7 +150,6 @@ export const purchaseCoupon = async (req, res) => {
       signer: sellerAccount,
     });
 
-    // Calculate total price
     const totalPrice = token.priceOfCoupon * quantity;
 
     // Check if buyer's wallet has enough balance
