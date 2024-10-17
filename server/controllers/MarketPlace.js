@@ -5,6 +5,7 @@ export const getAllCoupons = async (req, res) => {
   try {
     const coupons = await TokenModel.find({
       quantityAvailable: { $gt: 0 },
+      isWinningToken: false,
     });
 
     const couponsWithOwners = await Promise.all(

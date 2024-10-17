@@ -165,8 +165,8 @@ export const mintToken = async (req, res) => {
     }
 
     // Find the collection and add the new token
-    const isWinningToken = Math.random() < 0.1;
-    console.log(isWinningToken);
+    // const isWinningToken = Math.random() < 0.1;
+    // console.log(isWinningToken);
 
     const mintToken = await TokenModel.create({
       tokenName,
