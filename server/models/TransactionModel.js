@@ -13,7 +13,7 @@ const TransactionSchema = new mongoose.Schema({
   },
   item: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Item",
+    ref: "Token",
     required: true,
   },
   itemOwner: {
@@ -23,7 +23,7 @@ const TransactionSchema = new mongoose.Schema({
   },
   storeOwnerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Item",
+    ref: "User",
     required: true,
   },
   // store: {
@@ -31,11 +31,6 @@ const TransactionSchema = new mongoose.Schema({
   //   ref: "Store",
   //   required: true,
   // },
-  itemName: {
-    type: mongoose.Schema.Types.String,
-    ref: "Item",
-    required: true,
-  },
   quantity: {
     type: Number,
     required: true,

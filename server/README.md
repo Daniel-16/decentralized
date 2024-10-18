@@ -174,10 +174,20 @@
   - Description: This endpoint allows the user to initiate a coupon swap with another user. It updates the coupon's swap status and adds the coupon to the user's collection.
 
 - `POST /api/acceptCouponSwap`: Accept a coupon swap with another user
+
   - Authorization required: `Bearer <token>`
   - Required fields:
     - `swapOfferId`: ID of the swap offer to accept
   - Description: This endpoint allows the user to accept a coupon swap with another user. It updates the coupon's swap status and adds the coupon to the user's collection.
+
+- `POST /api/mintSpecialToken`: Mint a special token
+  - Authorization required: `Bearer <token>`
+  - Required fields:
+    - `collectionId`: ID of the collection containing the special token
+    - `tokenName`: Name of the special token
+    - `tokenDescription`: Description of the special token
+    - `tokenImageUrl`: URL of the special token's image
+  - Description: This endpoint allows the user to mint a special token. It updates the special token's ownership in the database if the token is won by the user.
 
 ## Marketplace
 

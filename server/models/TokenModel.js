@@ -12,10 +12,10 @@ const TokenSchema = new mongoose.Schema({
   },
   tokenDescription: String,
   tokenUrl: String,
-  isWinningToken: {
-    type: Boolean,
-    default: false,
-  },
+  // isWinningToken: {
+  //   type: Boolean,
+  //   default: false,
+  // },
   priceOfCoupon: {
     type: Number,
     default: 0,
