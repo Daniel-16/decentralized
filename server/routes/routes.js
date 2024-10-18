@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createCollectionController,
+  createSpecialToken,
   getUserCollections,
   getUserToken,
   getUserTokensAndPrizes,
@@ -192,5 +193,7 @@ router.post("/initiateCouponSwap", verifyToken, initiateCouponSwap);
  * @access Private
  */
 router.post("/acceptCouponSwap", verifyToken, acceptCouponSwap);
+
+router.post("/mintSpecialToken", verifyToken, createSpecialToken);
 
 export default router;

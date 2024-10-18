@@ -4,6 +4,7 @@ import UserModel from "../models/UserModel.js";
 import Sdk, { CHAIN_CONFIG } from "@unique-nft/sdk";
 import { KeyringProvider } from "@unique-nft/accounts/keyring";
 import TokenModel from "../models/TokenModel.js";
+import SpecialTokenModel from "../models/SpecialToken.js";
 
 export const checkBuyerPurchases = async (req, res) => {
   const userId = req.user.id;
@@ -231,6 +232,42 @@ export const purchaseCoupon = async (req, res) => {
         { $addToSet: { collectedTokens: token._id } },
         { new: true }
       );
+    }
+
+    // Check if buyer has purchased two or more items from this seller
+    const purchaseCount = await TransactionModel.countDocuments({
+      buyerId: buyer._id,
+      storeOwnerId: seller._id,
+    });
+
+    if (purchaseCount >= 2) {
+      // Find an available special token from the seller
+      const specialToken = await SpecialTokenModel.findOne({
+        tokenOwnerId: seller._id,
+        wonByUser: false,
+      });
+
+      if (specialToken) {
+        // Transfer special token from seller to buyer
+        const specialTokenTransfer =
+          await sellerSdk.token.transfer.submitWaitResult({
+            collectionId: specialToken.collectionId,
+            tokenId: specialToken.tokenId,
+            address: sellerAddress,
+            to: buyer.accountAddress,
+          });
+
+        if (specialTokenTransfer.isCompleted) {
+          // Update special token ownership in the database
+          await SpecialTokenModel.findByIdAndUpdate(specialToken._id, {
+            tokenOwnerAddress: buyer.accountAddress,
+            tokenOwnerId: buyer._id,
+            wonByUser: true,
+          });
+
+          console.log(`Special token transferred to buyer: ${buyer._id}`);
+        }
+      }
     }
 
     res.status(201).json({

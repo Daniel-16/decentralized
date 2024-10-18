@@ -3,6 +3,7 @@ import { KeyringProvider } from "@unique-nft/accounts/keyring";
 import CollectionModel from "../models/CollectionModel.js";
 import TokenModel from "../models/TokenModel.js";
 import UserModel from "../models/UserModel.js";
+import SpecialTokenModel from "../models/SpecialToken.js";
 
 // Controller to create a new collection
 export const createCollectionController = async (req, res) => {
@@ -179,7 +180,7 @@ export const mintToken = async (req, res) => {
       priceOfCoupon,
       quantityAvailable,
       tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
-      isWinningToken,
+      // isWinningToken,
     });
 
     return res.status(200).json({
@@ -261,6 +262,93 @@ export const getUserTokensAndPrizes = async (req, res) => {
     res.status(500).json({
       success: false,
       error: error.message,
+    });
+  }
+};
+
+export const createSpecialToken = async (req, res) => {
+  const { collectionId, tokenName, tokenDescription, tokenImageUrl } = req.body;
+  const userId = req.user.id;
+  try {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    //Get mnemonic from logged in user
+    const mnemonic = user.mnemonic;
+    if (!mnemonic) {
+      return res.status(400).json({
+        success: false,
+        message: "User mnemonic not found",
+      });
+    }
+
+    const account = await KeyringProvider.fromMnemonic(mnemonic);
+    const address = account.address;
+
+    const sdk = new Sdk({
+      baseUrl: CHAIN_CONFIG.opal.restUrl,
+      signer: account,
+    });
+
+    const result = await sdk.token.create.submitWaitResult({
+      address,
+      collectionId,
+      data: {
+        image: {
+          ipfsCid: tokenImageUrl,
+        },
+        name: {
+          _: tokenName,
+        },
+        description: {
+          _: tokenDescription,
+        },
+      },
+    });
+
+    const tokenId = result.parsed.tokenId;
+    console.log(`This is the special tokenId: ${tokenId}`);
+    const mintTokenCompleted = result.isCompleted;
+    console.log(`Special token minting completed: ${mintTokenCompleted}`);
+
+    if (!mintTokenCompleted) {
+      return res.status(400).json({
+        success: false,
+        message: "Failed to mint special token. No tokenId received.",
+      });
+    }
+
+    if (!tokenId) {
+      return res.status(400).json({
+        success: false,
+        message: "Failed to mint special token. No tokenId received.",
+      });
+    }
+
+    const specialToken = await SpecialTokenModel.create({
+      collectionId,
+      tokenName,
+      tokenDescription,
+      tokenImageUrl,
+      tokenOwnerAddress: address,
+      tokenOwnerId: user._id,
+      tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Special token created successfully",
+      specialToken,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message ? error.message : error,
     });
   }
 };
