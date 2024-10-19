@@ -187,7 +187,7 @@
     - `tokenName`: Name of the special token
     - `tokenDescription`: Description of the special token
     - `tokenImageUrl`: URL of the special token's image
-  - Description: This endpoint allows the user to mint a special token. It updates the special token's ownership in the database if the token is won by the user.
+  - Description: This endpoint allows the store owner to mint a special token. It updates the special token's ownership in the database if the token is won by the user when the user purchases two or more items from the store.
 
 ## Marketplace
 
