@@ -52,7 +52,8 @@
 
                     <div class="mb-3">
                         <label for="imageUpload" class="form-label">Upload Image:</label>
-                        <input type="file" id="imageUpload" class="form-control" accept="image/*" onchange="previewImage(event)" required>
+                        <input type="file" id="imageUpload" class="form-control" accept=".png, .jpg, .jpeg" onchange="validateFile(event)" required>
+                        <small class="text-danger" id="fileError" style="display: none;">Please upload a valid image (PNG, JPG, JPEG) and make sure it's less than 2MB.</small>
                     </div>
 
                     <div class="col-6">
@@ -286,6 +287,30 @@ $(document).ready(function() {
 
 <!-- preview image on upload -->
 <script>
+    function validateFile(event) {
+        const file = event.target.files[0];
+        const fileError = document.getElementById('fileError');
+
+        // Allowed file size (2MB in bytes)
+        const maxSize = 2 * 1024 * 1024;
+
+        // Validate file type
+        const validFileTypes = ['image/png', 'image/jpg', 'image/jpeg'];
+        const fileTypeValid = validFileTypes.includes(file.type);
+
+        // Validate file size
+        const fileSizeValid = file.size <= maxSize;
+
+        if (!fileTypeValid || !fileSizeValid) {
+            fileError.style.display = 'block';
+            event.target.value = ''; // Clear the input
+        } else {
+            fileError.style.display = 'none'; // Hide error message
+            previewImage(event); // Call the preview image function if validation passes
+        }
+    }
+
+
     function previewImage(event) {
         const imagePreview = document.getElementById('selectedImage');
         const file = event.target.files[0];
