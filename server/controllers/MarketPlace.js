@@ -4,8 +4,7 @@ import UserModel from "../models/UserModel.js";
 export const getAllCoupons = async (req, res) => {
   try {
     const coupons = await TokenModel.find({
-      quantityAvailable: { $gt: 0 },
-      isWinningToken: false,
+      isPurchased: false,
     });
 
     const couponsWithOwners = await Promise.all(
