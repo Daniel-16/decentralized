@@ -1,6 +1,74 @@
 <%- include('partials/home/header') %>
 
+<style>
 
+    .fixed-size {
+        width: 100%; /* Ensures the image takes full width of its container */
+        height: 200px; /* Set a fixed height */
+        object-fit: cover; /* Ensures the image scales without distorting aspect ratio */
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+    }
+
+
+
+    .cards {
+        display: flex;
+    }
+
+    .card {
+        margin: 10px;
+        width: 300px;
+        background: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+
+    .image {
+        img {
+            max-width: 100%;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+    }
+
+        .content {
+            padding: 20px 30px;
+        }
+    }
+
+    .card.is-loading {
+    .image,
+    h2,
+    p {
+        background: #eee;
+        background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+        border-radius: 5px;
+        background-size: 200% 100%;
+        animation: 1.5s shine linear infinite;
+    }
+
+    .image {
+        height: 200px;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    h2 {
+        height: 30px;
+    }
+
+    p {
+        height: 70px;
+    }
+    }
+
+    @keyframes shine {
+        to {
+            background-position-x: -200%;
+        }
+    }
+    
+</style>
 
 
 
@@ -42,6 +110,52 @@
         </div>
       </div>
       <div class="container">
+        <div class="row g-4 justify-content-center" id="loading-cards">
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <div class="cards">
+                    <div class="card is-loading">
+                        <div class="image"></div>
+                        <div class="content">
+                        <h2></h2>
+                        <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <div class="cards">
+                    <div class="card is-loading">
+                        <div class="image"></div>
+                        <div class="content">
+                        <h2></h2>
+                        <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <div class="cards">
+                    <div class="card is-loading">
+                        <div class="image"></div>
+                        <div class="content">
+                        <h2></h2>
+                        <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <div class="cards">
+                    <div class="card is-loading">
+                        <div class="image"></div>
+                        <div class="content">
+                        <h2></h2>
+                        <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row g-4 justify-content-center" id="itemsContainer">
 
 
@@ -223,7 +337,11 @@ $(document).ready(function () {
     $.ajax({
       url: `/api/getItems?limit=${limit}`,
       method: "GET",
+      beforeSend: function () {
+        $("#loading-cards").show();
+      },
       success: function (response) {
+        $("#loading-cards").hide();
         if (response.success) {
           const items = response.items;
           let itemsHTML = "";
@@ -233,7 +351,7 @@ $(document).ready(function () {
             <div class="nft-card card shadow-sm">
               <div class="card-body">
               <div class="img-wrap">
-                <img src="${item.itemImage}" alt="${item.nameOfItem}">
+                <img class="fixed-size" src="${item.itemImage}" alt="${item.nameOfItem}">
                 <!-- Badge -->
                 <div class="badge bg-dark position-absolute">
                   <img src="/assets/img/core-img/fire.png" alt="">${item.isHotSale ? 'Hot Sale' : 'New Item'}
@@ -262,7 +380,7 @@ $(document).ready(function () {
                 <div class="col-8">
                   <div class="name-info d-flex align-items-center">
                     <div class="author-img position-relative">
-                      <img class="shadow" src="/assets/img/bg-img/u4.jpg" alt="">
+                      <img class="shadow" src="/assets/img/bg-img/u2.jpg" alt="">
                       <i class="bi bi-check position-absolute bg-success"></i>
                     </div>
                     <div class="name-author">
@@ -273,10 +391,16 @@ $(document).ready(function () {
                 </div>
                 <div class="col-4">
                   <div class="price text-end">
-                    <span class="fz-12 d-block">Price</span>
-                    <h6 class="mb-0">${item.priceOfItem} UNQ</h6>
+                  <span class="fz-12 d-block">Current Price</span>
+                  <h6 class="mb-0">UNQ</h6>
+                  <h6 class="mb-0"> 
+
+                      ${new Intl.NumberFormat('en-US', { 
+                      minimumFractionDigits: 2, 
+                      maximumFractionDigits: 2 
+                  }).format(item.priceOfItem)}</h6>
                   </div>
-                </div>
+              </div>
                 <div class="col-12">
                   <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="#" data-item-id="${item._id}">Purchase Now</a>
                   <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" style="display: none;" href="#">Please wait...</a>
