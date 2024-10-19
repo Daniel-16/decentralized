@@ -16,11 +16,6 @@ const TransactionSchema = new mongoose.Schema({
     ref: "Token",
     required: true,
   },
-  itemOwner: {
-    type: mongoose.Schema.Types.String,
-    ref: "Item",
-    required: true,
-  },
   storeOwnerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -43,6 +38,11 @@ const TransactionSchema = new mongoose.Schema({
   purchaseDate: {
     type: Date,
     default: Date.now,
+  },
+  nameOfItemPurchased: {
+    type: mongoose.Schema.Types.String,
+    ref: "Token",
+    required: true,
   },
 });
 

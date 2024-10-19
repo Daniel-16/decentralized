@@ -32,17 +32,24 @@ export const checkStorePurchases = async (req, res) => {
   const itemOwnerId = req.user.id;
 
   try {
-    const item = await ItemModel.find({ itemOwnerId });
-    if (!item) {
+    const storeOwner = await UserModel.findById(itemOwnerId);
+    if (!storeOwner) {
       return res.status(404).json({
         success: false,
-        error: "User not found",
+        error: "Store owner not found",
+      });
+    }
+    const items = await TransactionModel.find({ storeOwnerId: storeOwner._id });
+    if (!items) {
+      return res.status(404).json({
+        success: false,
+        error: "No items found for this store owner",
       });
     }
     // Find all transactions where the itemOwner matches the store owner's ID
     const storePurchases = await TransactionModel.find({
       storeOwnerId: itemOwnerId,
-    }).select("buyerId buyerName itemName quantity totalPrice createdAt");
+    }).select("buyerId buyerName nameOfItemPurchased totalPrice purchaseDate");
 
     if (storePurchases.length === 0) {
       return res.status(200).json({
@@ -51,31 +58,10 @@ export const checkStorePurchases = async (req, res) => {
       });
     }
 
-    // Calculate total sales and items
-    const totalSales = storePurchases.reduce(
-      (sum, purchase) => sum + purchase.totalPrice,
-      0
-    );
-    const totalItems = storePurchases.reduce(
-      (sum, purchase) => sum + purchase.quantity,
-      0
-    );
-
-    const highestBuyer = storePurchases.reduce((prev, current) => {
-      return prev.totalPrice > current.totalPrice ? prev : current;
-    });
-
-    res.status(200).json({
+    // Return the store purchases
+    return res.status(200).json({
       success: true,
       purchases: storePurchases,
-      totalSales,
-      totalItems,
-      totalTransactions: storePurchases.length,
-      highestBuyer: {
-        buyerId: highestBuyer.buyerId,
-        buyerName: highestBuyer.buyerName,
-        totalPurchase: highestBuyer.totalPrice,
-      },
     });
   } catch (error) {
     res.status(500).json({
@@ -207,19 +193,11 @@ export const purchaseCoupon = async (req, res) => {
       itemOwner: seller.username || seller.email,
       storeOwnerId: seller._id,
       itemName: token.tokenName,
-      totalPrice: token.priceOfCoupon * quantity,
+      totalPrice: token.priceOfCoupon,
+      nameOfItemPurchased: token.tokenName,
     });
 
     await transaction.save();
-
-    // If it's a winning token, add it to buyer's collected tokens
-    if (token.isWinningToken) {
-      await UserModel.findByIdAndUpdate(
-        buyer._id,
-        { $addToSet: { collectedTokens: token._id } },
-        { new: true }
-      );
-    }
 
     // Check if buyer has purchased two or more items from this seller
     const purchaseCount = await TransactionModel.countDocuments({
@@ -244,7 +222,11 @@ export const purchaseCoupon = async (req, res) => {
             to: buyer.accountAddress,
           });
 
-        if (specialTokenTransfer.isCompleted) {
+        const parsedSpecialTokenTransfer = specialTokenTransfer.parsed;
+        const transferCompleted = specialTokenTransfer.isCompleted;
+        console.log(`Special token transfer completed: ${transferCompleted}`);
+
+        if (transferCompleted) {
           // Update special token ownership in the database
           await SpecialTokenModel.findByIdAndUpdate(specialToken._id, {
             tokenOwnerAddress: buyer.accountAddress,

@@ -27,7 +27,11 @@ import {
 import { getUserBalance } from "../controllers/getUserBalance.js";
 import { transferTokenController } from "../controllers/TransferToken.js";
 import { burnToken } from "../controllers/BurnToken.js";
-import { getAllCoupons, getCoupon, getStoreCoupons } from "../controllers/MarketPlace.js";
+import {
+  getAllCoupons,
+  getCoupon,
+  getStoreCoupons,
+} from "../controllers/MarketPlace.js";
 import { getStores } from "../controllers/GetStores.js";
 import {
   acceptCouponSwap,
@@ -180,8 +184,6 @@ router.get("/getAllCoupons", getAllCoupons);
  */
 router.get("/getStoreCoupons/:accountAddress", verifyToken, getStoreCoupons);
 
-
-
 /**
  * @route POST /api/initiateCouponSwap
  * @description Initiate a coupon swap
@@ -196,6 +198,11 @@ router.post("/initiateCouponSwap", verifyToken, initiateCouponSwap);
  */
 router.post("/acceptCouponSwap", verifyToken, acceptCouponSwap);
 
+/**
+ * @route POST /api/mintSpecialToken
+ * @description Mint a special token
+ * @access Private
+ */
 router.post("/mintSpecialToken", verifyToken, createSpecialToken);
 
 export default router;
