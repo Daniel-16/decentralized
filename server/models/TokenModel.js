@@ -25,10 +25,10 @@ const TokenSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  quantityAvailable: {
-    type: Number,
-    default: 1,
-  },
+  // quantityAvailable: {
+  //   type: Number,
+  //   default: 1,
+  // },
 });
 
 const TokenModel = mongoose.model("Token", TokenSchema);

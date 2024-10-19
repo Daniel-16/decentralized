@@ -86,10 +86,10 @@ export const checkStorePurchases = async (req, res) => {
 };
 
 export const purchaseCoupon = async (req, res) => {
-  const { tokenId, collectionId, quantity } = req.body;
+  const { tokenId, collectionId } = req.body;
   const buyerId = req.user.id;
 
-  if (!tokenId || !collectionId || !quantity) {
+  if (!tokenId || !collectionId) {
     return res.status(400).json({
       success: false,
       error:
@@ -118,14 +118,6 @@ export const purchaseCoupon = async (req, res) => {
       return res.status(404).json({ success: false, error: "Token not found" });
     }
 
-    // Check if requested quantity is available
-    if (token.quantityAvailable < quantity) {
-      return res.status(400).json({
-        success: false,
-        error: "Requested quantity not available",
-      });
-    }
-
     const seller = await UserModel.findOne({
       accountAddress: token.tokenOwnerAddress,
     });
@@ -151,13 +143,11 @@ export const purchaseCoupon = async (req, res) => {
       signer: sellerAccount,
     });
 
-    const totalPrice = token.priceOfCoupon * quantity;
-
     // Check if buyer's wallet has enough balance
     const buyerBalance = await sdk.balance.get({
       address: buyer.accountAddress,
     });
-    if (buyerBalance.availableBalance.amount < totalPrice) {
+    if (buyerBalance.availableBalance.amount < token.priceOfCoupon) {
       return res.status(400).json({
         success: false,
         error: "Insufficient balance",
@@ -169,7 +159,7 @@ export const purchaseCoupon = async (req, res) => {
       {
         address: buyerAddress,
         destination: seller.accountAddress,
-        amount: totalPrice,
+        amount: token.priceOfCoupon,
       },
       { signer: buyerAccount }
     );
@@ -193,21 +183,19 @@ export const purchaseCoupon = async (req, res) => {
       });
     }
 
-    // Update token ownership and quantity in the database
     await TokenModel.findOneAndUpdate(
       { tokenId, collectionId },
       {
         tokenOwnerAddress: buyer.accountAddress,
         tokenOwnerId: buyer._id,
         isPurchased: true,
-        $inc: { quantityAvailable: -quantity },
       }
     );
 
     // Update seller's wallet balance
     await UserModel.findByIdAndUpdate(
       seller._id,
-      { $inc: { walletBalance: totalPrice } },
+      { $inc: { walletBalance: token.priceOfCoupon } },
       { new: true }
     );
 
@@ -219,8 +207,7 @@ export const purchaseCoupon = async (req, res) => {
       itemOwner: seller.username || seller.email,
       storeOwnerId: seller._id,
       itemName: token.tokenName,
-      quantity: quantity,
-      totalPrice: totalPrice,
+      totalPrice: token.priceOfCoupon * quantity,
     });
 
     await transaction.save();
