@@ -148,7 +148,7 @@
     // Function to fetch user balance
     function fetchUserBalance() {
         const wallet_address = localStorage.getItem("accountAddress");
-        const apiUrl = `/api/getUserBalance/${wallet_address}`;
+        const apiUrl = `/api/getUserBalance`;
         $.ajax({
             url: apiUrl,
             method: "GET",

@@ -196,22 +196,22 @@ $(document).ready(function () {
                         localStorage.setItem("storeSpendings", JSON.stringify(storeSpendings));
 
                         // Check if customer has spent more than 5000 in this store
-                        if (storeSpendings[storeOwner] > 5000) {
-                            console.log(`Customer has spent over 5000 in store: ${storeOwner}`);
-                                confetti({
-                                    particleCount: 100,
-                                    spread: 70,
-                                    origin: { y: 0.6 },
-                                });
-                                // toastr.success("Successfully purchased 1 unit!");
-                            Swal.fire({
-                                title: "Coupon won!",
-                                text: "You've won a coupon! Check your profile for more details!",
-                                icon: "success",
-                                timer: 1500,  
-                                showConfirmButton: false  
-                            });
-                        }
+                        // if (storeSpendings[storeOwner] > 5000) {
+                        //     console.log(`Customer has spent over 5000 in store: ${storeOwner}`);
+                        //         confetti({
+                        //             particleCount: 100,
+                        //             spread: 70,
+                        //             origin: { y: 0.6 },
+                        //         });
+                        //         // toastr.success("Successfully purchased 1 unit!");
+                        //     Swal.fire({
+                        //         title: "Coupon won!",
+                        //         text: "You've won a coupon! Check your profile for more details!",
+                        //         icon: "success",
+                        //         timer: 1500,  
+                        //         showConfirmButton: false  
+                        //     });
+                        // }
 
                         Swal.fire({
                             title: "Purchase Successful!",
