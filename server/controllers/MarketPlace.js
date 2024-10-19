@@ -66,3 +66,78 @@ export const getStoreCoupons = async (req, res) => {
     });
   }
 };
+
+export const getCoupon = async (req, res) => {
+  const { collectionId, tokenId } = req.params;
+  try {
+    const coupon = await TokenModel.findOne({ collectionId, tokenId });
+
+    if (!coupon) {
+      return res.status(404).json({
+        success: false,
+        error: "Coupon not found",
+      });
+    }
+
+    // console.log("coupon: ", coupon);
+    const ownerDetails = await UserModel.find({
+      accountAddress: coupon.tokenOwnerAddress,
+    });
+
+    const moreCoupons = await TokenModel.find({
+      collectionId,
+      isPurchased: false,
+    }).limit(5); 
+
+    const moreCouponsWithOwnerDetails = await Promise.all(
+      moreCoupons.map(async (moreCoupon) => {
+        const ownerDetail = await UserModel.findOne({
+          accountAddress: moreCoupon.tokenOwnerAddress,
+        });
+        return {
+          ...moreCoupon._doc,
+          ownerName: ownerDetail ? ownerDetail.username : "Unknown", 
+        };
+      })
+    );
+    // console.log("ownerDetails: ", ownerDetails);
+    // res.status(200).json({
+    //   success: true,
+    //   coupon: {
+    //     ...coupon._doc,
+    //     ownerName: ownerDetails ? ownerDetails.username : "Unknown",
+    //   },
+    // });
+    res.render("token/tokenDetail", {
+      token: {
+        ...coupon._doc,
+        ownerName:
+          ownerDetails && ownerDetails.length > 0
+            ? ownerDetails[0].username
+            : "Unknown",
+      },
+      moreCoupons: moreCouponsWithOwnerDetails, 
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+export const getMoreCouponsByCollectionId = async (req, res) => {
+  const { collectionId } = req.params;
+  try {
+    const coupons = await TokenModel.find({ collectionId, isPurchased: false });
+    res.status(200).json({
+      success: true,
+      coupons,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};

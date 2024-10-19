@@ -1,7 +1,7 @@
 import express from "express";
 import { redirectIfNotAuthenticated } from "../middleware/redirectIfNotAuthenticated.js";
 import { checkAuth } from "../middleware/checkAuth.js";
-import { getStoreCoupons } from "../controllers/MarketPlace.js";
+import { getCoupon, getStoreCoupons } from "../controllers/MarketPlace.js";
 const router = express.Router();
 
 router.use(checkAuth);
@@ -94,5 +94,13 @@ router.get("/transactions", async function (req, res) {
 router.get("/store/:accountAddress", async function (req, res) {
   res.render("store/store-coupon");
 });
+
+
+/**
+ * @route GET /api/getCoupon/:collectionId/:tokenId
+ * @description Get a single coupon
+ * @access Private
+ */
+router.get("/getCoupon/:collectionId/:tokenId", getCoupon);
 
 export default router;

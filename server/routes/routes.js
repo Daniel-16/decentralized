@@ -27,7 +27,7 @@ import {
 import { getUserBalance } from "../controllers/getUserBalance.js";
 import { transferTokenController } from "../controllers/TransferToken.js";
 import { burnToken } from "../controllers/BurnToken.js";
-import { getAllCoupons, getStoreCoupons } from "../controllers/MarketPlace.js";
+import { getAllCoupons, getCoupon, getStoreCoupons } from "../controllers/MarketPlace.js";
 import { getStores } from "../controllers/GetStores.js";
 import {
   acceptCouponSwap,
@@ -179,6 +179,8 @@ router.get("/getAllCoupons", getAllCoupons);
  * @access Private
  */
 router.get("/getStoreCoupons/:accountAddress", verifyToken, getStoreCoupons);
+
+
 
 /**
  * @route POST /api/initiateCouponSwap
