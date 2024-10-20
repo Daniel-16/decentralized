@@ -7,25 +7,7 @@
 
 <div class="admin-wrapper">
     <div class="container">
-        <div class="pb-4 row justify-content-center">
-            <!-- <div class="col-12 text-center">
-                <h4 class="mb-3">Your current wallet</h4>
-            </div> -->
-            <div class="col-12 col-xl-12 col-xxl-12">
-                <div class="card wallet-card shadow-sm">
-                    <div class="card-body px-4 text-center">
-                        <div class="d-flex align-items-center">
-                            <!-- <div class="img-wrap">
-                                </div> -->
-                            <h4 class="mb-0 me-3">Got a Coupon to Swap?</h4>
-                            <a class="btn btn-sm btn-warning rounded-pill ms-auto" 
-                                data-bs-toggle="modal" 
-                                data-bs-target="#acceptCouponModal"  href="#">Swap</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-    </div>
+
 
         <h3 class="mb-3">All My Coupons</h3>
         <div class="row g-4" id="collections-container">
@@ -194,22 +176,16 @@ $(document).ready(function() {
                                 </div>
                                 <div class="row">
                                     <div class="col-6">
-                                        <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 btn-mint-token" href="#" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#transferModal" 
-                                            data-token-id="${token.tokenId}" 
-                                            data-collection-id="${token.collectionId}">
-                                            Swap Token                                    
-                                            <i class="me-1 bi bi-arrow-left-right"></i>
-                                            </a>
+                                        <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="/initiate-coupon-swap?tid=${token.tokenId}&cid=${token.collectionId}">
+                                            Swap                          
+                                        </a>
                                     </div>
                                     <div class="col-6">
                                         <a class="btn btn-danger rounded-pill btn-sm mt-3 w-100 redeem-coupon" href="#"  
                                             data-token-id="${token.tokenId}" 
                                             data-collection-id="${token.collectionId}"
                                             >
-                                            Redeem Coupon                                    
-                                            <i class="me-1 bi bi-gift-fill"></i>
+                                            Redeem                                    
                                         </a>
                                     </div>
                                 </div>
