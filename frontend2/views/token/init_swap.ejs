@@ -1,0 +1,223 @@
+<%- include('../partials/admin/header') %>
+
+
+
+
+
+
+
+<div class="admin-wrapper">
+    <div class="container">
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-12">
+                <div class="text-center">
+                    <h4 class="mb-4 mt-5">Swap your coupon with other coupons of the same price.</h4>
+                </div>
+            </div>
+            
+            <!-- me -->
+            <div class="col-12 col-sm-10 col-md-6 col-xl-5">
+                <div class="nft-card card shadow-sm">
+                    <div class="card-body">
+                        <div class="row align-items-center g-3">
+                            <div class="col-4">
+                                <!-- own credentials -->
+                                <input type="hidden" name="ownTokenId" id="ownTokenId" value="<%= coupon.tokenId %>">
+                                <input type="hidden" name="ownCollectionId" id="ownCollectionId" value="<%= coupon.collectionId %>">
+
+                                <div class="img-wrap"><img src="<%= coupon.tokenImageUrl %>" alt="">
+                                    <div class="badge bg-danger position-absolute px-2 py-1">#<%= coupon.tokenId %></div>
+                                </div>
+                            </div>
+                            <div class="col-8">
+                                <!-- Meta Info -->
+                                <div class="meta-info">
+                                    <div class="name-info d-flex align-items-center mb-3">
+                                        <div class="author-img position-relative"><img class="shadow" src="/assets/img/bg-img/u2.jpg" alt=""><i class="bi bi-check position-absolute bg-success"></i></div>
+                                        <div class="name-author"><a class="name d-block hover-primary fw-bold text-truncate" href="/getCoupon/<%= coupon.collectionId %>/<%= coupon.tokenId %>" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="<%= coupon.tokenName %>"><%= coupon.tokenName %></a><a class="author d-block fz-12 hover-primary text-truncate" href="#">@my_coupon</a></div>
+                                    </div>
+                                    <div class="price-bid d-flex align-items-center">
+                                        <div class="price me-2 me-sm-3">
+                                            <h6 class="mb-0 d-inline-block fz-14 border border-2 border-info rounded py-1 px-2 text-info"><%= coupon.priceOfCoupon %> UNQ</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- swap icon -->
+            <div class="col-12 col-xl-2 pt-4">
+                <div class="card shadow-sm">
+                    <div class="card-body px-4">
+                        <div class="d-flex align-items-center">
+                            <div class="img-wrap">
+                                <img style="height: 60px;" src="/assets/img/swap.png" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- receiver -->
+            <div class="col-12 col-sm-10 col-md-6 col-xl-5">
+                <!-- swapable coupons -->
+                <% if (swappableCoupons.length > 0) { %>
+                    <% swappableCoupons.forEach(function(coupon) { %>
+                        <div class="nft-card card shadow-sm mb-3">
+                            <div class="card-body">
+                                <div class="row align-items-center g-3">
+                                    <div class="col-4">
+                                        <div class="img-wrap">
+                                            <img src="<%= coupon.tokenImageUrl %>" alt="">
+                                            <div class="badge bg-danger position-absolute px-2 py-1">#<%= coupon.tokenId %></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-8">
+                                        <!-- Meta Info -->
+                                        <div class="meta-info">
+                                            <div class="name-info d-flex align-items-center mb-3">
+                                                <div class="author-img position-relative">
+                                                    <img class="shadow" src="/assets/img/bg-img/u1.jpg" alt="">
+                                                    <i class="bi bi-check position-absolute bg-success"></i>
+                                                </div>
+                                                <div class="name-author">
+                                                    <a class="name d-block hover-primary fw-bold text-truncate" href="/getCoupon/<%= coupon.collectionId %>/<%= coupon.tokenId %>" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Trees Growing Seedlings">Trees Growing Seedlings</a>
+                                                    <a class="author d-block fz-12 hover-primary text-truncate" href="#">@<%= coupon.tokenOwnerAddress %></a>
+                                                </div>
+                                            </div>
+                                            <div class="price-bid d-flex align-items-center">
+                                                <div class="price me-2 me-sm-3">
+                                                    <h6 class="mb-0 d-inline-block fz-14 border border-2 border-info rounded py-1 px-2 text-info"><%= coupon.priceOfCoupon %> UNQ</h6>
+                                                </div>
+                                                
+                                                <!-- desired -->
+                                                <a 
+                                                data-token-id="<%= coupon.tokenId %>" 
+                                                data-collection-id="<%= coupon.collectionId %>" 
+                                                data-recipient-address="<%= coupon.tokenOwnerAddress %>" 
+                                                class="requestSwap btn btn-primary btn-sm d-flex align-items-center"
+                                                href="#">
+                                                    <span class="button-text">Request Swap</span>
+                                                    <span class="spinner-border spinner-border-sm ms-2" style="display: none;" role="status" aria-hidden="true"></span>
+                                                </a>
+                                                
+                                            </div>
+                                            
+                                            <!-- Dropdown Button -->
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="nft-card card shadow-sm mb-3">
+                        <div class="card-body">
+                            <div class="row align-items-center g-3">
+                                <div class="col-12">
+                                    <div class="text-center">
+                                        <h6>No available coupons to swap with :(</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<%- include('../partials/admin/footer') %>
+
+
+<script>
+    $(document).ready(function() {
+
+        $(".requestSwap").click(function(event) {
+            event.preventDefault(); 
+            
+            const $this = $(this);
+            $this.find(".button-text").text("Requesting..."); 
+            $this.find(".spinner-border").show(); 
+            $this.prop("disabled", true); 
+
+            const desiredTokenId = $this.data('token-id');
+            const desiredCollectionId = $this.data('collection-id');
+            const recipientAddress = $this.data('recipient-address');
+            const ownTokenId = $("#ownTokenId").val();
+            const ownCollectionId = $("#ownCollectionId").val();
+
+            // console.log('Desired Token ID:', desiredTokenId);
+            // console.log('Desired Collection ID:', desiredCollectionId);
+            // console.log('Recipient Address:', recipientAddress);
+            // console.log('Own Token ID:', ownTokenId);
+            // console.log('Own Collection ID:', ownCollectionId);
+
+
+            $.ajax({
+                url: '/api/initiateCouponSwap',
+                type: 'POST',
+                data: {
+                    ownTokenId: ownTokenId,
+                    ownCollectionId: ownCollectionId,
+                    desiredTokenId: desiredTokenId,
+                    desiredCollectionId: desiredCollectionId,
+                    recipientAddress: recipientAddress
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Coupon Swap Request Placed Successfully!",
+                            text: "Please wait for the recipient to accept the swap request.",
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                        location.assign('/tokens');
+                    } else {
+                        Swal.fire({
+                            title: "Ooops!",
+                            text: response.message || "Failed to send swap request.",
+                            icon: "error",
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                        resetButton($this);
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        title: "Ooops!",
+                        text: response.message || "Failed to send swap request.",
+                        icon: "error",
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    resetButton($this);
+                }
+            });
+        });
+
+        function resetButton(button) {
+            button.find(".button-text").text("Request Swap"); 
+            button.find(".spinner-border").hide();
+            button.prop("disabled", false);
+        }
+    });
+</script>

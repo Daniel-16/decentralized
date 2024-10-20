@@ -67,6 +67,46 @@ export const getStoreCoupons = async (req, res) => {
   }
 };
 
+/**
+ *
+ * @param {*} req
+ * @param {*} res
+ * @returns view: initiate-coupon-swap
+ */
+export const initiateCouponSwap = async (req, res) => {
+  const {
+    cid: collectionId = defaultCollectionId,
+    tid: tokenId = defaultTokenId,
+  } = req.query;
+  try {
+    const coupon = await TokenModel.findOne({ collectionId, tokenId });
+    if (!coupon) {
+      return res.status(404).json({
+        success: false,
+        error: "Coupon not found",
+      });
+    }
+
+    const swappableCoupons = await TokenModel.find({
+      isPurchased: false,
+      priceOfCoupon: coupon.priceOfCoupon,
+      _id: { $ne: coupon._id },
+      tokenOwnerAddress: { $ne: coupon.tokenOwnerAddress },
+    });
+
+    // console.log("coupon: ", coupon);
+    res.render("token/init_swap", {
+      coupon,
+      swappableCoupons,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
 export const getCoupon = async (req, res) => {
   const { collectionId, tokenId } = req.params;
   try {
@@ -87,7 +127,7 @@ export const getCoupon = async (req, res) => {
     const moreCoupons = await TokenModel.find({
       collectionId,
       isPurchased: false,
-    }).limit(5); 
+    }).limit(5);
 
     const moreCouponsWithOwnerDetails = await Promise.all(
       moreCoupons.map(async (moreCoupon) => {
@@ -96,7 +136,7 @@ export const getCoupon = async (req, res) => {
         });
         return {
           ...moreCoupon._doc,
-          ownerName: ownerDetail ? ownerDetail.username : "Unknown", 
+          ownerName: ownerDetail ? ownerDetail.username : "Unknown",
         };
       })
     );
@@ -116,7 +156,7 @@ export const getCoupon = async (req, res) => {
             ? ownerDetails[0].username
             : "Unknown",
       },
-      moreCoupons: moreCouponsWithOwnerDetails, 
+      moreCoupons: moreCouponsWithOwnerDetails,
     });
   } catch (error) {
     res.status(500).json({

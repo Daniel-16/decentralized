@@ -15,6 +15,8 @@ const CollecionSchema = new mongoose.Schema({
   //   required: true,
   // },
   collectionUrl: String,
+  name: String,
+  description: String,
   // tokenUrl: String,
   walletAddress: {
     type: String,

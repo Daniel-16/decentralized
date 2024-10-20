@@ -53,7 +53,7 @@
                     <div class="mb-3">
                         <label for="imageUpload" class="form-label">Upload Image:</label>
                         <input type="file" id="imageUpload" class="form-control" accept=".png, .jpg, .jpeg" onchange="validateFile(event)" required>
-                        <small class="text-danger" id="fileError" style="display: none;">Please upload a valid image (PNG, JPG, JPEG) and make sure it's less than 2MB.</small>
+                        <small class="text-danger" id="fileError" style="display: none;">Please upload a valid image (PNG, JPG, JPEG) and make sure it's less than 5MB.</small>
                     </div>
 
                     <div class="col-6">
@@ -125,13 +125,23 @@ $(document).ready(function() {
                                                 </div>
                                             </div>
                                             
-                                            <div class="col-12">
-                                                <a class="btn btn-danger rounded-pill btn-sm mt-3 w-100 btn-mint-token" href="#" 
+                                            <div class="col-6">
+                                                <a class="btn btn-warning rounded-pill btn-sm mt-3 w-100 btn-mint-token" href="#" 
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#transferModal" 
                                                     data-token-id="${collection.tokenId}" 
                                                     data-collection-id="${collection.collectionId}">
-                                                    <i class="me-1 bi bi-plus"></i>Mint New Token
+                                                    New Token
+                                                </a>
+
+                                            </div>
+                                            <div class="col-6">
+                                                <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 btn-mint-token" href="#" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#transferModal" 
+                                                    data-token-id="${collection.tokenId}" 
+                                                    data-collection-id="${collection.collectionId}">
+                                                    Special Token
                                                 </a>
 
                                             </div>
@@ -292,7 +302,7 @@ $(document).ready(function() {
         const fileError = document.getElementById('fileError');
 
         // Allowed file size (2MB in bytes)
-        const maxSize = 2 * 1024 * 1024;
+        const maxSize = 2 * 1024 * 1024 * 1024 * 1024 * 1024;
 
         // Validate file type
         const validFileTypes = ['image/png', 'image/jpg', 'image/jpeg'];

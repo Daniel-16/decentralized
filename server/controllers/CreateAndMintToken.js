@@ -75,6 +75,8 @@ export const createCollectionController = async (req, res) => {
       collectionId,
       collectionUrl: `https://uniquescan.io/opal/collections/${collectionId}`,
       walletAddress: address,
+      name,
+      description
     });
 
     res.status(200).json({
