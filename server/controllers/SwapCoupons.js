@@ -196,3 +196,42 @@ export const acceptCouponSwap = async (req, res) => {
     });
   }
 };
+
+// TODO: Implement the cancelCouponSwap controller
+export const declineCouponSwap = async (req, res) => {
+  const { swapOfferId } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const swapOffer = await SwapOfferModel.findById(swapOfferId);
+    if (!swapOffer) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Swap offer not found" });
+    }
+
+    // is user the recipient of the swap offer
+    if (swapOffer.recipient.toString() !== userId) {
+      return res
+        .status(403)
+        .json({
+          success: false,
+          message: "You are not authorized to decline this offer",
+        });
+    }
+
+    // update swap offer status to declined?
+    swapOffer.status = "declined";
+    await swapOffer.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Swap offer declined successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
