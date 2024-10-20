@@ -5,6 +5,7 @@ import Sdk, { CHAIN_CONFIG } from "@unique-nft/sdk";
 import { KeyringProvider } from "@unique-nft/accounts/keyring";
 import TokenModel from "../models/TokenModel.js";
 import SpecialTokenModel from "../models/SpecialToken.js";
+import { checkAndTransferSpecialToken } from "../services/SpecialTokenService.js";
 
 export const checkBuyerPurchases = async (req, res) => {
   const userId = req.user.id;
@@ -78,8 +79,7 @@ export const purchaseCoupon = async (req, res) => {
   if (!tokenId || !collectionId) {
     return res.status(400).json({
       success: false,
-      error:
-        "Missing required fields: tokenId, collectionId and quantity must be provided",
+      error: "Missing required fields: tokenId, collectionId must be provided",
     });
   }
 
@@ -162,80 +162,43 @@ export const purchaseCoupon = async (req, res) => {
     const transferCompleted = txTransfer.isCompleted;
     console.log(`Transfer completed: ${transferCompleted}`);
 
-    if (!transferCompleted) {
-      return res.status(400).json({
-        success: false,
-        message: "Failed to transfer token.",
-      });
-    }
-
-    await TokenModel.findOneAndUpdate(
-      { tokenId, collectionId },
-      {
-        tokenOwnerAddress: buyer.accountAddress,
-        tokenOwnerId: buyer._id,
-        isPurchased: true,
-      }
-    );
-
-    // Update seller's wallet balance
-    await UserModel.findByIdAndUpdate(
-      seller._id,
-      { $inc: { walletBalance: token.priceOfCoupon } },
-      { new: true }
-    );
-
-    // Create transaction record
-    const transaction = new TransactionModel({
-      buyerId: buyer._id,
-      buyerName: buyer.username || buyer.email,
-      item: token._id,
-      itemOwner: seller.username || seller.email,
-      storeOwnerId: seller._id,
-      itemName: token.tokenName,
-      totalPrice: token.priceOfCoupon,
-      nameOfItemPurchased: token.tokenName,
-    });
-
-    await transaction.save();
-
-    // Check if buyer has purchased two or more items from this seller
-    const purchaseCount = await TransactionModel.countDocuments({
-      buyerId: buyer._id,
-      storeOwnerId: seller._id,
-    });
-
-    if (purchaseCount >= 2) {
-      // Find an available special token from the seller
-      const specialToken = await SpecialTokenModel.findOne({
-        tokenOwnerId: seller._id,
-        wonByUser: false,
-      });
-
-      if (specialToken) {
-        // Transfer special token from seller to buyer
-        const specialTokenTransfer =
-          await sellerSdk.token.transfer.submitWaitResult({
-            collectionId: specialToken.collectionId,
-            tokenId: specialToken.tokenId,
-            address: sellerAddress,
-            to: buyer.accountAddress,
-          });
-
-        const parsedSpecialTokenTransfer = specialTokenTransfer.parsed;
-        const transferCompleted = specialTokenTransfer.isCompleted;
-        console.log(`Special token transfer completed: ${transferCompleted}`);
-
-        if (transferCompleted) {
-          // Update special token ownership in the database
-          await SpecialTokenModel.findByIdAndUpdate(specialToken._id, {
-            tokenOwnerAddress: buyer.accountAddress,
-            tokenOwnerId: buyer._id,
-            wonByUser: true,
-          });
-
-          console.log(`Special token transferred to buyer: ${buyer._id}`);
+    if (transferCompleted) {
+      await TokenModel.findOneAndUpdate(
+        { tokenId, collectionId },
+        {
+          tokenOwnerAddress: buyer.accountAddress,
+          tokenOwnerId: buyer._id,
+          isPurchased: true,
         }
+      );
+
+      // Update seller's wallet balance
+      await UserModel.findByIdAndUpdate(
+        seller._id,
+        { $inc: { walletBalance: token.priceOfCoupon } },
+        { new: true }
+      );
+
+      // Create transaction record
+      const transaction = new TransactionModel({
+        buyerId: buyer._id,
+        buyerName: buyer.username || buyer.email,
+        nameOfItemPurchased: token.tokenName,
+        storeOwnerId: seller._id,
+        totalPrice: token.priceOfCoupon,
+      });
+
+      await transaction.save();
+
+      // Check and transfer special token
+      const specialTokenTransferred = await checkAndTransferSpecialToken(
+        buyer,
+        seller,
+        sellerSdk
+      );
+
+      if (specialTokenTransferred) {
+        console.log("Special token transferred successfully");
       }
     }
 
