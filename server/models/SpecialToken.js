@@ -1,14 +1,21 @@
 import mongoose from "mongoose";
 
 const SpecialTokenSchema = new mongoose.Schema({
-  tokenId: Number,
-  collectionId: Number,
+  tokenId: {
+    type: Number,
+    required: true,
+  },
+  collectionId: {
+    type: Number,
+    required: true,
+  },
   tokenName: String,
   tokenImageUrl: String,
   tokenOwnerAddress: String,
   tokenOwnerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+    required: true,
   },
   tokenDescription: String,
   tokenUrl: String,

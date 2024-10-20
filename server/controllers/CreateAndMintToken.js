@@ -76,7 +76,7 @@ export const createCollectionController = async (req, res) => {
       collectionUrl: `https://uniquescan.io/opal/collections/${collectionId}`,
       walletAddress: address,
       name,
-      description
+      description,
     });
 
     res.status(200).json({
@@ -153,42 +153,28 @@ export const mintToken = async (req, res) => {
     const mintTokenCompleted = result.isCompleted;
     console.log(`Token minting completed: ${mintTokenCompleted}`);
 
-    if (!mintTokenCompleted) {
-      return res.status(400).json({
-        success: false,
-        message: "Failed to mint token. No tokenId received.",
+    if (mintTokenCompleted) {
+      const mintToken = await TokenModel.create({
+        tokenName,
+        tokenId,
+        collectionId,
+        tokenImageUrl,
+        tokenOwnerAddress: user.accountAddress,
+        tokenOwnerId: user._id,
+        tokenDescription,
+        priceOfCoupon,
+        tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "Token minted successfully",
+        mintToken,
       });
     }
-
-    if (!tokenId) {
-      return res.status(400).json({
-        success: false,
-        message: "Failed to mint token. No tokenId received.",
-      });
-    }
-
-    // Find the collection and add the new token
-    // const isWinningToken = Math.random() < 0.1;
-    // console.log(isWinningToken);
-
-    const mintToken = await TokenModel.create({
-      tokenName,
-      tokenId,
-      collectionId,
-      tokenImageUrl,
-      tokenOwnerAddress: address,
-      tokenOwnerId: user._id,
-      tokenDescription,
-      priceOfCoupon,
-      quantityAvailable,
-      tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
-      // isWinningToken,
-    });
-
-    return res.status(200).json({
-      success: true,
-      message: "Token minted successfully",
-      mintToken,
+    res.status(400).json({
+      success: false,
+      message: "Failed to mint token",
     });
   } catch (error) {
     res.status(500).json({
@@ -313,39 +299,33 @@ export const createSpecialToken = async (req, res) => {
       },
     });
 
-    const tokenId = result.parsed.tokenId;
+    const tokenId = result.parsed?.tokenId;
     console.log(`This is the special tokenId: ${tokenId}`);
     const mintTokenCompleted = result.isCompleted;
     console.log(`Special token minting completed: ${mintTokenCompleted}`);
 
-    if (!mintTokenCompleted) {
-      return res.status(400).json({
-        success: false,
-        message: "Failed to mint special token. No tokenId received.",
+    if (mintTokenCompleted) {
+      const specialToken = await SpecialTokenModel.create({
+        collectionId,
+        tokenId,
+        tokenName,
+        tokenDescription,
+        tokenImageUrl,
+        tokenOwnerAddress: address,
+        tokenOwnerId: user._id,
+        tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "Special token created successfully",
+        specialToken,
       });
     }
 
-    if (!tokenId) {
-      return res.status(400).json({
-        success: false,
-        message: "Failed to mint special token. No tokenId received.",
-      });
-    }
-
-    const specialToken = await SpecialTokenModel.create({
-      collectionId,
-      tokenName,
-      tokenDescription,
-      tokenImageUrl,
-      tokenOwnerAddress: address,
-      tokenOwnerId: user._id,
-      tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
-    });
-
-    return res.status(200).json({
-      success: true,
-      message: "Special token created successfully",
-      specialToken,
+    res.status(400).json({
+      success: false,
+      message: "Failed to mint special token",
     });
   } catch (error) {
     res.status(500).json({
