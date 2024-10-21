@@ -154,8 +154,19 @@ $(document).ready(function() {
     }
 
     function createCollectionItem(token, tokenType) {
+        
+        const swapBtn = tokenType == "standard" ? `
+        <div class="col-6">
+            <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="/initiate-coupon-swap?tid=${token.tokenId}&cid=${token.collectionId}">
+                Swap                          
+                </a>
+                </div>
+                ` : '';
+                
         const tokenStatus = !token.isPurchased ? 'In Marketplace' : 'Redeemable';
         const tokenClass = tokenType === 'special' ? 'badge bg-warning' : 'badge bg-dark';
+
+        console.log("token: ", token)
 
         return `
         <div class="col-12 col-sm-6 col-xl-4 col-xxl-4">
@@ -180,10 +191,10 @@ $(document).ready(function() {
                                     <i class="bi bi-check position-absolute bg-success"></i>
                                 </div>
                                 <div class="name-author">
-                                    <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="${token.tokenName}">
+                                    <a class="name d-block hover-primary fw-bold text-truncate" href="/getCoupon/${token.collectionId}/${token.tokenId}" data-bs-toggle="tooltip" data-bs-placement="top" title="${token.tokenName}">
                                         ${token.tokenName}
                                     </a>
-                                    <a class="author d-block fz-12 hover-primary text-truncate" href="author.html">
+                                    <a class="author d-block fz-12 hover-primary text-truncate" href="#">
                                         #${token.tokenId}-${token.collectionId}
                                     </a>
                                 </div>
@@ -199,11 +210,7 @@ $(document).ready(function() {
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-6">
-                                <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="/initiate-coupon-swap?tid=${token.tokenId}&cid=${token.collectionId}">
-                                    Swap                          
-                                </a>
-                            </div>
+                            ${swapBtn}
                             <div class="col-6">
                                 <a class="btn btn-danger rounded-pill btn-sm mt-3 w-100 redeem-coupon" href="#"  
                                     data-token-id="${token.tokenId}" 

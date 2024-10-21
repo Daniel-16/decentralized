@@ -14,7 +14,7 @@ export const initiateCouponSwap = async (req, res) => {
   } = req.body;
   const userId = req.user.id;
   // console.log("userId: ", userId);
-  console.log("body", req.body);
+  // console.log("body", req.body);
 
   try {
     const user = await UserModel.findById(userId);
@@ -22,11 +22,17 @@ export const initiateCouponSwap = async (req, res) => {
     if (!user) {
       return res
         .status(404)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "User not found!" });
     }
 
-    console.log("ownTokenId: ", ownTokenId);
-    console.log("ownCollectionId: ", ownCollectionId);
+    if (user.isAdmin) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Store is not allowed to swap!" });
+    }
+
+    // console.log("ownTokenId: ", ownTokenId);
+    // console.log("ownCollectionId: ", ownCollectionId);
 
     const ownToken = await TokenModel.findOne({
       tokenId: ownTokenId,
@@ -219,12 +225,10 @@ export const declineCouponSwap = async (req, res) => {
 
     // is user the recipient of the swap offer
     if (swapOffer.recipient.toString() !== userId) {
-      return res
-        .status(403)
-        .json({
-          success: false,
-          message: "You are not authorized to decline this offer",
-        });
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to decline this offer",
+      });
     }
 
     // update swap offer status to declined?
@@ -242,7 +246,6 @@ export const declineCouponSwap = async (req, res) => {
     });
   }
 };
-
 
 export const getSwapOffers = async (req, res) => {
   const userId = req.user.id;

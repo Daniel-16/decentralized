@@ -211,7 +211,6 @@ export const getUserCollections = async (req, res) => {
 };
 
 // controller to get all tokens owned by a user
-
 export const getUserToken = async (req, res) => {
   const userId = req.user.id;
 
