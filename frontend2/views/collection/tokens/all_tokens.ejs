@@ -117,102 +117,31 @@ $(document).ready(function() {
                 $('#collections-container').empty();  
                 if (response && response.success) {
                     console.log('Response:', response);
-                    console.log('Collections:', response.tokens);
-                    if (response.tokens && response.tokens.length > 0) {
-                        response.tokens.forEach(function(token) {
-                            let tokensHtml = '';
-                            let tokenCount = 0;
-
-                            // if (collection.token && collection.token.length > 0) {
-                            //     tokenCount = collection.token.length;
-                            //     collection.token.forEach(function(tokenItem) {
-                            //         tokensHtml += `<div>Token ID: #${tokenItem.substring(0, 10) + '...'}</div>`;
-                            //     });
-                            // } else {
-                            //     tokensHtml = '<div>No tokens available for this collection.</div>';
-                            // }
-
-                            const collectionItem = `
-                            <div class="col-12 col-sm-6 col-xl-4 col-xxl-4">
-                    <!-- Featured Card -->
-                    <div class="nft-card card border-0">
-                        <div class="card-body">
-                            <div class="img-wrap">
-                                <img style="height: 200px; width: auto; object-fit: cover;" src="${token.tokenImageUrl}" alt="${token.tokenName}">                                
-                                <div class="badge bg-dark position-absolute text-center">
-                                    <img src="/assets/img/core-img/fire.png" alt="">
-                                    ${!token.isPurchased ? 'In Marketplace' : 'Redeemable'}
-                                </div>
-                            </div>
-                            <!-- Others Info -->
-                            <div class="row gx-2 align-items-center mt-3">
-                                <div class="col-12">
-                                    <span class="d-block fz-12"><i class="bi bi-bag me-1"></i>Available</span>
-                                </div>
-                            </div>
-                            <div class="row gx-2 align-items-center mt-2">
-                                <div class="col-7">
-                                    <div class="name-info d-flex align-items-center">
-                                        <div class="author-img position-relative">
-                                            <img class="shadow" src="/assets/img/bg-img/u2.jpg" alt="">
-                                            <i class="bi bi-check position-absolute bg-success"></i>
-                                        </div>
-                                        <div class="name-author">
-                                            <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Fancy Car">
-                                                ${token.tokenName}
-                                            </a>
-                                            <a class="author d-block fz-12 hover-primary text-truncate" href="author.html">
-                                                #${token.tokenId}-${token.collectionId}
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-5">
-                                    <div class="price text-end"><span class="fz-12 d-block">Current Price</span>
-                                    <h6 class="mb-0">UNQ ${new Intl.NumberFormat('en-US', { 
-                                        minimumFractionDigits: 2, 
-                                        maximumFractionDigits: 2 
-                                    }).format(token.priceOfCoupon)}</h6>                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="/initiate-coupon-swap?tid=${token.tokenId}&cid=${token.collectionId}">
-                                            Swap                          
-                                        </a>
-                                    </div>
-                                    <div class="col-6">
-                                        <a class="btn btn-danger rounded-pill btn-sm mt-3 w-100 redeem-coupon" href="#"  
-                                            data-token-id="${token.tokenId}" 
-                                            data-collection-id="${token.collectionId}"
-                                            >
-                                            Redeem                                    
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                            `;
-
+                    const { standardTokens, specialTokens } = response.allTokens;
+                    
+                    // Handle Standard Tokens
+                    if (standardTokens && standardTokens.length > 0) {
+                        standardTokens.forEach(function(token) {
+                            let collectionItem = createCollectionItem(token, 'standard');
                             $('#collections-container').append(collectionItem);
-
-                            // Attach click event handler for mint buttons
-                            $('.btn-mint-token').on('click', function(e) {
-                                e.preventDefault();
-                                // Get token ID and collection ID from data attributes
-                                const tokenId = $(this).data('token-id');
-                                const collectionId = $(this).data('collection-id');
-                                // Pre-populate the modal form fields
-                                $('#tokenId').val(tokenId);
-                                $('#collectionId').val(collectionId);
-                                // Show the modal for token transfer/minting
-                                $('#transferModal').fadeIn();
-                            });
                         });
                     } else {
-                        $('#collections-container').append('<p>No collections created for this user.</p>');
+                        $('#collections-container').append('<p>No standard tokens created for this user.</p>');
                     }
+
+                    // Handle Special Tokens
+                    if (specialTokens && specialTokens.length > 0) {
+                        specialTokens.forEach(function(token) {
+                            let collectionItem = createCollectionItem(token, 'special');
+                            $('#collections-container').append(collectionItem);
+                        });
+                    } else {
+                        $('#collections-container').append('<p>No special tokens created for this user.</p>');
+                    }
+
+                    // Attach click event handler for mint buttons
+                    attachMintButtonHandler();
+
                 } else {
                     $('#collections-container').append('<p>Error fetching collections.</p>');
                 }
@@ -221,6 +150,87 @@ $(document).ready(function() {
                 console.error('An error occurred:', xhr.responseText);
                 $('#collections-container').append('<p>Failed to fetch collections. Please try again later.</p>');
             }
+        });
+    }
+
+    function createCollectionItem(token, tokenType) {
+        const tokenStatus = !token.isPurchased ? 'In Marketplace' : 'Redeemable';
+        const tokenClass = tokenType === 'special' ? 'badge bg-warning' : 'badge bg-dark';
+
+        return `
+        <div class="col-12 col-sm-6 col-xl-4 col-xxl-4">
+            <div class="nft-card card border-0">
+                <div class="card-body">
+                    <div class="img-wrap">
+                        <img style="height: 200px; width: auto; object-fit: cover;" src="${token.tokenImageUrl}" alt="${token.tokenName}">                                
+                        <div class="${tokenClass} position-absolute text-center">
+                            ${tokenType}
+                        </div>
+                    </div>
+                    <div class="row gx-2 align-items-center mt-3">
+                        <div class="col-12">
+                            <span class="d-block fz-12"><i class="bi bi-bag me-1"></i>${tokenStatus}</span>
+                        </div>
+                    </div>
+                    <div class="row gx-2 align-items-center mt-2">
+                        <div class="col-7">
+                            <div class="name-info d-flex align-items-center">
+                                <div class="author-img position-relative">
+                                    <img class="shadow" src="/assets/img/bg-img/u2.jpg" alt="">
+                                    <i class="bi bi-check position-absolute bg-success"></i>
+                                </div>
+                                <div class="name-author">
+                                    <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="${token.tokenName}">
+                                        ${token.tokenName}
+                                    </a>
+                                    <a class="author d-block fz-12 hover-primary text-truncate" href="author.html">
+                                        #${token.tokenId}-${token.collectionId}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <div class="price text-end">
+                                <span class="fz-12 d-block">Current Price</span>
+                                <h6 class="mb-0">UNQ ${new Intl.NumberFormat('en-US', { 
+                                    minimumFractionDigits: 2, 
+                                    maximumFractionDigits: 2 
+                                }).format(token.priceOfCoupon)}</h6>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="/initiate-coupon-swap?tid=${token.tokenId}&cid=${token.collectionId}">
+                                    Swap                          
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a class="btn btn-danger rounded-pill btn-sm mt-3 w-100 redeem-coupon" href="#"  
+                                    data-token-id="${token.tokenId}" 
+                                    data-collection-id="${token.collectionId}">
+                                    Redeem                                    
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    }
+
+// / Function to attach mint button event handlers
+    function attachMintButtonHandler() {
+        $('.btn-mint-token').on('click', function(e) {
+            e.preventDefault();
+            // Get token ID and collection ID from data attributes
+            const tokenId = $(this).data('token-id');
+            const collectionId = $(this).data('collection-id');
+            // Pre-populate the modal form fields
+            $('#tokenId').val(tokenId);
+            $('#collectionId').val(collectionId);
+            // Show the modal for token transfer/minting
+            $('#transferModal').fadeIn();
         });
     }
 
@@ -403,7 +413,6 @@ $(document).ready(function() {
             return;
         }
 
-        // Show confirmation using SweetAlert
         Swal.fire({
             title: 'Are you sure?',
             text: 'Are you sure you want to proceed with this swap?',
@@ -415,10 +424,9 @@ $(document).ready(function() {
             cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
-                $('#submitAcceptButton').hide();      // Hide the complete swap button
-                $('#kindlyWaitButton').show();        // Show the wait button
+                $('#submitAcceptButton').hide();      
+                $('#kindlyWaitButton').show();        
 
-                // Perform the AJAX request to complete the swap
                 $.ajax({
                     url: '/api/acceptCouponSwap',
                     type: 'POST',
@@ -431,10 +439,9 @@ $(document).ready(function() {
                         if (response.success) {
                             Swal.fire('Success!', response.message, 'success');
 
-                            // Optionally reload or update the UI
                             setTimeout(function() {
                                 location.reload();
-                            }, 2000); // Wait 2 seconds before reloading
+                            }, 2000);
                         } else {
                             Swal.fire('Error!', response.message, 'error');
                         }

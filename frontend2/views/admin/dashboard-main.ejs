@@ -15,7 +15,7 @@
                 <div class="row g-4">
                     <!-- Welcome Card -->
                     <div class="col-12">
-                        <div class="card dashboard-hero-card p-2 border-0 bg-img shadow-sm" style="background-image: url('img/bg-img/44.jpg')">
+                        <div class="card dashboard-hero-card p-2 border-0 bg-img shadow-sm" style="background-image: url('/assets/img/bg-img/44.jpg')">
                             <div class="card-body p-4">
                                 <h3 class="mb-3 text-white">Explore, trade, and redeem exceptional digital coupons.</h3>
                                 <p class="mb-4 text-white">KooponCraft combines innovative technology with a unique trading experience.</p>
@@ -65,8 +65,77 @@
                     </div>
                 </div>
             </div>
+
+            <div class="col-12 col-xxl-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <div style="display: none;" class="spinner-grow text-danger me-1" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <h5>Coupon Swap Offers</h5>
+                            </div>
+                            <ul class="nav nav-tabs border-0 mb-2" id="funtoTab" role="tablist">
+                                <li class="nav-item" role="presentation"><a class="rounded-pill btn btn-sm btn-primary me-1 active" id="tab--1" data-bs-toggle="tab" href="#tab1" role="tab" aria-controls="tab1" aria-selected="true">Recent Offers</a></li>
+                            </ul>
+                        </div>
+                        <div class="tab-content">
+                        <!-- Tab Pane-->
+                            <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab--1">
+                                <div class="table-responsive border shadow-sm dashboard-table activity-table">
+                                    <table class="table mb-0">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">My Coupon</th>
+                                            <th scope="col">Their Coupon</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Time</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="decisionModal" tabindex="-1" role="dialog" aria-labelledby="decisionModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="decisionModalLabel">Approve or Decline</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to proceed with this swap offer?</p>
+        <p><strong>Offer Details:</strong></p>
+        <p id="offerDetails"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="approveButton">Approve</button>
+        <button type="button" class="btn btn-primary" style="display: none;" disabled id="pleaseWaitBtn">Please wait...</button>
+        <button type="button" class="btn btn-danger" id="declineButton">Decline</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 
@@ -78,6 +147,187 @@
 
 
 
-
-
 <%- include('../partials/admin/footer') %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: '/api/getSwapOffers', 
+            type: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+            success: function(response) {
+            if (response.success) {
+                populateSwapOffers(response.swapOffers, response.currentUserId);
+                if (response.swapOffers.length > 0) {
+                    $('.spinner-grow').show();
+                }
+            } else {
+                alert(response.message);
+            }
+            },
+            error: function() {
+            console.log('Failed to fetch swap offers or empty swap offers.');
+            }
+        });
+    });
+
+    $('table').on('click', '.view-button', function (event) {
+        event.preventDefault();
+
+        // Get offer details from data attributes
+        const offerId = $(this).data('offer-id');
+        const offerDetails = $(this).data('offer-details');
+        // console.log(offerId, offerDetails);
+
+        // Populate the modal with the offer details
+        $('#offerDetails').text(offerDetails);
+        $('#decisionModal').data('offer-id', offerId); // Store offer ID in the modal
+    });
+
+// populate table
+function populateSwapOffers(offers, currentUserId) {
+  const tableBody = $('table tbody');
+  tableBody.empty(); 
+  
+  offers.forEach(function(offer) {
+    //   console.log("offer id: ", offer._id);
+    const askingCoupon = `${offer.ownTokenName}`;
+    const offeringCoupon = `${offer.desiredTokenName}`;
+    const status = offer.status;  
+    const timeAgo = moment(offer.createdAt).fromNow();  
+    const initiatorEmail = offer.initiator.email;
+
+    // console.log(offer.initiator)
+    const isInitiator = currentUserId === offer.initiator._id;
+    // console.log(isInitiator);
+    const viewButton = isInitiator 
+      ? '<span class="text-muted">pending</span>'  // Disable or hide button
+      : `<a href="#" class="rounded-pill btn btn-sm btn-primary view-button" 
+           data-bs-toggle="modal" 
+           data-bs-target="#decisionModal"
+           data-offer-id="${offer._id}" 
+           data-offer-details="${offer.ownTokenName} -> ${offer.desiredTokenName}"> 
+           View
+         </a>`;
+
+
+    // Build the table row
+    const row = `
+      <tr>
+        <th scope="row">
+          <a class="btn btn-minimal text-dark hover-primary" href="#">
+            <img class="rounded me-1" src="${offer.ownTokenImage}" alt="">
+            <a target="_blank" href="/getCoupon/${offer.ownCollectionId}/${offer.ownTokenId}">${askingCoupon}</a>
+          </a>
+        </th>
+        <td><span class="d-inline-block fw-bold fz-14"><a target="_blank" href="/getCoupon/${offer.desiredCollectionId}/${offer.desiredTokenId}">${offeringCoupon}</a></span></td>
+        <td>${status}</td>
+        <td><i class="bi bi-clock"></i>${timeAgo}</td>
+        <td>
+            ${viewButton}
+        </td>
+      </tr>
+    `;
+
+    tableBody.append(row);
+  });
+}
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        $('.view-button').click(function (event) {
+            console.log("yawo")
+            event.preventDefault();
+
+            // Get offer details from data attributes
+            const offerId = $(this).data('offer-id');
+            const offerDetails = $(this).data('offer-details');
+            console.log(offerId, offerDetails);
+
+            // Populate the modal with the offer details
+            $('#offerDetails').text(offerDetails);
+            $('#decisionModal').data('offer-id', offerId); // Store offer ID in the modal
+        });
+
+  // Handle the Approve button
+    $('#approveButton').click(function () {
+        $('#pleaseWaitBtn').show();
+        $('#approveButton').hide();
+
+        const offerId = $('#decisionModal').data('offer-id');
+        
+        $.ajax({
+        url: '/api/acceptCouponSwap',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ swapOfferId: offerId }),
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
+        success: function (response) {
+            if (response.success) {
+                $('#pleaseWaitBtn').hide();
+                $('#approveButton').show();
+
+                Swal.fire({
+                    title: 'Offer approved successfully!',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                location.reload();
+            // alert('Offer approved successfully!');
+            $('#decisionModal').modal('hide');
+            } else {
+                $('#pleaseWaitBtn').hide();
+                $('#approveButton').show();
+
+                alert('Failed to approve the offer.');
+            }
+        },
+        error: function () {
+            $('#pleaseWaitBtn').hide();
+            $('#approveButton').show();
+
+            alert('An error occurred while approving the offer.');
+        }
+        });
+    });
+
+  // decline button
+  $('#declineButton').click(function () {
+    const offerId = $('#decisionModal').data('offer-id');
+    
+    $.ajax({
+      url: '/api/declineCouponSwap', 
+      type: 'POST',
+      data: { offerId },
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      },
+      success: function (response) {
+        if (response.success) {
+        //   alert('Offer declined successfully!');
+        Swal.fire({
+            title: 'Offer declined successfully!',
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 1500
+        });
+          // refresh the offers table
+          $('#decisionModal').modal('hide');
+        } else {
+          alert('Failed to decline the offer.');
+        }
+      },
+      error: function () {
+        alert('An error occurred while declining the offer.');
+      }
+    });
+  });
+});
+</script>

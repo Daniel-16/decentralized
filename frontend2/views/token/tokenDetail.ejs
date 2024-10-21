@@ -111,11 +111,13 @@
                   <p class="mb-2">Price</p>
                   <h5 class="text-center mb-0 border border-2 px-3 py-2 border-primary d-inline-block rounded text-primary w-100"><%= token.priceOfCoupon %> UNQ </h5>
                 </div>
+                <% if(!token.isPurchased) { %>
                 <div class="col-6 col-sm-4 col-lg-5">
                     <a class="btn btn-primary rounded-pill w-100" href="#" id="purchaseBtn" data-bs-toggle="modal" data-bs-target="#walletModal">
-                    Buy
-                </a>
+                        Buy
+                    </a>
                 </div>
+                <% } %>
               </div>
               <div class="border-top w-75 my-4"></div>
 

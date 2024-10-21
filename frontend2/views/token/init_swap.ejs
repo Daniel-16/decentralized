@@ -173,12 +173,16 @@
             $.ajax({
                 url: '/api/initiateCouponSwap',
                 type: 'POST',
-                data: {
+                contentType: "application/json",
+                data: JSON.stringify({
                     ownTokenId: ownTokenId,
                     ownCollectionId: ownCollectionId,
                     desiredTokenId: desiredTokenId,
                     desiredCollectionId: desiredCollectionId,
                     recipientAddress: recipientAddress
+                }),
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("token")
                 },
                 success: function(response) {
                     if (response.success) {
@@ -204,7 +208,7 @@
                 error: function() {
                     Swal.fire({
                         title: "Ooops!",
-                        text: response.message || "Failed to send swap request.",
+                        text: "Failed to send swap request.",
                         icon: "error",
                         timer: 1500,
                         showConfirmButton: false

@@ -80,6 +80,7 @@ export const initiateCouponSwap = async (req, res) => {
   } = req.query;
   try {
     const coupon = await TokenModel.findOne({ collectionId, tokenId });
+    // console.log("coupon: ", coupon);
     if (!coupon) {
       return res.status(404).json({
         success: false,

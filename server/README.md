@@ -180,6 +180,13 @@
     - `swapOfferId`: ID of the swap offer to accept
   - Description: This endpoint allows the user to accept a coupon swap with another user. It updates the coupon's swap status and adds the coupon to the user's collection.
 
+  - `POST /api/declineCouponSwap`: Decline a coupon swap with another user
+
+    - Authorization required: `Bearer <token>`
+    - Required fields:
+      - `swapOfferId`: ID of the swap offer to decline
+    - Description: This endpoint allows the user to decline a coupon swap offer from another user. It updates the swap offer status to declined and notifies the offer creator.
+
 - `POST /api/mintSpecialToken`: Mint a special token
   - Authorization required: `Bearer <token>`
   - Required fields:
