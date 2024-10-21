@@ -101,7 +101,6 @@ export const mintToken = async (req, res) => {
     tokenDescription,
     tokenImageUrl,
     priceOfCoupon,
-    quantityAvailable,
   } = req.body;
   const userId = req.user.id;
 
@@ -164,6 +163,10 @@ export const mintToken = async (req, res) => {
         tokenDescription,
         priceOfCoupon,
         tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
+        metadata: {
+          storeAddress: user.accountAddress,
+          storeId: user._id,
+        },
       });
 
       return res.status(200).json({
@@ -348,6 +351,10 @@ export const createSpecialToken = async (req, res) => {
         tokenOwnerId: user._id,
         tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
         priceOfCoupon,
+        metadata: {
+          storeAddress: user.accountAddress,
+          storeId: user._id,
+        },
       });
 
       return res.status(200).json({

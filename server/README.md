@@ -96,6 +96,8 @@
   - Authorization required: `Bearer <token>`
   - Description: Fetches all items for a specific store
 
+#### Purchase Items (Priority: High)
+
 - `POST /api/purchaseItem`: Purchase an item in the form of a token (NFT)
 
   - Authorization required: `Bearer <token>`
@@ -158,11 +160,11 @@
     - `collectionId`: ID of the collection containing the coupon
   - Description: This endpoint allows the user to purchase a coupon with their UNQ balance. It updates the coupon's purchase status and adds the coupon to the user's collection.
 
-- `DELETE /api/burnToken`: Burn a token. Also used to redeem a coupon.
+<!-- - `DELETE /api/burnToken`: Burn a token. Also used to redeem a coupon.
 
   - Authorization required: `Bearer <token>`
   - Required fields: `collectionId`, `tokenId`
-  - Description: This endpoint allows the user to burn a token. If the token is a coupon, it will be redeemed.
+  - Description: This endpoint allows the user to burn a token. If the token is a coupon, it will be redeemed. -->
 
 - `POST /api/initiateCouponSwap`: Initiate a coupon swap with another user
 
@@ -198,9 +200,23 @@
     - `tokenImageUrl`: URL of the special token's image
   - Description: This endpoint allows the store owner to mint a special token. It updates the special token's ownership in the database if the token is won by the user when the user purchases two or more items from the store.
 
+#### Redeem Coupons
+
+- `POST /api/redeemCoupon`: Sends a request to redeem a coupon to the store owner
+  - Authorization required: `Bearer <token>`
+  - Required fields:
+    - `collectionId`: ID of the collection containing the coupon.
+    - `tokenId`: ID of the coupon to redeem.
+  - Description: This endpoint allows the user to send a request to redeem a coupon to the store owner.
+- `DELETE /api/acceptRedeemRequest/:redeemRequestId`: Accepts a redeem request from a user
+  - Authorization required: `Bearer <token>`
+  - Required fields:
+    - `/:redeemRequestId`: ID of the redeem request to accept.
+  - Description: This endpoint allows the store owner to accept a redeem request from a user and it then calls the burnTokenHelper to burn the coupon.
+
 ## Marketplace
 
 - `GET /api/getAllCoupons`: Retrieve all coupons
-  - Description: Fetches all coupons available for purchase. Returns only coupons that have not been purchased.
+  - Description: Fetches all coupons available for purchase and are not items.
 - `GET /api/getStoreCoupons`: Retrieve all coupons for a specific store
-  - Description: Fetches all coupons available for purchase for a specific store. Returns only coupons that have not been purchased.
+  - Description: Fetches all coupons and items available for purchase for a specific store.

@@ -26,7 +26,7 @@ import {
 } from "../controllers/TransactionController.js";
 import { getUserBalance } from "../controllers/getUserBalance.js";
 import { transferTokenController } from "../controllers/TransferToken.js";
-import { burnToken } from "../controllers/BurnToken.js";
+// import { burnToken } from "../controllers/BurnToken.js";
 import {
   getAllCoupons,
   getCoupon,
@@ -39,6 +39,10 @@ import {
   getSwapOffers,
   initiateCouponSwap,
 } from "../controllers/SwapCoupons.js";
+import {
+  acceptRedeemRequest,
+  redeemCoupon,
+} from "../controllers/RedeemCoupons.js";
 const router = express.Router();
 
 /**
@@ -165,12 +169,12 @@ router.get("/getUserTokensAndPrizes", verifyToken, getUserTokensAndPrizes);
 //  */
 router.get("/getStoreItems", verifyToken, getStoreItems);
 
-/**
- * @route DELETE /api/burnToken
- * @description Burn a token
- * @access Private
- */
-router.delete("/burnToken", verifyToken, burnToken);
+// /**
+//  * @route DELETE /api/burnToken
+//  * @description Burn a token
+//  * @access Private
+//  */
+// router.delete("/burnToken", verifyToken, burnToken);
 
 /**
  * @route GET /api/getAllCoupons
@@ -220,5 +224,23 @@ router.get("/getSwapOffers", verifyToken, getSwapOffers);
  * @access Private
  */
 router.post("/mintSpecialToken", verifyToken, createSpecialToken);
+
+/**
+ * @route POST /api/redeemCoupon
+ * @description Redeem a coupon
+ * @access Private
+ */
+router.post("/redeemCoupon", verifyToken, redeemCoupon);
+
+/**
+ * @route DELETE /api/acceptRedeemRequest/:redeemRequestId
+ * @description Accept a redeem request
+ * @access Private
+ */
+router.delete(
+  "/acceptRedeemRequest/:redeemRequestId",
+  verifyToken,
+  acceptRedeemRequest
+);
 
 export default router;
