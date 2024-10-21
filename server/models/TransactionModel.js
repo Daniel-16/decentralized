@@ -42,7 +42,7 @@ const TransactionSchema = new mongoose.Schema({
   nameOfItemPurchased: {
     type: mongoose.Schema.Types.String,
     ref: "Token",
-    required: true,
+    // required: true,
   },
 });
 
