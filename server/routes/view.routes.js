@@ -2,6 +2,7 @@ import express from "express";
 import { redirectIfNotAuthenticated } from "../middleware/redirectIfNotAuthenticated.js";
 import { checkAuth } from "../middleware/checkAuth.js";
 import { getCoupon, getStoreCoupons, initiateCouponSwap } from "../controllers/MarketPlace.js";
+import { getDashboard } from "../controllers/UserController.js";
 const router = express.Router();
 
 router.use(checkAuth);
@@ -78,9 +79,12 @@ router.get("/items/create", async function (req, res) {
   res.render("admin/items/create_item");
 });
 
+// router.get("/dashboard", getDashboard);
+
 router.get("/dashboard", async function (req, res) {
   res.render("admin/dashboard-main");
 });
+
 
 router.get("/my-wallet", async function (req, res) {
   res.render("admin/wallet");

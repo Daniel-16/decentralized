@@ -50,6 +50,18 @@
                         <input type="text" id="tokenDescription1" class="form-control" name="tokenDescription" required>
                     </div>
 
+                        <div class="mb-3">
+                            <label for="tokenType" class="form-label">Select Token Type:</label>
+                            <div>
+                                <input type="radio" id="standardToken" name="tokenType" value="standard" required>
+                                <label for="standardToken">Standard Token</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="specialToken" name="tokenType" value="special" required>
+                                <label for="specialToken">Special Token</label>
+                            </div>
+                        </div>
+
                     <div class="mb-3">
                         <label for="imageUpload" class="form-label">Upload Image:</label>
                         <input type="file" id="imageUpload" class="form-control" accept=".png, .jpg, .jpeg" onchange="validateFile(event)" required>
@@ -125,26 +137,17 @@ $(document).ready(function() {
                                                 </div>
                                             </div>
                                             
-                                            <div class="col-6">
+                                            <div class="col-12">
                                                 <a class="btn btn-warning rounded-pill btn-sm mt-3 w-100 btn-mint-token" href="#" 
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#transferModal" 
                                                     data-token-id="${collection.tokenId}" 
                                                     data-collection-id="${collection.collectionId}">
-                                                    New Token
+                                                    Mint New Token
                                                 </a>
 
                                             </div>
-                                            <div class="col-6">
-                                                <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 btn-mint-token" href="#" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#transferModal" 
-                                                    data-token-id="${collection.tokenId}" 
-                                                    data-collection-id="${collection.collectionId}">
-                                                    Special Token
-                                                </a>
-
-                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -227,6 +230,10 @@ $(document).ready(function() {
         reader.onload = function () {
             const base64Image = reader.result; 
 
+            // Get the value of the selected radio button
+            const tokenType = $('input[name="tokenType"]:checked').val();
+            let urlToPost = tokenType === 'standard' ? '/api/mintToken' : '/api/mintSpecialToken';
+
             const formData = {
                 collectionId: $('#collectionId').val(),
                 tokenName: $('#tokenName1').val(),
@@ -238,7 +245,7 @@ $(document).ready(function() {
             const token = localStorage.getItem('token');
 
             $.ajax({
-                url: '/api/mintToken', 
+                url: urlToPost, 
                 type: 'POST',
                 data: JSON.stringify(formData),
                 contentType: 'application/json',

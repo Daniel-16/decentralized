@@ -105,3 +105,36 @@ export const getUser = async (req, res) => {
     });
   }
 };
+
+// get dashboard view
+export const getDashboard = async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const user = await UserModel.findById(userId).select("-password");
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    const balance = await getUserBalance(user.accountAddress);
+    const userType = user.isAdmin ? "Store Owner" : "User";
+
+    res.render("admin/dashboard-main", {
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        accountAddress: user.accountAddress,
+        balance,
+        userType,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};

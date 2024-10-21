@@ -36,6 +36,7 @@ import { getStores } from "../controllers/GetStores.js";
 import {
   acceptCouponSwap,
   declineCouponSwap,
+  getSwapOffers,
   initiateCouponSwap,
 } from "../controllers/SwapCoupons.js";
 const router = express.Router();
@@ -205,6 +206,13 @@ router.post("/acceptCouponSwap", verifyToken, acceptCouponSwap);
  * @access Private
  */
 router.post("/declineCouponSwap", verifyToken, declineCouponSwap);
+
+/**
+ * @route GET /api/getSwapOffers
+ * @description Get all swap offers
+ * @access Private
+ */
+router.get("/getSwapOffers", verifyToken, getSwapOffers);
 
 /**
  * @route POST /api/mintSpecialToken

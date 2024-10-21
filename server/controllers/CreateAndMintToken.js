@@ -222,23 +222,50 @@ export const getUserCollections = async (req, res) => {
 };
 
 // controller to get all tokens owned by a user
+
 export const getUserToken = async (req, res) => {
   const userId = req.user.id;
 
-  const user = await UserModel.find({ _id: userId });
-  const userAddress = user[0].accountAddress;
   try {
+    // Get the user data
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const userAddress = user.accountAddress;
+
+    // Retrieve standard tokens owned by the user
     const tokens = await TokenModel.find({ tokenOwnerAddress: userAddress });
-    if (tokens && tokens.length <= 0) {
+
+    // Retrieve special tokens owned by the user
+    const specialTokens = await SpecialTokenModel.find({
+      tokenOwnerId: userId,
+    });
+
+    // Combine both token arrays (standard tokens + special tokens)
+    const allTokens = {
+      standardTokens: tokens || [],
+      specialTokens: specialTokens || [],
+    };
+
+    // Check if no tokens exist for the user
+    if (!tokens.length && !specialTokens.length) {
       return res.status(200).json({
         success: true,
         message: "No tokens created for this user",
+        allTokens,
       });
     }
-    // console.log("tokens: ", tokens);
+
+    // Return all tokens (standard and special) in the response
     res.status(200).json({
       success: true,
-      tokens,
+      message: "Tokens retrieved successfully",
+      allTokens,
     });
   } catch (error) {
     res.status(500).json({
