@@ -25,6 +25,13 @@ const TokenSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  metadata: {
+    storeAddress: String,
+    storeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  },
 });
 
 const TokenModel = mongoose.model("Token", TokenSchema);

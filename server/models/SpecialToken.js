@@ -28,6 +28,13 @@ const SpecialTokenSchema = new mongoose.Schema({
     default: 0,
     required: true,
   },
+  metadata: {
+    storeAddress: String,
+    storeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  },
   //   quantityAvailable: {
   //     type: Number,
   //     default: 1,
