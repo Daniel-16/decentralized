@@ -282,7 +282,13 @@ export const getUserTokensAndPrizes = async (req, res) => {
 };
 
 export const createSpecialToken = async (req, res) => {
-  const { collectionId, tokenName, tokenDescription, tokenImageUrl } = req.body;
+  const {
+    collectionId,
+    tokenName,
+    tokenDescription,
+    tokenImageUrl,
+    priceOfCoupon,
+  } = req.body;
   const userId = req.user.id;
   try {
     const user = await UserModel.findById(userId);
@@ -341,6 +347,7 @@ export const createSpecialToken = async (req, res) => {
         tokenOwnerAddress: address,
         tokenOwnerId: user._id,
         tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
+        priceOfCoupon,
       });
 
       return res.status(200).json({
