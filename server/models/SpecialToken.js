@@ -23,6 +23,11 @@ const SpecialTokenSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  priceOfCoupon: {
+    type: Number,
+    default: 0,
+    required: true,
+  },
   //   quantityAvailable: {
   //     type: Number,
   //     default: 1,

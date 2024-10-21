@@ -5,6 +5,7 @@ export const getAllCoupons = async (req, res) => {
   try {
     const coupons = await TokenModel.find({
       isPurchased: false,
+      isItem: false,
     });
 
     const couponsWithOwners = await Promise.all(
@@ -54,10 +55,17 @@ export const getStoreCoupons = async (req, res) => {
       tokenOwnerAddress: accountAddress,
       isPurchased: false,
     });
+    const items = await TokenModel.find({
+      tokenOwnerAddress: accountAddress,
+      isPurchased: true,
+      isItem: true,
+    });
+
     res.status(200).json({
       success: true,
       storeOwner,
       coupons,
+      items,
     });
   } catch (error) {
     res.status(500).json({

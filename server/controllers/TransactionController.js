@@ -189,17 +189,6 @@ export const purchaseCoupon = async (req, res) => {
       });
 
       await transaction.save();
-
-      // Check and transfer special token
-      const specialTokenTransferred = await checkAndTransferSpecialToken(
-        buyer,
-        seller,
-        sellerSdk
-      );
-
-      if (specialTokenTransferred) {
-        console.log("Special token transferred successfully");
-      }
     }
 
     res.status(201).json({
@@ -218,54 +207,139 @@ export const purchaseCoupon = async (req, res) => {
 };
 
 export const purchaseItem = async (req, res) => {
-  const { itemId, quantity } = req.body;
-  const userId = req.user.id;
+  const { tokenId, collectionId } = req.body;
+  const buyerId = req.user.id;
+
+  if (!tokenId || !collectionId) {
+    return res.status(400).json({
+      success: false,
+      error: "Missing required fields: tokenId, collectionId must be provided",
+    });
+  }
 
   try {
-    const user = await UserModel.findById(userId);
-    if (!user) {
+    const buyer = await UserModel.findById(buyerId);
+    if (!buyer) {
       return res.status(404).json({
         success: false,
-        error: "User not found",
+        error: "Buyer not found",
       });
     }
-    const item = await ItemModel.findById(itemId);
+
+    if (!buyer.mnemonic) {
+      return res.status(400).json({
+        success: false,
+        error: "Buyer's mnemonic not found",
+      });
+    }
+
+    const item = await TokenModel.findOne({
+      tokenId,
+      collectionId,
+      isItem: true,
+    });
     if (!item) {
       return res.status(404).json({ success: false, error: "Item not found" });
     }
 
-    const totalPrice = item.priceOfItem * quantity;
-
-    const transaction = new TransactionModel({
-      buyerId: userId,
-      buyerName: user.username || user.email,
-      item: itemId,
-      itemOwner: item.itemOwner,
-      storeOwnerId: item.itemOwnerId,
-      itemName: item.nameOfItem,
-      // store: item.itemOwnerId,
-      quantity,
-      totalPrice,
+    const seller = await UserModel.findOne({
+      accountAddress: item.tokenOwnerAddress,
     });
 
-    await transaction.save();
+    if (!seller) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Seller not found" });
+    }
 
-    // const userTransactions = await TransactionModel.find({ user: userId })
-    // const totalItemsPurchased = userTransactions.reduce((total, t) => total + t.quantity, 0);
+    const buyerAccount = await KeyringProvider.fromMnemonic(buyer.mnemonic);
+    const sellerAccount = await KeyringProvider.fromMnemonic(seller.mnemonic);
 
-    // if (totalItemsPurchased >= 4) {
-    //   try {
-    //     const user = await UserModel.findById(userId);
-    //     if (!user.hasReceivedToken) {
+    const buyerAddress = buyerAccount.address;
+    const sellerAddress = sellerAccount.address;
 
-    //     }
-    //   } catch (error) {
+    const sdk = new Sdk({
+      baseUrl: CHAIN_CONFIG.opal.restUrl,
+      signer: buyerAccount,
+    });
 
-    //   }
-    // }
+    const sellerSdk = new Sdk({
+      baseUrl: CHAIN_CONFIG.opal.restUrl,
+      signer: sellerAccount,
+    });
 
-    res.json({ success: true, transaction });
+    const buyerBalance = await sdk.balance.get({
+      address: buyerAddress,
+    });
+
+    if (buyerBalance.availableBalance.amount < item.priceOfCoupon) {
+      return res.status(400).json({
+        success: false,
+        error: "Insufficient balance",
+      });
+    }
+
+    await sdk.balance.transfer.submitWaitResult(
+      {
+        address: buyerAddress,
+        destination: seller.accountAddress,
+        amount: item.priceOfCoupon,
+      },
+      { signer: buyerAccount }
+    );
+
+    const txTransfer = await sellerSdk.token.transfer.submitWaitResult({
+      collectionId,
+      tokenId,
+      address: sellerAddress,
+      to: buyer.accountAddress,
+    });
+
+    const parsedTransfer = txTransfer.parsed;
+    const transferCompleted = txTransfer.isCompleted;
+    console.log(`Transfer completed: ${transferCompleted}`);
+
+    if (transferCompleted) {
+      await TokenModel.findOneAndUpdate(
+        { tokenId, collectionId, isItem: true },
+        {
+          tokenOwnerAddress: buyer.accountAddress,
+          tokenOwnerId: buyer._id,
+          isPurchased: true,
+        }
+      );
+
+      await UserModel.findByIdAndUpdate(
+        seller._id,
+        { $inc: { walletBalance: item.priceOfCoupon } },
+        { new: true }
+      );
+
+      const transaction = new TransactionModel({
+        buyerId: buyer._id,
+        buyerName: buyer.username || buyer.email,
+        nameOfItemPurchased: item.tokenName,
+        storeOwnerId: seller._id,
+        totalPrice: item.priceOfCoupon,
+      });
+
+      await transaction.save();
+
+      // Check and transfer special token
+      const specialTokenTransferred = await checkAndTransferSpecialToken(
+        buyer,
+        seller,
+        sellerSdk
+      );
+
+      if (specialTokenTransferred) {
+        console.log("Special token transferred successfully");
+      }
+    }
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({
+      success: false,
+      error: error.message ? error.message : error,
+    });
   }
 };

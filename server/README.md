@@ -96,13 +96,15 @@
   - Authorization required: `Bearer <token>`
   - Description: Fetches all items for a specific store
 
-<!-- - `POST /api/purchaseItem`: Purchase an existing item with UNQ balance
+- `POST /api/purchaseItem`: Purchase an item in the form of a token (NFT)
 
   - Authorization required: `Bearer <token>`
   - Required fields:
-    - `itemId`: ID of the item to purchase
-    - `quantity`: Number of items to purchase
-  - Description: Gets the item details and pays for it with UNQ balance. -->
+    - `tokenId`: ID of the token to purchase
+    - `collectionId`: ID of the collection containing the token
+    - `priceOfCoupon`: Price of the coupon. In this case, it is the price of the item.
+    - `isItem`: Boolean value to indicate if the token is an actual item.
+  - Description: Purchases an item in the form of a token (NFT) and adds it to the user's collection.
 
 - `GET /api/buyerPurchases`: Retrieve user's purchase history
 

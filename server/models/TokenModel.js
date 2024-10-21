@@ -12,10 +12,6 @@ const TokenSchema = new mongoose.Schema({
   },
   tokenDescription: String,
   tokenUrl: String,
-  // isWinningToken: {
-  //   type: Boolean,
-  //   default: false,
-  // },
   priceOfCoupon: {
     type: Number,
     default: 0,
@@ -25,10 +21,10 @@ const TokenSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  // quantityAvailable: {
-  //   type: Number,
-  //   default: 1,
-  // },
+  isItem: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const TokenModel = mongoose.model("Token", TokenSchema);
