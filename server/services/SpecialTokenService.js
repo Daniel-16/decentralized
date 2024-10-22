@@ -8,7 +8,7 @@ export async function checkAndTransferSpecialToken(buyer, seller, sellerSdk) {
     storeOwnerId: seller._id,
   });
 
-  if (purchaseCount >= 2) {
+  if (purchaseCount === 2) {
     const specialToken = await SpecialTokenModel.findOne({
       tokenOwnerId: seller._id,
       wonByUser: false,

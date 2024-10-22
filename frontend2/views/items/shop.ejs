@@ -173,7 +173,7 @@ $(document).ready(function () {
     // Fetch and display items
     function loadItems() {
         $.ajax({
-            url: "/api/getItems",
+            url: "/api/getAllCoupons?item=true",
             method: "GET",
             beforeSend: function () {
                 $("#loading-cards").show();
@@ -182,7 +182,7 @@ $(document).ready(function () {
                 $("#loading-cards").hide();
                 // console.log(response);
                 if (response.success) {
-                    const items = response.items;
+                    const items = response.coupons;
                     let itemsHTML = "";
                     // TODO: give item image a fixed height
                     items.forEach((item) => {
@@ -191,7 +191,7 @@ $(document).ready(function () {
                             <div class="nft-card card shadow-sm">
                             <div class="card-body">
                                 <div class="img-wrap">
-                                <img class="fixed-size" src="${item.itemImage}" alt="${item.nameOfItem}">
+                                <img class="fixed-size" src="${item.tokenImageUrl}" alt="${item.tokenName}">
                                 </div>
                                 <!-- Others Info -->
                                 <div class="row gx-2 align-items-center mt-3">
@@ -211,8 +211,8 @@ $(document).ready(function () {
                                         <i class="bi bi-check position-absolute bg-success"></i>
                                     </div>
                                     <div class="name-author">
-                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.nameOfItem}">${item.nameOfItem}</a>
-                                        <a class="author d-block fz-12 hover-primary text-truncate" href="#">@${item.itemOwner}</a>
+                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.tokenName}">${item.tokenName}</a>
+                                        <a class="author d-block fz-12 hover-primary text-truncate" href="#">@${item.ownerName}</a>
                                     </div>
                                     </div>
                                 </div>
@@ -225,11 +225,11 @@ $(document).ready(function () {
                                         ${new Intl.NumberFormat('en-US', { 
                                         minimumFractionDigits: 2, 
                                         maximumFractionDigits: 2 
-                                    }).format(item.priceOfItem)}</h6>
+                                    }).format(item.priceOfCoupon)}</h6>
                                     </div>
                                 </div>
                                 <div class="col-12">
-                                    <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 purchase-btn" href="#" data-token-id="${item._id}" data-item-id="${item._id}" data-store-owner="${item.itemOwnerAddress}" data-item-price="${item.priceOfItem}">Purchase Now</a>                                    
+                                    <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="/getItem/${item.collectionId}/${item.tokenId}" data-token-id="${item._id}" data-item-id="${item._id}" data-store-owner="${item.tokenOwnerAddress}" data-item-price="${item.priceOfCoupon}">Purchase</a>                                    
                                     <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 pleasewait-btn" id="pleaseWait-${item._id}" href="#" style="display: none;" disabled>Please wait...</a>
                                 </div>
                                 </div>
@@ -256,7 +256,7 @@ $(document).ready(function () {
     // End: fetch and display items
 
     // Handle purchase 
-   function attachPurchaseHandlers() {
+    function attachPurchaseHandlers() {
         $('.purchase-btn').off('click').on('click', function(event) {
             event.preventDefault();
 

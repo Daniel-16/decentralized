@@ -3,10 +3,18 @@ import UserModel from "../models/UserModel.js";
 
 export const getAllCoupons = async (req, res) => {
   try {
-    const coupons = await TokenModel.find({
+    const { item } = req.query;
+    
+    let searchQuery = {
       isPurchased: false,
-      isItem: false,
-    });
+      isItem: false
+    };
+
+    if(item){
+      searchQuery.isItem = true;
+    }
+
+    const coupons = await TokenModel.find(searchQuery);
 
     const couponsWithOwners = await Promise.all(
       coupons.map(async (coupon) => {
@@ -158,6 +166,65 @@ export const getCoupon = async (req, res) => {
     //   },
     // });
     res.render("token/tokenDetail", {
+      token: {
+        ...coupon._doc,
+        ownerName:
+          ownerDetails && ownerDetails.length > 0
+            ? ownerDetails[0].username
+            : "Unknown",
+      },
+      moreCoupons: moreCouponsWithOwnerDetails,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+export const getItem = async (req, res) => {
+  const { collectionId, tokenId } = req.params;
+  try {
+    const coupon = await TokenModel.findOne({ collectionId, tokenId });
+
+    if (!coupon) {
+      return res.status(404).json({
+        success: false,
+        error: "Coupon not found",
+      });
+    }
+
+    // console.log("coupon: ", coupon);
+    const ownerDetails = await UserModel.find({
+      accountAddress: coupon.tokenOwnerAddress,
+    });
+
+    const moreCoupons = await TokenModel.find({
+      collectionId,
+      isPurchased: false,
+    }).limit(5);
+
+    const moreCouponsWithOwnerDetails = await Promise.all(
+      moreCoupons.map(async (moreCoupon) => {
+        const ownerDetail = await UserModel.findOne({
+          accountAddress: moreCoupon.tokenOwnerAddress,
+        });
+        return {
+          ...moreCoupon._doc,
+          ownerName: ownerDetail ? ownerDetail.username : "Unknown",
+        };
+      })
+    );
+    // console.log("ownerDetails: ", ownerDetails);
+    // res.status(200).json({
+    //   success: true,
+    //   coupon: {
+    //     ...coupon._doc,
+    //     ownerName: ownerDetails ? ownerDetails.username : "Unknown",
+    //   },
+    // });
+    res.render("items/itemDetail", {
       token: {
         ...coupon._doc,
         ownerName:

@@ -7,6 +7,7 @@ import { burnTokenHelper } from "../helper/BurnToken.js";
 export const redeemCoupon = async (req, res) => {
   const { tokenId, collectionId } = req.body;
   const userId = req.user.id;
+
   try {
     const user = await UserModel.findById(userId);
     if (!user) {
@@ -20,7 +21,6 @@ export const redeemCoupon = async (req, res) => {
       collectionId,
       isPurchased: true,
       tokenOwnerAddress: user.accountAddress,
-      //   isItem: false,
     });
 
     if (!token) {
@@ -29,11 +29,28 @@ export const redeemCoupon = async (req, res) => {
         .json({ success: false, message: "Token not found" });
     }
 
+    // Check for existing redeem request
+    const existingRequest = await RedeemRequestModel.findOne({
+      initiator: userId,
+      "couponToRedeem.tokenId": tokenId,
+      "couponToRedeem.collectionId": collectionId,
+    });
+
+    if (existingRequest) {
+      return res
+        .status(409)
+        .json({
+          success: false,
+          message: "Redeem request already made for this coupon.",
+        });
+    }
+
     const redeemRequest = await RedeemRequestModel.create({
       initiator: userId,
       store: token.metadata.storeAddress,
       couponToRedeem: { tokenId, collectionId },
     });
+
     res.status(200).json({ success: true, redeemRequest });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
