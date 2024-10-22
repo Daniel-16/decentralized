@@ -3,6 +3,7 @@ import TokenModel from "../models/TokenModel.js";
 import UserModel from "../models/UserModel.js";
 import { burnTokenHelper } from "../helper/BurnToken.js";
 
+// initiate request to redeem
 export const redeemCoupon = async (req, res) => {
   const { tokenId, collectionId } = req.body;
   const userId = req.user.id;

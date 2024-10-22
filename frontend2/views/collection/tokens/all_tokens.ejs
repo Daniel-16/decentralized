@@ -88,7 +88,7 @@
                     </div>
 
                     
-                   
+                    
 
                     <button id="submitAcceptButton" type="submit" onclick="return confirm('Are you sure you want to proceed with this swap?')" class="btn btn-danger w-100">Complete Swap</button>
                     <button id="kindlyWaitButton"  type="submit" class="btn btn-danger w-100" disabled style="display:none;">Please Wait...</button>
@@ -117,7 +117,7 @@ $(document).ready(function() {
                 $('#collections-container').empty();  
                 if (response && response.success) {
                     console.log('Response:', response);
-                    const { standardTokens, specialTokens } = response.allTokens;
+                    const { standardTokens, specialTokens, itemTokens } = response.allTokens;
                     
                     // Handle Standard Tokens
                     if (standardTokens && standardTokens.length > 0) {
@@ -138,6 +138,16 @@ $(document).ready(function() {
                     } else {
                         $('#collections-container').append('<p>No special tokens created for this user.</p>');
                     }
+                    
+                    // Handle Item Tokens
+                    if (itemTokens && itemTokens.length > 0) {
+                        itemTokens.forEach(function(token) {
+                            let collectionItem = createCollectionItem(token, 'item');
+                            $('#collections-container').append(collectionItem);
+                        });
+                    } else {
+                        $('#collections-container').append('<p>No Item tokens created for this user.</p>');
+                    }
 
                     // Attach click event handler for mint buttons
                     attachMintButtonHandler();
@@ -154,19 +164,45 @@ $(document).ready(function() {
     }
 
     function createCollectionItem(token, tokenType) {
-        
+        const couponUrl = tokenType == "standard" ? `/getCoupon/${token.collectionId}/${token.tokenId}` : '#';
         const swapBtn = tokenType == "standard" ? `
-        <div class="col-6">
-            <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="/initiate-coupon-swap?tid=${token.tokenId}&cid=${token.collectionId}">
-                Swap                          
+            <div class="col-6">
+                <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="${couponUrl}">
+                    Swap                          
                 </a>
-                </div>
-                ` : '';
+            </div>
+        ` : '';
                 
-        const tokenStatus = !token.isPurchased ? 'In Marketplace' : 'Redeemable';
-        const tokenClass = tokenType === 'special' ? 'badge bg-warning' : 'badge bg-dark';
+        // const tokenStatus = !token.isPurchased ? 'In Marketplace' : 'Redeemable';
+        // const tokenClass = tokenType === 'special' ? 'badge bg-warning' : 'badge bg-dark';
+        let tokenClass = '';
 
-        console.log("token: ", token)
+        switch (tokenType) {
+            case 'special':
+                tokenClass = 'badge bg-warning'
+                break;
+            case 'item':
+                tokenClass = 'badge bg-primary'
+                break;
+        
+            default:
+                tokenClass = 'badge bg-dark'
+                break;
+        }
+        
+        
+        let tokenStatus = '';
+
+        if (!token.isPurchased && tokenType === 'standard') {
+            tokenStatus = 'In Marketplace';
+        } else if(!token.isPurchased && tokenType === 'item'){
+            tokenStatus = 'In Store';
+        } else if(!token.isPurchased && tokenType === 'special'){
+            tokenStatus = 'Redeemable';
+        }
+        
+
+        // console.log("token: ", token)
 
         return `
         <div class="col-12 col-sm-6 col-xl-4 col-xxl-4">
@@ -191,7 +227,7 @@ $(document).ready(function() {
                                     <i class="bi bi-check position-absolute bg-success"></i>
                                 </div>
                                 <div class="name-author">
-                                    <a class="name d-block hover-primary fw-bold text-truncate" href="/getCoupon/${token.collectionId}/${token.tokenId}" data-bs-toggle="tooltip" data-bs-placement="top" title="${token.tokenName}">
+                                    <a class="name d-block hover-primary fw-bold text-truncate" href="${couponUrl}" data-bs-toggle="tooltip" data-bs-placement="top" title="${token.tokenName}">
                                         ${token.tokenName}
                                     </a>
                                     <a class="author d-block fz-12 hover-primary text-truncate" href="#">

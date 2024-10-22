@@ -101,6 +101,7 @@ export const mintToken = async (req, res) => {
     tokenDescription,
     tokenImageUrl,
     priceOfCoupon,
+    isItem,
   } = req.body;
   const userId = req.user.id;
 
@@ -167,6 +168,7 @@ export const mintToken = async (req, res) => {
           storeAddress: user.accountAddress,
           storeId: user._id,
         },
+        isItem,
       });
 
       return res.status(200).json({
@@ -234,10 +236,16 @@ export const getUserToken = async (req, res) => {
       tokenOwnerId: userId,
     });
 
+    const itemTokens = await TokenModel.find({
+      tokenOwnerAddress: userAddress,
+      isItem: true,
+    });
+
     // Combine both token arrays (standard tokens + special tokens)
     const allTokens = {
       standardTokens: tokens || [],
       specialTokens: specialTokens || [],
+      itemTokens: itemTokens || [],
     };
 
     // Check if no tokens exist for the user
