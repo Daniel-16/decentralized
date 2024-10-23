@@ -24,7 +24,7 @@
                         <div class="d-flex align-items-center">
                             <!-- <div class="img-wrap"><img src="/assets/img/bg-img/metamask.png" alt=""></div> -->
                             <h4 class="mb-0 me-3">Create New Item
-                            </h4><a class="btn btn-sm btn-warning rounded-pill ms-auto" href="/items/create">Create<i class="ms-1 bi bi-arrow-right"></i></a>
+                            </h4><a class="btn btn-sm btn-warning rounded-pill ms-auto" href="/collection/my-collections">Create<i class="ms-1 bi bi-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -78,7 +78,7 @@
 <!-- get all transactions -->
 <script>
 $(document).ready(function () {
-  console.log("Document ready");
+  // console.log("Document ready");
 
   // Function to fetch and display store transactions
   function loadTransactions() {
@@ -104,10 +104,10 @@ $(document).ready(function () {
               transactionsHTML += `
                 <li class="py-3">
                   <a href="#">
-                    ${transaction.itemName}
+                    ${transaction.nameOfItemPurchased}
                     <span class="badge bg-dark fz-12 rounded-pill ms-auto">UNQ ${transaction.totalPrice.toFixed(2)}</span>
                   </a>
-                  <p class="mb-0">Purchased by ${transaction.buyerName}. Quantity: ${transaction.quantity}</p>
+                  <p class="mb-0">Purchased by ${transaction.buyerName}. Quantity: 1</p>
                 </li>
               `;
             });
@@ -134,7 +134,7 @@ $(document).ready(function () {
             `;
 
             // Append it to your desired container
-            $("#additionalInfoContainer").html(storeSummaryHTML);
+            $("#additionalInfoContainer").append(storeSummaryHTML);
 
           } else {
             $("#transactionsContainer").html("<li><p>No purchases have been made from your store yet.</p></li>");

@@ -347,6 +347,13 @@ export const purchaseItem = async (req, res) => {
 
       if (specialTokenTransferred) {
         console.log("Special token transferred successfully");
+
+        // Send a response indicating the special token transfer was successful
+        return res.status(200).json({
+          success: true,
+          message: "Purchase successful and special token transferred",
+          specialTokenTransferred: true, // indicate the special token transfer
+        });
       }
 
       res.status(201).json({
@@ -358,6 +365,7 @@ export const purchaseItem = async (req, res) => {
         finalPrice,
         tokenId: parsedTransfer?.tokenId,
         collectionId: parsedTransfer?.collectionId,
+
       });
     }
   } catch (error) {

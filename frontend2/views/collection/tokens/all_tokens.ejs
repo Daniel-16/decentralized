@@ -165,9 +165,10 @@ $(document).ready(function() {
 
     function createCollectionItem(token, tokenType) {
         const couponUrl = tokenType == "standard" ? `/getCoupon/${token.collectionId}/${token.tokenId}` : '#';
-        const swapBtn = tokenType == "standard" ? `
+        // const swapBtn = tokenType == "standard" ? `
+        const swapBtn = (tokenType == "item" || tokenType == "standard") ? `
             <div class="col-6">
-                <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="${couponUrl}">
+                <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="/initiate-coupon-swap?cid=${token.collectionId}&tid=${token.tokenId}">
                     Swap                          
                 </a>
             </div>
@@ -198,6 +199,8 @@ $(document).ready(function() {
         } else if(!token.isPurchased && tokenType === 'item'){
             tokenStatus = 'In Store';
         } else if(!token.isPurchased && tokenType === 'special'){
+            tokenStatus = 'Redeemable';
+        } else if(token.isPurchased){
             tokenStatus = 'Redeemable';
         }
         
@@ -381,7 +384,7 @@ $(document).ready(function() {
         const tokenId = $(this).data('token-id');
         const collectionId = $(this).data('collection-id');
         const $button = $(this);  // Store reference to the clicked button
-        var token = localStorage.getItem("token");
+        const token = localStorage.getItem("token");
 
         Swal.fire({
             title: 'Are you sure?',
@@ -392,14 +395,14 @@ $(document).ready(function() {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, redeem it!',
             cancelButtonText: 'Cancel'
-        }).then((result) => {
+        })
+        .then((result) => {
             if (result.isConfirmed) {
-
                 // Change the button text to "Please wait..." and disable it
                 $button.html('Please wait...').attr('disabled', true);
                 $.ajax({
-                    url: '/api/burnToken',
-                    type: 'DELETE',
+                    url: '/api/redeemCoupon',
+                    type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({
                         tokenId: tokenId,
@@ -408,35 +411,36 @@ $(document).ready(function() {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
-                    success: function (response) {
+                    success: function(response) {
                         if (response.success) {
                             Swal.fire(
-                                'Redeemed!',
+                                'Success!',
                                 response.message,
                                 'success'
                             );
                             // Optionally, refresh the page or update the UI
-                            setTimeout(function () {
+                            setTimeout(function() {
                                 location.reload();
                             }, 2000); 
                         } else {
-                            Swal.fire(
-                                'Error!',
-                                response.message,
-                                'error'
-                            );
-                            // Restore the button in case of failure
-                            $button.html('Redeem Coupon <i class="me-1 bi bi-gift-fill"></i>').attr('disabled', false);
+                            // Handle specific error messages
+                            if (response.message === "Redeem request already made for this coupon.") {
+                                Swal.fire('Notice!', response.message, 'info');
+                            } else {
+                                Swal.fire('Error!', response.message, 'error');
+                            }
                         }
                     },
-                    error: function (xhr, status, error) {
+                    error: function(xhr, status, error) {
+                        // console.log(xhr.responseText)
                         Swal.fire(
                             'Error!',
-                            'Failed to redeem the token. Please try again.',
+                            xhr.responseText,
                             'error'
                         );
-                        // Restore the button in case of error
-                        $button.html('Redeem Coupon <i class="me-1 bi bi-gift-fill"></i>').attr('disabled', false);
+                    },
+                    complete: function() {
+                        $button.html('Redeem').attr('disabled', false);
                     }
                 });
             }

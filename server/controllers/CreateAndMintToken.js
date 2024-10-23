@@ -229,19 +229,24 @@ export const getUserToken = async (req, res) => {
     const userAddress = user.accountAddress;
 
     // Retrieve standard tokens owned by the user
-    const tokens = await TokenModel.find({ tokenOwnerAddress: userAddress });
+    // Retrieve standard tokens owned by the user
+    const tokens = await TokenModel.find({
+      tokenOwnerAddress: userAddress,
+      isItem: { $ne: true }, // Ensure standard tokens are not items
+    });
 
-    // Retrieve special tokens owned by the user
+    // special tokens owned by the user
     const specialTokens = await SpecialTokenModel.find({
       tokenOwnerId: userId,
     });
 
+    // item tokens owned by the user
     const itemTokens = await TokenModel.find({
       tokenOwnerAddress: userAddress,
-      isItem: true,
+      isItem: true, 
     });
 
-    // Combine both token arrays (standard tokens + special tokens)
+
     const allTokens = {
       standardTokens: tokens || [],
       specialTokens: specialTokens || [],
