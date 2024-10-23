@@ -154,6 +154,11 @@ router.get("/checkStorePurchases", verifyToken, checkStorePurchases);
  */
 router.get("/getCollections", verifyToken, getUserCollections);
 
+/**
+ * @route GET /api/getUserToken
+ * @description Get user's tokens
+ * @access Private
+ */
 router.get("/getUserToken", verifyToken, getUserToken);
 
 /**

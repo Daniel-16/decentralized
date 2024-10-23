@@ -335,7 +335,7 @@ $(document).ready(function () {
   // Fetch and display items
   function loadItems(limit) {
     $.ajax({
-      url: `/api/getItems?limit=${limit}`,
+      url: `/api/getAllCoupons?item=true`,
       method: "GET",
       beforeSend: function () {
         $("#loading-cards").show();
@@ -343,73 +343,60 @@ $(document).ready(function () {
       success: function (response) {
         $("#loading-cards").hide();
         if (response.success) {
-          const items = response.items;
+          const items = response.coupons;
           let itemsHTML = "";
           items.forEach((item) => {
             itemsHTML += `
-            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-            <div class="nft-card card shadow-sm">
-              <div class="card-body">
-              <div class="img-wrap">
-                <img class="fixed-size" src="${item.itemImage}" alt="${item.nameOfItem}">
-                <!-- Badge -->
-                <div class="badge bg-dark position-absolute">
-                  <img src="/assets/img/core-img/fire.png" alt="">${item.isHotSale ? 'Hot Sale' : 'New Item'}
-                </div>
-                <!-- Dropdown -->
-                <div class="dropdown">
-                  <button class="btn dropdown-toggle rounded-pill shadow-sm" id="dropdownqwa22" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></button>
-                  <!-- Dropdown Menu -->
-                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownqwa22">
-                    <li><a class="dropdown-item" href="#"><i class="me-1 bi bi-share"></i>Share</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="me-1 bi bi-flag"></i>Report</a></li>
-                  </ul>
-                </div>
-              </div>
-              <!-- Others Info -->
-              <div class="row gx-2 align-items-center mt-3">
-                <div class="col-8">
-                    <span class="d-block fz-12"><i class="bi bi-bag me-1"></i>Available</span>
-                </div>
-                <div class="col-4 text-end">
-                  <button class="wishlist-btn" type="button"><i class="bi"></i></button>
-                </div>
-              </div>
-              <!-- Meta Info -->
-              <div class="row gx-2 align-items-center mt-2">
-                <div class="col-8">
-                  <div class="name-info d-flex align-items-center">
-                    <div class="author-img position-relative">
-                      <img class="shadow" src="/assets/img/bg-img/u2.jpg" alt="">
-                      <i class="bi bi-check position-absolute bg-success"></i>
-                    </div>
-                    <div class="name-author">
-                      <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.nameOfItem}">${item.nameOfItem}</a>
-                      <a class="author d-block fz-12 hover-primary text-truncate" href="#">@${item.itemOwner}</a>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-4">
-                  <div class="price text-end">
-                  <span class="fz-12 d-block">Current Price</span>
-                  <h6 class="mb-0">UNQ</h6>
-                  <h6 class="mb-0"> 
+              <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                  <div class="nft-card card shadow-sm">
+                  <div class="card-body">
+                      <div class="img-wrap">
+                      <img class="fixed-size" src="${item.tokenImageUrl}" alt="${item.tokenName}">
+                      </div>
+                      <!-- Others Info -->
+                      <div class="row gx-2 align-items-center mt-3">
+                      <div class="col-8">
+                          <span class="d-block fz-12"><i class="bi bi-bag me-1"></i>Available</span>
+                      </div>
+                      <div class="col-4 text-end">
+                          <button class="wishlist-btn" type="button"><i class="bi"></i></button>
+                      </div>
+                      </div>
+                      <!-- Meta Info -->
+                      <div class="row gx-2 align-items-center mt-2">
+                      <div class="col-8">
+                          <div class="name-info d-flex align-items-center">
+                          <div class="author-img position-relative">
+                              <img class="shadow" src="/assets/img/bg-img/u2.jpg" alt="">
+                              <i class="bi bi-check position-absolute bg-success"></i>
+                          </div>
+                          <div class="name-author">
+                              <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.tokenName}">${item.tokenName}</a>
+                              <a class="author d-block fz-12 hover-primary text-truncate" href="#">@${item.ownerName}</a>
+                          </div>
+                          </div>
+                      </div>
+                      <div class="col-4">
+                          <div class="price text-end">
+                          <span class="fz-12 d-block">Current Price</span>
+                          <h6 class="mb-0">UNQ</h6>
+                          <h6 class="mb-0"> 
 
-                      ${new Intl.NumberFormat('en-US', { 
-                      minimumFractionDigits: 2, 
-                      maximumFractionDigits: 2 
-                  }).format(item.priceOfItem)}</h6>
+                              ${new Intl.NumberFormat('en-US', { 
+                              minimumFractionDigits: 2, 
+                              maximumFractionDigits: 2 
+                          }).format(item.priceOfCoupon)}</h6>
+                          </div>
+                      </div>
+                      <div class="col-12">
+                          <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="/getItem/${item.collectionId}/${item.tokenId}" data-token-id="${item._id}" data-item-id="${item._id}" data-store-owner="${item.tokenOwnerAddress}" data-item-price="${item.priceOfCoupon}">Purchase</a>                                    
+                          <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 pleasewait-btn" id="pleaseWait-${item._id}" href="#" style="display: none;" disabled>Please wait...</a>
+                      </div>
+                      </div>
+                  </div>
                   </div>
               </div>
-                <div class="col-12">
-                  <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="#" data-item-id="${item._id}">Purchase Now</a>
-                  <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" style="display: none;" href="#">Please wait...</a>
-                </div>
-              </div>
-              </div>
-              </div>
-              </div>
-            `;
+              `;
           });
 
           // Append items to the #itemsContainer
@@ -422,8 +409,6 @@ $(document).ready(function () {
             $("#load-more").show();
           }
 
-          // Connect click handler to dynamically created buttons
-          attachPurchaseHandlers();
         } else {
           $("#itemsContainer").html("<p>No items found.</p>");
         }
@@ -435,65 +420,6 @@ $(document).ready(function () {
   }
   // End: fetch and display items
 
-  // Handle purchase 
-  function attachPurchaseHandlers() {
-    $('.btn-primary').off('click').on('click', function(event) {
-      event.preventDefault(); 
-
-      const purchaseButton = $(this); // Reference to the purchase button
-      const pleaseWaitButton = purchaseButton.next(); // Reference to the "Please wait..." button
-      const itemId = purchaseButton.data('item-id'); // Get the item id from data attribute
-      const quantity = 1; // Assume quantity is always 1 for simplicity
-
-      // Show the "Please wait..." button and disable it, hide the "Purchase Now" button
-      purchaseButton.hide();
-      pleaseWaitButton.show().prop('disabled', true);
-
-      // fetch the token from localStorage
-      const token = localStorage.getItem("token");
-
-      $.ajax({
-        url: '/api/purchaseItem', 
-        method: 'POST',
-        contentType: 'application/json', 
-        data: JSON.stringify({
-          itemId: itemId,
-          quantity: quantity
-        }),
-        headers: {
-          Authorization: `Bearer ${token}` 
-        },
-        success: function(response) {
-          if (response.success) {
-            confetti({
-              particleCount: 100,
-              spread: 70,
-              origin: { y: 0.6 },
-            });
-            // toastr.success("Successfully purchased 1 unit!");
-            Swal.fire({
-              title: "Purchase Successful!",
-              text: "You have successfully purchased 1 unit of this item! Buy more and stand a chance to win exclusive coupons.",
-              icon: "success",
-              timer: 1500,  
-              showConfirmButton: false  
-          });
-          } else {
-            alert('Error: ' + response.error);
-          }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-          alert('Error: ' + errorThrown);
-        },
-        complete: function() {
-          // After the request is complete (either success or failure), revert the buttons
-          pleaseWaitButton.hide();
-          purchaseButton.show();
-        }
-      });
-    });
-  }
-  // End: handle purchase 
 
   // Load initial items
   loadItems(currentLimit);

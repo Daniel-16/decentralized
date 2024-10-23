@@ -235,11 +235,11 @@ $(document).ready(function() {
                                 $('#tokenId').val(tokenId);
                                 $('#collectionId').val(collectionId);
                                 
-                                console.log(mint_collectionId)
+                                // console.log(mint_collectionId)
                                 $('#mint_tokenId').val(tokenId);
                                 $('#mint_collectionId').val(mint_collectionId);
                                 // Show the modal for token transfer/minting
-                                $('#transferModal').fadeIn();
+                                // $('#transferModal').fadeIn();
                             });
                         });
                     } else {
@@ -389,6 +389,8 @@ $(document).ready(function() {
         if (!fileInput) {
             alert("Please select an image file.");
             $('#cover-spin').hide(0);
+            $('#mintItemButton').show();
+            $('#pleaseWaitButtonMint').hide();
             return;
         }
 

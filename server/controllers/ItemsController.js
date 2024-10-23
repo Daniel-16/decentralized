@@ -1,4 +1,5 @@
 import ItemModel from "../models/ItemsModel.js";
+import TokenModel from "../models/TokenModel.js";
 import UserModel from "../models/UserModel.js";
 
 export const createItem = async (req, res) => {
@@ -34,7 +35,13 @@ export const createItem = async (req, res) => {
 
 export const getAllItems = async (req, res) => {
   try {
-    const items = await ItemModel.find({});
+    // const items = await ItemModel.find({});
+    // res.status(200).json({
+    //   success: true,
+    //   items,
+    // });
+
+    const items = await TokenModel.find({ isItem: true, isPurchased: false });
     res.status(200).json({
       success: true,
       items,
