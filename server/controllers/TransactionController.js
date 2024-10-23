@@ -1,11 +1,10 @@
 import TransactionModel from "../models/TransactionModel.js";
-import ItemModel from "../models/ItemsModel.js";
 import UserModel from "../models/UserModel.js";
 import Sdk, { CHAIN_CONFIG } from "@unique-nft/sdk";
 import { KeyringProvider } from "@unique-nft/accounts/keyring";
 import TokenModel from "../models/TokenModel.js";
-import SpecialTokenModel from "../models/SpecialToken.js";
 import { checkAndTransferSpecialToken } from "../services/SpecialTokenService.js";
+import { applyCouponDiscount } from "../utils/UseCoupon.js";
 
 export const checkBuyerPurchases = async (req, res) => {
   const userId = req.user.id;
@@ -140,16 +139,6 @@ export const purchaseCoupon = async (req, res) => {
       });
     }
 
-    // Transfer payment from buyer to seller
-    await sdk.balance.transfer.submitWaitResult(
-      {
-        address: buyerAddress,
-        destination: seller.accountAddress,
-        amount: token.priceOfCoupon,
-      },
-      { signer: buyerAccount }
-    );
-
     // Transfer token from seller to buyer
     const txTransfer = await sellerSdk.token.transfer.submitWaitResult({
       collectionId,
@@ -163,6 +152,16 @@ export const purchaseCoupon = async (req, res) => {
     console.log(`Transfer completed: ${transferCompleted}`);
 
     if (transferCompleted) {
+      // Transfer payment from buyer to seller
+      await sdk.balance.transfer.submitWaitResult(
+        {
+          address: buyerAddress,
+          destination: seller.accountAddress,
+          amount: token.priceOfCoupon,
+        },
+        { signer: buyerAccount }
+      );
+
       await TokenModel.findOneAndUpdate(
         { tokenId, collectionId },
         {
@@ -186,6 +185,7 @@ export const purchaseCoupon = async (req, res) => {
         nameOfItemPurchased: token.tokenName,
         storeOwnerId: seller._id,
         totalPrice: token.priceOfCoupon,
+        item: token._id,
       });
 
       await transaction.save();
@@ -252,6 +252,13 @@ export const purchaseItem = async (req, res) => {
         .json({ success: false, error: "Seller not found" });
     }
 
+    // Apply coupon discount
+    const { finalPrice, discountAmount } = await applyCouponDiscount(
+      buyer,
+      seller,
+      item
+    );
+
     const buyerAccount = await KeyringProvider.fromMnemonic(buyer.mnemonic);
     const sellerAccount = await KeyringProvider.fromMnemonic(seller.mnemonic);
 
@@ -272,21 +279,12 @@ export const purchaseItem = async (req, res) => {
       address: buyerAddress,
     });
 
-    if (buyerBalance.availableBalance.amount < item.priceOfCoupon) {
+    if (buyerBalance.availableBalance.amount < finalPrice) {
       return res.status(400).json({
         success: false,
         error: "Insufficient balance",
       });
     }
-
-    await sdk.balance.transfer.submitWaitResult(
-      {
-        address: buyerAddress,
-        destination: seller.accountAddress,
-        amount: item.priceOfCoupon,
-      },
-      { signer: buyerAccount }
-    );
 
     const txTransfer = await sellerSdk.token.transfer.submitWaitResult({
       collectionId,
@@ -300,6 +298,15 @@ export const purchaseItem = async (req, res) => {
     console.log(`Transfer completed: ${transferCompleted}`);
 
     if (transferCompleted) {
+      await sdk.balance.transfer.submitWaitResult(
+        {
+          address: buyerAddress,
+          destination: seller.accountAddress,
+          amount: finalPrice,
+        },
+        { signer: buyerAccount }
+      );
+
       await TokenModel.findOneAndUpdate(
         { tokenId, collectionId, isItem: true },
         {
@@ -311,7 +318,7 @@ export const purchaseItem = async (req, res) => {
 
       await UserModel.findByIdAndUpdate(
         seller._id,
-        { $inc: { walletBalance: item.priceOfCoupon } },
+        { $inc: { walletBalance: finalPrice } },
         { new: true }
       );
 
@@ -321,21 +328,37 @@ export const purchaseItem = async (req, res) => {
         item: item._id,
         nameOfItemPurchased: item.tokenName,
         storeOwnerId: seller._id,
-        totalPrice: item.priceOfCoupon,
+        totalPrice: finalPrice,
       });
 
       await transaction.save();
+
+      // if (coupon) {
+      //   await TokenModel.findByIdAndUpdate(coupon._id, { isPurchased: true });
+      // }
 
       // Check and transfer special token
       const specialTokenTransferred = await checkAndTransferSpecialToken(
         buyer,
         seller,
-        sellerSdk
+        sellerAddress,
+        sellerAccount
       );
 
       if (specialTokenTransferred) {
         console.log("Special token transferred successfully");
       }
+
+      res.status(201).json({
+        success: true,
+        message: "Item purchased successfully",
+        transaction,
+        discountApplied: discountAmount > 0,
+        discountAmount,
+        finalPrice,
+        tokenId: parsedTransfer?.tokenId,
+        collectionId: parsedTransfer?.collectionId,
+      });
     }
   } catch (error) {
     res.status(500).json({
