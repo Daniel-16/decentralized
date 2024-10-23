@@ -21,16 +21,6 @@ const TransactionSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  // store: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "Store",
-  //   required: true,
-  // },
-  // quantity: {
-  //   type: Number,
-  //   required: true,
-  //   min: 1,
-  // },
   totalPrice: {
     type: Number,
     required: true,
@@ -42,7 +32,6 @@ const TransactionSchema = new mongoose.Schema({
   nameOfItemPurchased: {
     type: mongoose.Schema.Types.String,
     ref: "Token",
-    // required: true,
   },
 });
 
