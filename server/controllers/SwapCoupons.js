@@ -260,9 +260,10 @@ export const getSwapOffers = async (req, res) => {
       .exec();
 
     if (!swapOffers || swapOffers.length === 0) {
-      return res.status(404).json({
+      return res.status(200).json({
         success: true,
         message: "No swap offers found for this user",
+        swapOffers: [],
       });
     }
 
@@ -273,9 +274,10 @@ export const getSwapOffers = async (req, res) => {
 
     // If all offers are completed, you may return a message
     if (filteredOffers.length === 0) {
-      return res.status(404).json({
+      return res.status(200).json({
         success: true,
         message: "No active swap offers found for this user",
+        filteredOffers: [],
       });
     }
 

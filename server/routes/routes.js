@@ -41,6 +41,7 @@ import {
 } from "../controllers/SwapCoupons.js";
 import {
   acceptRedeemRequest,
+  getAllRedeemRequests,
   redeemCoupon,
 } from "../controllers/RedeemCoupons.js";
 const router = express.Router();
@@ -232,6 +233,9 @@ router.post("/mintSpecialToken", verifyToken, createSpecialToken);
  */
 router.post("/redeemCoupon", verifyToken, redeemCoupon);
 
+
+router.get("/getAllRedeemRequests", verifyToken, getAllRedeemRequests);
+
 /**
  * @route DELETE /api/acceptRedeemRequest/:redeemRequestId
  * @description Accept a redeem request
@@ -242,5 +246,7 @@ router.delete(
   verifyToken,
   acceptRedeemRequest
 );
+
+
 
 export default router;
