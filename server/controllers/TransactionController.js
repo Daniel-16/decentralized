@@ -365,7 +365,6 @@ export const purchaseItem = async (req, res) => {
         finalPrice,
         tokenId: parsedTransfer?.tokenId,
         collectionId: parsedTransfer?.collectionId,
-
       });
     }
   } catch (error) {
