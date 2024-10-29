@@ -29,6 +29,7 @@ import { transferTokenController } from "../controllers/TransferToken.js";
 // import { burnToken } from "../controllers/BurnToken.js";
 import {
   getAllCoupons,
+  getAllMyCoupons,
   getCoupon,
   getStoreCoupons,
 } from "../controllers/MarketPlace.js";
@@ -188,6 +189,14 @@ router.get("/getStoreItems", verifyToken, getStoreItems);
  * @access Private
  */
 router.get("/getAllCoupons", getAllCoupons);
+
+/**
+ * get all my coupons
+ * @route GET /api/getAllMyCoupons/:accountAddress
+ * @description Get all coupons of a user
+ */
+router.get("/getAllMyCoupons/:accountAddress", verifyToken, getAllMyCoupons);
+
 
 /**
  * @route GET /api/getStoreCoupons/:accountAddress

@@ -19,6 +19,35 @@
     overflow: hidden;
     border-radius: 5px;
   }
+
+  /**
+  Default Markup
+**/
+
+  /**
+  Component
+**/
+
+  label {
+    width: 100%;
+  }
+
+  .card-input-element {
+    display: none;
+  }
+
+  .card-input {
+    margin: 10px;
+    padding: 0px;
+  }
+
+  .card-input:hover {
+    cursor: pointer;
+  }
+
+  .card-input-element:checked + .card-input {
+    box-shadow: 0 0 1px 1px #2ecc71;
+  }
 </style>
 
 <!-- Breadcrumb -->
@@ -184,6 +213,7 @@
               >
             </div>
           </div>
+
           <div class="border-top w-75 mb-4"></div>
           <!-- Bid End -->
           <div class="row align-items-end">
@@ -207,16 +237,78 @@
                 Buy
               </a>
             </div>
+            <% } %> <% if(token.tokenDescription){ %>
+            <div class="short-description">
+              <h5 class="pt-3">Short Description</h5>
+              <p class="mb-0"><%= token.tokenDescription %></p>
+            </div>
             <% } %>
           </div>
-          <div class="border-top w-75 my-4"></div>
 
-          <% if(token.tokenDescription){ %>
-          <div class="short-description">
-            <h5>Short Description</h5>
-            <p class="mb-0"><%= token.tokenDescription %></p>
+          <div class="border-top w-75 mt-4 mb-4"></div>
+          <!-- use mySpecialCoupons instead -->
+          <% if (myCoupons.length > 0) { %>
+          <h5>Apply a coupon</h5>
+          <div class="row">
+            <% myCoupons.forEach(coupon => { %>
+            <div
+              style="width: 50%"
+              class="col-12 col-sm-10 col-md-6 col-lg-5 col-xl-6 pb-3"
+            >
+              <label>
+                <input
+                  type="radio"
+                  name="specialToken"
+                  class="card-input-element"
+                  data-token-id="<%= coupon.tokenId %>"
+                  data-collection-id="<%= coupon.collectionId %>"
+                />
+                <div class="card card-default card-input">
+                  <div class="card-header">Special Coupon</div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-3">
+                        <div
+                          class="img-wrap"
+                          style="max-height: 100px; overflow: hidden"
+                        >
+                          <div
+                            class="badge bg-danger position-absolute px-2 py-1"
+                          >
+                            #<%= coupon.tokenId %>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-9">
+                        <%= coupon.tokenName %>
+                        <a
+                          class="author d-block fz-12 hover-primary text-truncate"
+                          href="#"
+                        >
+                          @my_token
+                        </a>
+
+                        <div
+                          class="price-bid d-flex justify-content-center mt-3"
+                        >
+                          <div class="price me-3">
+                            <h6
+                              class="mb-0 d-inline-block fz-14 border border-2 rounded py-1 px-2"
+                            >
+                              <%= coupon.priceOfCoupon %> UNQ
+                            </h6>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <% }) %>
           </div>
-          <% } %>
+          <% } else { %> <% } %>
         </div>
       </div>
     </div>
@@ -280,7 +372,7 @@
               </div>
             </div>
           </div>
-          <!-- polkadot -->
+          <!-- coinbase -->
           <div class="col-6">
             <div class="nft-card card seller-card shadow-sm">
               <div class="card-body">
@@ -605,115 +697,68 @@
 
 <script>
   $(document).ready(function () {
-    attachPurchaseHandlers(); // Call this to bind the click event when the document is ready
+    attachPurchaseHandlers();
   });
 
   // Handle purchase
   function attachPurchaseHandlers() {
-    $(".purchase-btn")
+    $("#unqPurchase")
       .off("click")
-      .on("click", function (event) {
+      .on("click", async function (event) {
         event.preventDefault();
 
-        const purchaseButton = $(this);
-        const itemId = purchaseButton.data("item-id");
+        const accountAddress = localStorage.getItem("accountAddress");
 
-        const tokenId = parseInt(purchaseButton.data("token-id"), 10);
-        const collectionId = parseInt(purchaseButton.data("collection-id"), 10);
+        if (!accountAddress) {
+          Swal.fire({
+            title: "Wallet Not Connected",
+            text: "Please connect your MetaMask wallet first.",
+            icon: "error",
+          });
+          return;
+        }
 
-        $("#cover-spin").show(0);
-
-        const token = localStorage.getItem("token");
-
+        // Add your purchase logic here without web3 integration
         $.ajax({
           url: "/api/purchaseItem",
           method: "POST",
           contentType: "application/json",
           data: JSON.stringify({
-            tokenId: tokenId,
-            collectionId: collectionId,
+            tokenId: $(this).data("token-id"),
+            collectionId: $(this).data("collection-id"),
+            specialTokenId: $("input[name='specialToken']:checked").data(
+              "token-id"
+            ),
+            specialCollectionId: $("input[name='specialToken']:checked").data(
+              "collection-id"
+            ),
           }),
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           success: function (response) {
             if (response.success) {
-              $("#cover-spin").hide(0);
               Swal.fire({
                 title: "Purchase Successful!",
-                text: `You have successfully purchased this item! Visit the ${ownerName} store to redeem it.`,
+                text: "You have successfully purchased this item!",
                 icon: "success",
               });
-
-              // Check if special token was transferred and log or display a message
-              if (response.specialTokenTransferred) {
-                console.log("Special token transferred successfully!");
-                confetti({
-                  particleCount: 100,
-                  spread: 70,
-                  origin: { y: 0.6 },
-                });
-                Swal.fire({
-                  title: "Congratulations!",
-                  text: "You've won a special token! Check your profile for more details.",
-                  icon: "success",
-                  timer: 2000,
-                  showConfirmButton: false,
-                });
-              }
-
-              location.reload();
-            } else {
-              alert("Error: " + response.error);
             }
           },
           error: function (jqXHR) {
             let errorResponse = jqXHR.responseJSON;
-
-            if (errorResponse && errorResponse.error) {
-              let errorTitle = "Oooopss!";
-              let errorMessage = "An error occurred";
-
-              // Check for a ValidationError with more details
-              if (
-                errorResponse.error.name === "ValidationError" &&
-                errorResponse.error.details
-              ) {
-                const errorDetail = errorResponse.error.details["0"];
-                const target = errorDetail.target || {};
-                const constraints = errorDetail.constraints || {};
-
-                if (constraints.NotYourselfAddress !== undefined) {
-                  errorMessage = `Address '${target.address}' cannot be the same as the destination.`;
-                }
-              } else {
-                if (errorResponse.error === "Token is not valid") {
-                  errorTitle = "Oooops!";
-                  errorMessage =
-                    "You have to be signed in to purchase a coupon.";
-                } else {
-                  errorMessage = errorResponse.error;
-                }
-              }
-
-              Swal.fire({
-                title: errorTitle,
-                text: errorMessage,
-                icon: "error",
-              });
-            } else {
-              alert("Error: An unexpected error occurred.");
-            }
-          },
-          complete: function () {
-            purchaseButton.show();
-            $("#cover-spin").hide(0);
+            Swal.fire({
+              title: "Error",
+              text: errorResponse?.error || "An unexpected error occurred.",
+              icon: "error",
+            });
           },
         });
       });
   }
-  // End: handle purchase
 </script>
+
+<!-- connect with metamask -->
 <script>
   const detectEthereumProvider = async () => {
     if (typeof window.ethereum !== "undefined") {
@@ -752,7 +797,12 @@
         // Refresh the page or update UI as needed
         location.reload();
       } catch (error) {
-        alert(error.message);
+        Swal.fire({
+          title: "Error",
+          html: 'Metamask extension is not installed or disabled. Please <a href="https://metamask.io/download/" target="_blank">install</a> it or activate it in your browser settings.',
+          icon: "error",
+          showConfirmButton: false,
+        });
       }
     });
   });

@@ -1,3 +1,4 @@
+import SpecialTokenModel from "../models/SpecialToken.js";
 import TokenModel from "../models/TokenModel.js";
 import UserModel from "../models/UserModel.js";
 
@@ -216,14 +217,21 @@ export const getItem = async (req, res) => {
         };
       })
     );
-    // console.log("ownerDetails: ", ownerDetails);
-    // res.status(200).json({
-    //   success: true,
-    //   coupon: {
-    //     ...coupon._doc,
-    //     ownerName: ownerDetails ? ownerDetails.username : "Unknown",
-    //   },
-    // });
+
+    // Fetch user's coupons based on the account address
+    const myCoupons = await TokenModel.find({
+      tokenOwnerAddress: coupon.tokenOwnerAddress,
+      isPurchased: false,
+    });
+
+    // Fetch user's special coupons
+    const mySpecialCoupons = await SpecialTokenModel.find({
+      tokenOwnerAddress: coupon.tokenOwnerAddress,
+      isPurchased: false,
+      priceOfCoupon: { $gt: 5000 },
+    });
+
+
     res.render("items/itemDetail", {
       token: {
         ...coupon._doc,
@@ -233,6 +241,8 @@ export const getItem = async (req, res) => {
             : "Unknown",
       },
       moreCoupons: moreCouponsWithOwnerDetails,
+      myCoupons,
+      mySpecialCoupons,
     });
   } catch (error) {
     res.status(500).json({
@@ -249,6 +259,46 @@ export const getMoreCouponsByCollectionId = async (req, res) => {
     res.status(200).json({
       success: true,
       coupons,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+
+export const getAllMyCoupons = async (req, res) => {
+  const { accountAddress } = req.params;
+  const userId = req.user.id;
+
+  try {
+    const loggedInUser = await UserModel.findById(userId);
+    if (!loggedInUser) {
+      return res.status(401).json({
+        success: false,
+        error: "User not authenticated",
+      });
+    }
+
+
+    const coupons = await TokenModel.find({
+      tokenOwnerAddress: accountAddress,
+      isPurchased: false,
+    });
+
+    const specialCoupons = await SpecialTokenModel.find({
+      tokenOwnerAddress: accountAddress,
+      isPurchased: false,
+      priceOfCoupon: { $gt: 5000 },
+    });
+
+
+    res.status(200).json({
+      success: true,
+      coupons,
+      specialCoupons,
     });
   } catch (error) {
     res.status(500).json({

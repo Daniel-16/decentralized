@@ -26,6 +26,11 @@ const UserSchema = new mongoose.Schema({
   },
   accountAddress: {
     type: String,
+    required: true,
+  },
+  evmAddress: {
+    type: String,
+    required: true,
   },
   collectedTokens: [
     {

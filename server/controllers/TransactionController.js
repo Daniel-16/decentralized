@@ -5,6 +5,7 @@ import { KeyringProvider } from "@unique-nft/accounts/keyring";
 import TokenModel from "../models/TokenModel.js";
 import { checkAndTransferSpecialToken } from "../services/SpecialTokenService.js";
 import { applyCouponDiscount } from "../utils/UseCoupon.js";
+import Web3 from "web3";
 
 export const checkBuyerPurchases = async (req, res) => {
   const userId = req.user.id;
@@ -206,8 +207,37 @@ export const purchaseCoupon = async (req, res) => {
   }
 };
 
+const verifyEthTransaction = async (txHash, expectedAmount) => {
+  const web3 = new Web3(process.env.ETH_NODE_URL);
+  try {
+    const tx = await web3.eth.getTransaction(txHash);
+    const receipt = await web3.eth.getTransactionReceipt(txHash);
+
+    if (!receipt || !receipt.status) {
+      throw new Error("Transaction failed or pending");
+    }
+
+    const txAmount = web3.utils.fromWei(tx.value, "ether");
+    if (parseFloat(txAmount) !== parseFloat(expectedAmount)) {
+      throw new Error("Transaction amount mismatch");
+    }
+
+    return true;
+  } catch (error) {
+    console.error("ETH verification error:", error);
+    return false;
+  }
+};
+
 export const purchaseItem = async (req, res) => {
-  const { tokenId, collectionId } = req.body;
+  const {
+    tokenId,
+    collectionId,
+    specialTokenId,
+    specialCollectionId,
+    ethAddress,
+    transactionHash,
+  } = req.body;
   const buyerId = req.user.id;
 
   if (!tokenId || !collectionId) {
@@ -256,7 +286,9 @@ export const purchaseItem = async (req, res) => {
     const { finalPrice, discountAmount } = await applyCouponDiscount(
       buyer,
       seller,
-      item
+      item,
+      specialTokenId,
+      specialCollectionId
     );
 
     const buyerAccount = await KeyringProvider.fromMnemonic(buyer.mnemonic);

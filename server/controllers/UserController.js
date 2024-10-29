@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { generateToken } from "../middleware/generateToken.js";
 import { Sr25519Account } from "@unique-nft/sr25519";
 import { getUserBalance } from "./getUserBalance.js";
+import { Address } from "@unique-nft/utils";
 
 export const createUser = async (req, res) => {
   const { username, email, password } = req.body;
@@ -14,13 +15,18 @@ export const createUser = async (req, res) => {
         error: "A user with this email already exist",
       });
     }
+
     const mnemonic = Sr25519Account.generateMnemonic();
     const account = Sr25519Account.fromUri(mnemonic);
+
+    const ethMirror = Address.mirror.substrateToEthereum(account.address);
+
     const user = await UserModel.create({
       username,
       email,
       password,
       accountAddress: account.address,
+      evmAddress: ethMirror,
       mnemonic,
     });
 
@@ -32,6 +38,8 @@ export const createUser = async (req, res) => {
         id: user._id,
         username: user.username,
         email: user.email,
+        accountAddress: user.accountAddress,
+        evmAddress: user.evmAddress,
       },
       account,
       mnemonic,
