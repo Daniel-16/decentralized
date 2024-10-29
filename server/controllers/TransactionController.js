@@ -148,11 +148,13 @@ export const purchaseCoupon = async (req, res) => {
       to: buyer.accountAddress,
     });
 
-    const parsedTransfer = txTransfer.parsed;
-    const transferCompleted = txTransfer.isCompleted;
+    const parsedTransfer = txTransfer?.parsed;
+    const transferCompleted = txTransfer?.isCompleted;
     console.log(`Transfer completed: ${transferCompleted}`);
 
     if (transferCompleted) {
+      buyer.points += 10;
+      await buyer.save();
       // Transfer payment from buyer to seller
       await sdk.balance.transfer.submitWaitResult(
         {
@@ -188,7 +190,6 @@ export const purchaseCoupon = async (req, res) => {
         totalPrice: token.priceOfCoupon,
         item: token._id,
       });
-
       await transaction.save();
     }
 
@@ -207,27 +208,27 @@ export const purchaseCoupon = async (req, res) => {
   }
 };
 
-const verifyEthTransaction = async (txHash, expectedAmount) => {
-  const web3 = new Web3(process.env.ETH_NODE_URL);
-  try {
-    const tx = await web3.eth.getTransaction(txHash);
-    const receipt = await web3.eth.getTransactionReceipt(txHash);
+// const verifyEthTransaction = async (txHash, expectedAmount) => {
+//   const web3 = new Web3(process.env.ETH_NODE_URL);
+//   try {
+//     const tx = await web3.eth.getTransaction(txHash);
+//     const receipt = await web3.eth.getTransactionReceipt(txHash);
 
-    if (!receipt || !receipt.status) {
-      throw new Error("Transaction failed or pending");
-    }
+//     if (!receipt || !receipt.status) {
+//       throw new Error("Transaction failed or pending");
+//     }
 
-    const txAmount = web3.utils.fromWei(tx.value, "ether");
-    if (parseFloat(txAmount) !== parseFloat(expectedAmount)) {
-      throw new Error("Transaction amount mismatch");
-    }
+//     const txAmount = web3.utils.fromWei(tx.value, "ether");
+//     if (parseFloat(txAmount) !== parseFloat(expectedAmount)) {
+//       throw new Error("Transaction amount mismatch");
+//     }
 
-    return true;
-  } catch (error) {
-    console.error("ETH verification error:", error);
-    return false;
-  }
-};
+//     return true;
+//   } catch (error) {
+//     console.error("ETH verification error:", error);
+//     return false;
+//   }
+// };
 
 export const purchaseItem = async (req, res) => {
   const {
@@ -235,8 +236,8 @@ export const purchaseItem = async (req, res) => {
     collectionId,
     specialTokenId,
     specialCollectionId,
-    ethAddress,
-    transactionHash,
+    // ethAddress,
+    // transactionHash,
   } = req.body;
   const buyerId = req.user.id;
 
@@ -330,6 +331,8 @@ export const purchaseItem = async (req, res) => {
     console.log(`Transfer completed: ${transferCompleted}`);
 
     if (transferCompleted) {
+      buyer.points += 10;
+      await buyer.save();
       await sdk.balance.transfer.submitWaitResult(
         {
           address: buyerAddress,

@@ -28,10 +28,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  evmAddress: {
-    type: String,
-    required: true,
-  },
+  // evmAddress: {
+  //   type: String,
+  //   required: true,
+  // },
   collectedTokens: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -46,21 +46,21 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  points: {
+    type: Number,
+    default: 0,
+  },
+  lastPointsAssigned: {
+    type: Date,
+    default: null,
+  },
 });
 
 UserSchema.pre("save", async function (next) {
-  const email = this.email;
-  const user = await UserModel.findOne({ email });
-  try {
-    if (user) {
-      const emailExist = new Error("An account with this email already exists");
-      return next(emailExist);
-    }
-  } catch (error) {
-    throw new Error(error);
+  if (this.isModified("password")) {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
   }
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
   next();
 });
 
