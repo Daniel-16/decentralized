@@ -15,42 +15,39 @@
     height: 200px;
   }
 
-    .item-big-thumb {
-        overflow: hidden; 
-        border-radius: 5px; 
-    }
+  .item-big-thumb {
+    overflow: hidden;
+    border-radius: 5px;
+  }
 
-    /**
+  /**
   Default Markup
 **/
 
-
-/**
+  /**
   Component
 **/
 
-label {
+  label {
     width: 100%;
-}
+  }
 
-.card-input-element {
+  .card-input-element {
     display: none;
-}
+  }
 
-.card-input {
+  .card-input {
     margin: 10px;
     padding: 0px;
-}
+  }
 
-.card-input:hover {
+  .card-input:hover {
     cursor: pointer;
-}
+  }
 
-.card-input-element:checked + .card-input {
-     box-shadow: 0 0 1px 1px #2ecc71;
-}
-
-
+  .card-input-element:checked + .card-input {
+    box-shadow: 0 0 1px 1px #2ecc71;
+  }
 </style>
 
 <!-- Breadcrumb -->
@@ -192,284 +189,336 @@ label {
             <!-- Wishlist -->
             <!-- <button class="btn btn-dark btn-sm rounded-pill px-3 wishlist-btn" type="button"><i class="bi"></i><span class="ms-1">98</span></button> -->
 
-                <!-- Badge-->
-                <!-- <div class="badge border px-3 py-2 rounded-pill text-dark fz-14 d-inline-block ms-1 ms-sm-4"><i class="me-1 bi bi-eye"></i>8,634 people views this</div> -->
-
-              </div>
-              <h2 class="my-3"><%= token.tokenName %> #<%= token.tokenId %></h2>
-              <div class="d-flex align-items-center mb-4">
-                <div class="author-img position-relative me-3"><img class="shadow" src="/assets/img/bg-img/u2.jpg" alt=""><i class="bi bi-check position-absolute bg-primary"></i></div>
-                <div class="name-author"><span class="d-block fz-14">Created by</span><a class="author d-block fz-16 hover-primary text-truncate" href="#">@<%= token.ownerName %> <strong> <span class="text-primary font-weight-bold"><%= token.tokenOwnerAddress %></span></strong></a></div>
-              </div>
-
-
-                <div class="border-top w-75 mb-4"></div>
-                <!-- Bid End -->
-                <div class="row align-items-end">
-                    <div class="col-6 col-sm-4">
-                        <p class="mb-2">Price</p>
-                        <h5 class="text-center mb-0 border border-2 px-3 py-2 border-primary d-inline-block rounded text-primary w-100"><%= token.priceOfCoupon %> UNQ </h5>
-                    </div>
-                    <% if(!token.isPurchased) { %>
-                    <div class="col-6 col-sm-4 col-lg-5">
-                        <a class="btn btn-primary rounded-pill w-100" href="#" id="purchaseBtn" data-bs-toggle="modal" data-bs-target="#walletModal">
-                            Buy
-                        </a>
-                    </div>
-                    <% } %>
-
-
-                    <% if(token.tokenDescription){ %>
-                    <div class="short-description">
-                        <h5 class="pt-3">Short Description</h5>
-                        <p class="mb-0">
-                            <%= token.tokenDescription %>
-                        </p>
-                    </div>
-                    <% } %>
-                </div>
-
-                <div class="border-top w-75 mt-4 mb-4"></div>
-                <!-- use mySpecialCoupons instead -->
-                <% if (myCoupons.length > 0) { %>
-                <h5>Apply a coupon</h5>
-                <div class="row">
-                    <% myCoupons.forEach(coupon => { %>
-                    <div style="width: 50%;" class="col-12 col-sm-10 col-md-6 col-lg-5 col-xl-6 pb-3">
-                        <label>
-                        <input type="radio" name="specialToken" class="card-input-element" 
-                                    data-token-id="<%= coupon.tokenId %>" 
-                                    data-collection-id="<%= coupon.collectionId %>"/>
-                            <div class="card card-default card-input">
-                            <div class="card-header">Special Coupon</div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-3">
-                                            <div class="img-wrap" style="max-height: 100px; overflow: hidden;">
-                                                <div class="badge bg-danger position-absolute px-2 py-1">#<%= coupon.tokenId %></div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-9">
-                                            <%= coupon.tokenName %>
-                                            <a class="author d-block fz-12 hover-primary text-truncate" href="#">
-                                                @my_token
-                                            </a>
-
-                                            <div class="price-bid d-flex justify-content-center mt-3">
-                                                <div class="price me-3">
-                                                    <h6 class="mb-0 d-inline-block fz-14 border border-2 rounded py-1 px-2"><%= coupon.priceOfCoupon %> UNQ</h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-                    <% }) %>
-                </div>
-            <% } else { %>
-                
-            <% } %>
-
-
-
-                
-
-            
-
-
-
-            
-
-
+            <!-- Badge-->
+            <!-- <div class="badge border px-3 py-2 rounded-pill text-dark fz-14 d-inline-block ms-1 ms-sm-4"><i class="me-1 bi bi-eye"></i>8,634 people views this</div> -->
+          </div>
+          <h2 class="my-3"><%= token.tokenName %> #<%= token.tokenId %></h2>
+          <div class="d-flex align-items-center mb-4">
+            <div class="author-img position-relative me-3">
+              <img class="shadow" src="/assets/img/bg-img/u2.jpg" alt="" /><i
+                class="bi bi-check position-absolute bg-primary"
+              ></i>
+            </div>
+            <div class="name-author">
+              <span class="d-block fz-14">Created by</span
+              ><a
+                class="author d-block fz-16 hover-primary text-truncate"
+                href="#"
+                >@<%= token.ownerName %>
+                <strong>
+                  <span class="text-primary font-weight-bold"
+                    ><%= token.tokenOwnerAddress %></span
+                  ></strong
+                ></a
+              >
             </div>
           </div>
+
+          <div class="border-top w-75 mb-4"></div>
+          <!-- Bid End -->
+          <div class="row align-items-end">
+            <div class="col-6 col-sm-4">
+              <p class="mb-2">Price</p>
+              <h5
+                class="text-center mb-0 border border-2 px-3 py-2 border-primary d-inline-block rounded text-primary w-100"
+              >
+                <%= token.priceOfCoupon %> UNQ
+              </h5>
+            </div>
+            <% if(!token.isPurchased) { %>
+            <div class="col-6 col-sm-4 col-lg-5">
+              <a
+                class="btn btn-primary rounded-pill w-100"
+                href="#"
+                id="purchaseBtn"
+                data-bs-toggle="modal"
+                data-bs-target="#walletModal"
+              >
+                Buy
+              </a>
+            </div>
+            <% } %> <% if(token.tokenDescription){ %>
+            <div class="short-description">
+              <h5 class="pt-3">Short Description</h5>
+              <p class="mb-0"><%= token.tokenDescription %></p>
+            </div>
+            <% } %>
+          </div>
+
+          <div class="border-top w-75 mt-4 mb-4"></div>
+          <!-- use mySpecialCoupons instead -->
+          <% if (myCoupons.length > 0) { %>
+          <h5>Apply a coupon</h5>
+          <div class="row">
+            <% myCoupons.forEach(coupon => { %>
+            <div
+              style="width: 50%"
+              class="col-12 col-sm-10 col-md-6 col-lg-5 col-xl-6 pb-3"
+            >
+              <label>
+                <input
+                  type="radio"
+                  name="specialToken"
+                  class="card-input-element"
+                  data-token-id="<%= coupon.tokenId %>"
+                  data-collection-id="<%= coupon.collectionId %>"
+                />
+                <div class="card card-default card-input">
+                  <div class="card-header">Special Coupon</div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-3">
+                        <div
+                          class="img-wrap"
+                          style="max-height: 100px; overflow: hidden"
+                        >
+                          <div
+                            class="badge bg-danger position-absolute px-2 py-1"
+                          >
+                            #<%= coupon.tokenId %>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-9">
+                        <%= coupon.tokenName %>
+                        <a
+                          class="author d-block fz-12 hover-primary text-truncate"
+                          href="#"
+                        >
+                          @my_token
+                        </a>
+
+                        <div
+                          class="price-bid d-flex justify-content-center mt-3"
+                        >
+                          <div class="price me-3">
+                            <h6
+                              class="mb-0 d-inline-block fz-14 border border-2 rounded py-1 px-2"
+                            >
+                              <%= coupon.priceOfCoupon %> UNQ
+                            </h6>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <% }) %>
+          </div>
+          <% } else { %> <% } %>
         </div>
       </div>
-    </div>
-
-
-
-
-<!-- Connect wallet modal -->
-<div class="modal fade" id="walletModal" tabindex="-1" aria-labelledby="walletModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="walletModalLabel">Connect Wallet</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center">
-                <p>Choose how you want to connect. If you don't have a wallet, you can select a provider and create one.</p>
-                <div class="row pb-3">
-                    <!-- metamask -->
-                    <div class="col-6">
-                        <div class="nft-card card seller-card shadow-sm">
-                            <div class="card-body">
-                                <div class="row align-items-center g-3">
-                                <div class="col-4">
-                                    <div class="img-wrap">
-                                        <img src="/assets/img/bg-img/metamask.png" alt="">
-                                    </div>
-                                </div>
-                                <div class="col-8">
-                                    <div class="name-author">
-                                        <a id="connectMetaMask" class="name d-block hover-primary fw-bold text-truncate" href="#">
-                                            <i class="bi bi-patch-check-fill ms-2 text-success" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="available" data-bs-original-title="available"></i>
-                                            MetaMask
-                                        </a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- coinbase -->
-                    <div class="col-6">
-                        <div class="nft-card card seller-card shadow-sm">
-                            <div class="card-body">
-                                <div class="row align-items-center g-3">
-                                <div class="col-4">
-                                    <div class="img-wrap">
-                                        <img src="/assets/img/bg-img/coinbase.png" alt="">
-                                    </div>
-                                </div>
-                                <div class="col-8">
-                                    <div class="name-author">
-                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#">
-                                            <i class="bi bi bi-x-circle-fill ms-2 text-danger" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="not available" data-bs-original-title="not available"></i>
-                                            Coinbase
-                                        </a>
-
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row pb-3">
-                <!-- kaikas -->
-                <div class="col-6">
-                    <div class="nft-card card seller-card shadow-sm">
-                    <div class="card-body">
-                        <div class="row align-items-center g-3">
-                        <div class="col-4">
-                            <div class="img-wrap">
-                            <img src="/assets/img/bg-img/kaikas.png" alt="" />
-                            </div>
-                        </div>
-                        <div class="col-8">
-                            <div class="name-author">
-                            <a
-                                class="name d-block hover-primary fw-bold text-truncate"
-                                href="#"
-                            >
-                                <i
-                                class="bi bi bi-x-circle-fill ms-2 text-danger"
-                                data-bs-toggle="tooltip"
-                                data-bs-placement="top"
-                                aria-label="not available"
-                                data-bs-original-title="not available"
-                                ></i>
-                                Kaikas
-                            </a>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-                <!-- nova wallet -->
-                <div class="col-6">
-                    <div class="nft-card card seller-card shadow-sm">
-                    <div class="card-body">
-                        <div class="row align-items-center g-3">
-                        <div class="col-4">
-                            <div class="img-wrap">
-                            <img src="/assets/img/bg-img/venly.png" alt="" />
-                            </div>
-                        </div>
-                        <div class="col-8">
-                            <div class="name-author">
-                            <a
-                                class="name d-block hover-primary fw-bold text-truncate"
-                                href="#"
-                            >
-                                <i
-                                class="bi bi bi-x-circle-fill ms-2 text-danger"
-                                data-bs-toggle="tooltip"
-                                data-bs-placement="top"
-                                aria-label="not available"
-                                data-bs-original-title="not available"
-                                ></i>
-                                Venly
-                            </a>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-                </div>
-
-                <!-- proceed with unq wallet -->
-                <div class="row align-items-center">
-                    <div class="col-12">
-                        <div class="nft-card card seller-card shadow-sm">
-                            <div class="card-body">
-                                <a
-                                id="unqPurchase"
-                                class="purchase-btn name d-block hover-primary fw-bold text-truncate"
-                                data-collection-id="<%= token.collectionId %>"
-                                data-token-id="<%= token.tokenId %>"
-                                data-item-id="<%= token._id %>"
-                                href="#"
-                                >
-                                <div class="row align-items-center g-3">
-                                    <div class="col-4">
-                                    <div class="img-wrap">
-                                        <img
-                                        src="/assets/img/unique_network_cover.jpeg"
-                                        alt=""
-                                        />
-                                    </div>
-                                    </div>
-                                    <div class="col-8">
-                                    <div class="name-author">
-                                        <i
-                                        class="bi bi-patch-check-fill ms-2 text-success"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-placement="top"
-                                        aria-label="available"
-                                        data-bs-original-title="available"
-                                        ></i>
-                                        UNQ Balance
-                                    </div>
-                                    </div>
-                                </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Close
-            </button>
-        </div>
     </div>
   </div>
 </div>
 
+<!-- Connect wallet modal -->
+<div
+  class="modal fade"
+  id="walletModal"
+  tabindex="-1"
+  aria-labelledby="walletModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="walletModalLabel">Connect Wallet</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body text-center">
+        <p>
+          Choose how you want to connect. If you don't have a wallet, you can
+          select a provider and create one.
+        </p>
+        <div class="row pb-3">
+          <!-- metamask -->
+          <div class="col-6">
+            <div class="nft-card card seller-card shadow-sm">
+              <div class="card-body">
+                <div class="row align-items-center g-3">
+                  <div class="col-4">
+                    <div class="img-wrap">
+                      <img src="/assets/img/bg-img/metamask.png" alt="" />
+                    </div>
+                  </div>
+                  <div class="col-8">
+                    <div class="name-author">
+                      <a
+                        id="connectMetaMask"
+                        class="name d-block hover-primary fw-bold text-truncate"
+                        href="#"
+                      >
+                        <i
+                          class="bi bi-patch-check-fill ms-2 text-success"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          aria-label="available"
+                          data-bs-original-title="available"
+                        ></i>
+                        MetaMask
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- coinbase -->
+          <div class="col-6">
+            <div class="nft-card card seller-card shadow-sm">
+              <div class="card-body">
+                <div class="row align-items-center g-3">
+                  <div class="col-4">
+                    <div class="img-wrap">
+                      <img src="/assets/img/bg-img/coinbase.png" alt="" />
+                    </div>
+                  </div>
+                  <div class="col-8">
+                    <div class="name-author">
+                      <a
+                        class="name d-block hover-primary fw-bold text-truncate"
+                        href="#"
+                      >
+                        <i
+                          class="bi bi bi-x-circle-fill ms-2 text-danger"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          aria-label="not available"
+                          data-bs-original-title="not available"
+                        ></i>
+                        Coinbase
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
+        <div class="row pb-3">
+          <!-- kaikas -->
+          <div class="col-6">
+            <div class="nft-card card seller-card shadow-sm">
+              <div class="card-body">
+                <div class="row align-items-center g-3">
+                  <div class="col-4">
+                    <div class="img-wrap">
+                      <img src="/assets/img/bg-img/kaikas.png" alt="" />
+                    </div>
+                  </div>
+                  <div class="col-8">
+                    <div class="name-author">
+                      <a
+                        class="name d-block hover-primary fw-bold text-truncate"
+                        href="#"
+                      >
+                        <i
+                          class="bi bi bi-x-circle-fill ms-2 text-danger"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          aria-label="not available"
+                          data-bs-original-title="not available"
+                        ></i>
+                        Kaikas
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- nova wallet -->
+          <div class="col-6">
+            <div class="nft-card card seller-card shadow-sm">
+              <div class="card-body">
+                <div class="row align-items-center g-3">
+                  <div class="col-4">
+                    <div class="img-wrap">
+                      <img src="/assets/img/bg-img/venly.png" alt="" />
+                    </div>
+                  </div>
+                  <div class="col-8">
+                    <div class="name-author">
+                      <a
+                        class="name d-block hover-primary fw-bold text-truncate"
+                        href="#"
+                      >
+                        <i
+                          class="bi bi bi-x-circle-fill ms-2 text-danger"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          aria-label="not available"
+                          data-bs-original-title="not available"
+                        ></i>
+                        Venly
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-
-
+        <!-- proceed with unq wallet -->
+        <div class="row align-items-center">
+          <div class="col-12">
+            <div class="nft-card card seller-card shadow-sm">
+              <div class="card-body">
+                <a
+                  id="unqPurchase"
+                  class="purchase-btn name d-block hover-primary fw-bold text-truncate"
+                  data-collection-id="<%= token.collectionId %>"
+                  data-token-id="<%= token.tokenId %>"
+                  data-item-id="<%= token._id %>"
+                  href="#"
+                >
+                  <div class="row align-items-center g-3">
+                    <div class="col-4">
+                      <div class="img-wrap">
+                        <img
+                          src="/assets/img/unique_network_cover.jpeg"
+                          alt=""
+                        />
+                      </div>
+                    </div>
+                    <div class="col-8">
+                      <div class="name-author">
+                        <i
+                          class="bi bi-patch-check-fill ms-2 text-success"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          aria-label="available"
+                          data-bs-original-title="available"
+                        ></i>
+                        UNQ Balance
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="d-block w-100 mb-70"></div>
 
@@ -648,23 +697,23 @@ label {
 
 <script>
   $(document).ready(function () {
-    attachPurchaseHandlers(); // Call this to bind the click event when the document is ready
+    attachPurchaseHandlers();
   });
 
   // Handle purchase
   function attachPurchaseHandlers() {
     $("#unqPurchase")
       .off("click")
-      .on("click", function (event) {
+      .on("click", async function (event) {
         event.preventDefault();
 
         const purchaseButton = $(this);
         const itemId = purchaseButton.data("item-id");
-
         const tokenId = parseInt(purchaseButton.data("token-id"), 10);
         const collectionId = parseInt(purchaseButton.data("collection-id"), 10);
+        const priceInUNQ = parseFloat($(".price h6").text().split(" ")[0]);
 
-         // Get selected special token radio button values
+        // Get selected special token radio button values
         const selectedSpecialToken = $("input[name='specialToken']:checked");
         const specialTokenId = selectedSpecialToken.data("token-id");
         const specialCollectionId = selectedSpecialToken.data("collection-id");
@@ -672,116 +721,191 @@ label {
         $("#cover-spin").show(0);
 
         const token = localStorage.getItem("token");
+        const accountAddress = localStorage.getItem("accountAddress");
 
-        $.ajax({
-          url: "/api/purchaseItem",
-          method: "POST",
-          contentType: "application/json",
-          data: JSON.stringify({
-            tokenId: tokenId,
-            collectionId: collectionId,
+        if (!accountAddress) {
+          Swal.fire({
+            title: "Wallet Not Connected",
+            text: "Please connect your MetaMask wallet first.",
+            icon: "error",
+          });
+          $("#cover-spin").hide(0);
+          return;
+        }
 
-            specialTokenId,
-            specialCollectionId,
-          }),
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          success: function (response) {
-            if (response.success) {
-              $("#cover-spin").hide(0);
-              Swal.fire({
-                title: "Purchase Successful!",
-                text: `You have successfully purchased this item! Visit the ${ownerName} store to redeem it.`,
-                icon: "success",
+        try {
+          // Initialize Web3 and switch to Sepolia
+          if (typeof window.ethereum !== "undefined") {
+            window.web3 = new Web3(window.ethereum);
+
+            // Request network switch to Sepolia
+            try {
+              await window.ethereum.request({
+                method: "wallet_switchEthereumChain",
+                params: [{ chainId: "0xaa36a7" }], // Sepolia chainId
               });
-
-              // Check if special token was transferred and log or display a message
-              if (response.specialTokenTransferred) {
-                console.log("Special token transferred successfully!");
-                confetti({
-                  particleCount: 100,
-                  spread: 70,
-                  origin: { y: 0.6 },
+            } catch (switchError) {
+              // Handle chain switch error
+              if (switchError.code === 4902) {
+                await window.ethereum.request({
+                  method: "wallet_addEthereumChain",
+                  params: [
+                    {
+                      chainId: "0xaa36a7",
+                      chainName: "Sepolia Test Network",
+                      nativeCurrency: {
+                        name: "Sepolia ETH",
+                        symbol: "SEP",
+                        decimals: 18,
+                      },
+                      rpcUrls: [
+                        "https://sepolia.infura.io/v3/a9d94c1012ad40d8a22a5aaf612e7874",
+                      ],
+                      blockExplorerUrls: ["https://sepolia.etherscan.io"],
+                    },
+                  ],
                 });
-                Swal.fire({
-                  title: "Congratulations!",
-                  text: "You've won a special token! Check your profile for more details.",
-                  icon: "success",
-                  timer: 2000,
-                  showConfirmButton: false,
-                });
-              }
-
-              location.reload();
-            } else {
-              alert("Error: " + response.error);
-            }
-          },
-          error: function (jqXHR) {
-            let errorResponse = jqXHR.responseJSON;
-
-            if (errorResponse && errorResponse.error) {
-              let errorTitle = "Oooopss!";
-              let errorMessage = "An error occurred";
-
-              // Check for a ValidationError with more details
-              if (
-                errorResponse.error.name === "ValidationError" &&
-                errorResponse.error.details
-              ) {
-                const errorDetail = errorResponse.error.details["0"];
-                const target = errorDetail.target || {};
-                const constraints = errorDetail.constraints || {};
-
-                if (constraints.NotYourselfAddress !== undefined) {
-                  errorMessage = `Address '${target.address}' cannot be the same as the destination.`;
-                }
               } else {
-                if (errorResponse.error === "Token is not valid") {
-                  errorTitle = "Oooops!";
-                  errorMessage =
-                    "You have to be signed in to purchase a coupon.";
-                } else {
-                  errorMessage = errorResponse.error;
-                }
+                throw switchError;
               }
-
-              Swal.fire({
-                title: errorTitle,
-                text: errorMessage,
-                icon: "error",
-              });
-            } else {
-              alert("Error: An unexpected error occurred.");
             }
-          },
-          complete: function () {
-            purchaseButton.show();
+
+            await window.ethereum.enable();
+          } else {
+            Swal.fire({
+              title: "MetaMask Not Detected",
+              text: "Please install MetaMask to make purchases.",
+              icon: "error",
+            });
             $("#cover-spin").hide(0);
-          },
-        });
+            return;
+          }
+
+          // For testing, use a fixed conversion rate
+          // 1 UNQ = 0.0001 ETH (this is just for testing)
+          const ethAmount = priceInUNQ * 0.0001;
+
+          // Send ETH transaction
+          const transaction = await web3.eth.sendTransaction({
+            from: accountAddress,
+            to: "0x271cBC27FEcE9D43994e09FD348E5B56bc26d11A", // Replace with your Sepolia wallet address
+            value: web3.utils.toWei(ethAmount.toString(), "ether"),
+            gas: "21000", // Standard gas limit
+            gasPrice: await web3.eth.getGasPrice(),
+          });
+
+          // If transaction is successful, proceed with the API call
+          $.ajax({
+            url: "/api/purchaseItem",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+              tokenId: tokenId,
+              collectionId: collectionId,
+
+              specialTokenId,
+              specialCollectionId,
+              transactionHash: transaction.transactionHash,
+              network: "sepolia", // Add network information
+            }),
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            success: function (response) {
+              if (response.success) {
+                $("#cover-spin").hide(0);
+                Swal.fire({
+                  title: "Test Purchase Successful!",
+                  text: `You have successfully purchased this item using Sepolia ETH! Transaction Hash: ${transaction.transactionHash}`,
+                  icon: "success",
+                  html: `
+                    <p>Purchase successful!</p>
+                    <p>Transaction Hash: <a href="https://sepolia.etherscan.io/tx/${
+                      transaction.transactionHash
+                    }" target="_blank">${transaction.transactionHash.substring(
+                    0,
+                    10
+                  )}...</a></p>
+                  `,
+                });
+
+                // Rest of success handling...
+              }
+            },
+            error: function (jqXHR) {
+              let errorResponse = jqXHR.responseJSON;
+
+              if (errorResponse && errorResponse.error) {
+                let errorTitle = "Oooopss!";
+                let errorMessage = "An error occurred";
+
+                // Check for a ValidationError with more details
+                if (
+                  errorResponse.error.name === "ValidationError" &&
+                  errorResponse.error.details
+                ) {
+                  const errorDetail = errorResponse.error.details["0"];
+                  const target = errorDetail.target || {};
+                  const constraints = errorDetail.constraints || {};
+
+                  if (constraints.NotYourselfAddress !== undefined) {
+                    errorMessage = `Address '${target.address}' cannot be the same as the destination.`;
+                  }
+                } else {
+                  if (errorResponse.error === "Token is not valid") {
+                    errorTitle = "Oooops!";
+                    errorMessage =
+                      "You have to be signed in to purchase a coupon.";
+                  } else {
+                    errorMessage = errorResponse.error;
+                  }
+                }
+
+                Swal.fire({
+                  title: errorTitle,
+                  text: errorMessage,
+                  icon: "error",
+                });
+              } else {
+                alert("Error: An unexpected error occurred.");
+              }
+            },
+            complete: function () {
+              purchaseButton.show();
+              $("#cover-spin").hide(0);
+            },
+          });
+        } catch (error) {
+          console.error("Error during purchase:", error);
+          Swal.fire({
+            title: "Purchase Failed",
+            text:
+              error.message ||
+              "There was an error processing your purchase. Please try again.",
+            icon: "error",
+          });
+          $("#cover-spin").hide(0);
+        }
       });
   }
   // End: handle purchase
 </script>
 
-
 <script>
   function saveCouponData(collectionId, tokenId) {
     // Store the collectionId and tokenId in localStorage
-    localStorage.setItem('collectionId', collectionId);
-    localStorage.setItem('tokenId', tokenId);
-    
+    localStorage.setItem("collectionId", collectionId);
+    localStorage.setItem("tokenId", tokenId);
+
     // You can optionally add a redirect or any other action here
-    console.log(`Coupon data saved: collectionId=${collectionId}, tokenId=${tokenId}`);
+    console.log(
+      `Coupon data saved: collectionId=${collectionId}, tokenId=${tokenId}`
+    );
   }
 </script>
 
-
-
 <!-- connect with metamask -->
- <script>
+<script>
   const detectEthereumProvider = async () => {
     if (typeof window.ethereum !== "undefined") {
       return window.ethereum;
@@ -821,11 +945,11 @@ label {
       } catch (error) {
         // alert(error.message);
         Swal.fire({
-            title: "Error",
-            html: 'Metamask extension is not installed or disabled. Please <a href="https://metamask.io/download/" target="_blank">install</a> it or activate it in your browser settings.',
-            icon: "error",
-            // timer: 2000,
-            showConfirmButton: false,
+          title: "Error",
+          html: 'Metamask extension is not installed or disabled. Please <a href="https://metamask.io/download/" target="_blank">install</a> it or activate it in your browser settings.',
+          icon: "error",
+          // timer: 2000,
+          showConfirmButton: false,
         });
       }
     });
