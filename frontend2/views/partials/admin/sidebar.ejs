@@ -1,40 +1,39 @@
 <style>
   .skeleton {
-  background-color: #e0e0e0;
-  border-radius: 4px;
-  opacity: 0.7;
-  animation: skeleton-loading 1.2s infinite;
-}
-
-.skeleton-text {
-  width: 100px;
-  height: 20px;
-}
-
-.skeleton-counter {
-  width: 80px;
-  height: 30px;
-  margin-top: 10px;
-}
-
-.skeleton-btn {
-  width: 100%;
-  height: 40px;
-}
-
-@keyframes skeleton-loading {
-  0% {
     background-color: #e0e0e0;
+    border-radius: 4px;
+    opacity: 0.7;
+    animation: skeleton-loading 1.2s infinite;
   }
-  50% {
-    background-color: #f0f0f0;
+
+  .skeleton-text {
+    width: 100px;
+    height: 20px;
   }
-  100% {
-    background-color: #e0e0e0;
+
+  .skeleton-counter {
+    width: 80px;
+    height: 30px;
+    margin-top: 10px;
   }
-}
+
+  .skeleton-btn {
+    width: 100%;
+    height: 40px;
+  }
+
+  @keyframes skeleton-loading {
+    0% {
+      background-color: #e0e0e0;
+    }
+    50% {
+      background-color: #f0f0f0;
+    }
+    100% {
+      background-color: #e0e0e0;
+    }
+  }
 </style>
-
 
 <!-- Admin Sidebar Wrap -->
 <div class="admin-sidebar-wrap">
@@ -58,11 +57,18 @@
         <div id="balance-card">
           <div class="card-body text-center p-4">
             <h6 class="mb-1">My current balance</h6>
-            <h5 class="mb-0 text-dark d-flex align-items-center justify-content-center">
-              <span class="ms-2 px-2 skeleton skeleton-text">Loading...</span> <br>
+            <h5
+              class="mb-0 text-dark d-flex align-items-center justify-content-center"
+            >
+              <span class="ms-2 px-2 skeleton skeleton-text">Loading...</span>
+              <br />
               <span class="skeleton skeleton-counter"></span>
             </h5>
-            <a class="btn btn-warning rounded-pill btn-sm w-100 mt-3 skeleton skeleton-btn" href="#">Recharge</a>
+            <a
+              class="btn btn-warning rounded-pill btn-sm w-100 mt-3 skeleton skeleton-btn"
+              href="#"
+              >Recharge</a
+            >
           </div>
         </div>
       </div>
@@ -141,8 +147,6 @@
   ></a>
 </div>
 
-
-
 <!-- for avail bal -->
 <script>
   $(document).ready(function () {
@@ -178,7 +182,7 @@
         },
         beforeSend: function () {
           // Show skeleton loader before the request starts
-          $('#balance-card').html(`
+          $("#balance-card").html(`
             <div class="card-body text-center p-4">
               <h6 class="mb-1">My current balance</h6>
               <h5 class="mb-0 text-dark d-flex align-items-center justify-content-center">
@@ -202,7 +206,7 @@
                     ).toFixed(5)}</span>
                     
                   </h5>
-                  <a class="btn btn-warning rounded-pill btn-sm w-100 mt-3" href="https://t.me/unique2faucet_opal_bot?start=/start">Recharge</a>
+                  <a class="btn btn-warning rounded-pill btn-sm w-100 mt-3" href="https://t.me/unique2faucet_opal_bot?start=/start" target="_blank">Recharge</a>
                 </div>
             `;
 
