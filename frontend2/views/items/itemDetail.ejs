@@ -707,20 +707,6 @@
       .on("click", async function (event) {
         event.preventDefault();
 
-        const purchaseButton = $(this);
-        const itemId = purchaseButton.data("item-id");
-        const tokenId = parseInt(purchaseButton.data("token-id"), 10);
-        const collectionId = parseInt(purchaseButton.data("collection-id"), 10);
-        const priceInUNQ = parseFloat($(".price h6").text().split(" ")[0]);
-
-        // Get selected special token radio button values
-        const selectedSpecialToken = $("input[name='specialToken']:checked");
-        const specialTokenId = selectedSpecialToken.data("token-id");
-        const specialCollectionId = selectedSpecialToken.data("collection-id");
-
-        $("#cover-spin").show(0);
-
-        const token = localStorage.getItem("token");
         const accountAddress = localStorage.getItem("accountAddress");
 
         if (!accountAddress) {
@@ -729,178 +715,46 @@
             text: "Please connect your MetaMask wallet first.",
             icon: "error",
           });
-          $("#cover-spin").hide(0);
           return;
         }
 
-        try {
-          // Initialize Web3 and switch to Sepolia
-          if (typeof window.ethereum !== "undefined") {
-            window.web3 = new Web3(window.ethereum);
-
-            // Request network switch to Sepolia
-            try {
-              await window.ethereum.request({
-                method: "wallet_switchEthereumChain",
-                params: [{ chainId: "0xaa36a7" }], // Sepolia chainId
+        // Add your purchase logic here without web3 integration
+        $.ajax({
+          url: "/api/purchaseItem",
+          method: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({
+            tokenId: $(this).data("token-id"),
+            collectionId: $(this).data("collection-id"),
+            specialTokenId: $("input[name='specialToken']:checked").data(
+              "token-id"
+            ),
+            specialCollectionId: $("input[name='specialToken']:checked").data(
+              "collection-id"
+            ),
+          }),
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          success: function (response) {
+            if (response.success) {
+              Swal.fire({
+                title: "Purchase Successful!",
+                text: "You have successfully purchased this item!",
+                icon: "success",
               });
-            } catch (switchError) {
-              // Handle chain switch error
-              if (switchError.code === 4902) {
-                await window.ethereum.request({
-                  method: "wallet_addEthereumChain",
-                  params: [
-                    {
-                      chainId: "0xaa36a7",
-                      chainName: "Sepolia Test Network",
-                      nativeCurrency: {
-                        name: "Sepolia ETH",
-                        symbol: "SEP",
-                        decimals: 18,
-                      },
-                      rpcUrls: [
-                        "https://sepolia.infura.io/v3/a9d94c1012ad40d8a22a5aaf612e7874",
-                      ],
-                      blockExplorerUrls: ["https://sepolia.etherscan.io"],
-                    },
-                  ],
-                });
-              } else {
-                throw switchError;
-              }
             }
-
-            await window.ethereum.enable();
-          } else {
+          },
+          error: function (jqXHR) {
+            let errorResponse = jqXHR.responseJSON;
             Swal.fire({
-              title: "MetaMask Not Detected",
-              text: "Please install MetaMask to make purchases.",
+              title: "Error",
+              text: errorResponse?.error || "An unexpected error occurred.",
               icon: "error",
             });
-            $("#cover-spin").hide(0);
-            return;
-          }
-
-          // For testing, use a fixed conversion rate
-          // 1 UNQ = 0.0001 ETH (this is just for testing)
-          const ethAmount = priceInUNQ * 0.0001;
-
-          // Send ETH transaction
-          const transaction = await web3.eth.sendTransaction({
-            from: accountAddress,
-            to: "0x271cBC27FEcE9D43994e09FD348E5B56bc26d11A", // Replace with your Sepolia wallet address
-            value: web3.utils.toWei(ethAmount.toString(), "ether"),
-            gas: "21000", // Standard gas limit
-            gasPrice: await web3.eth.getGasPrice(),
-          });
-
-          // If transaction is successful, proceed with the API call
-          $.ajax({
-            url: "/api/purchaseItem",
-            method: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({
-              tokenId: tokenId,
-              collectionId: collectionId,
-
-              specialTokenId,
-              specialCollectionId,
-              transactionHash: transaction.transactionHash,
-              network: "sepolia", // Add network information
-            }),
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            success: function (response) {
-              if (response.success) {
-                $("#cover-spin").hide(0);
-                Swal.fire({
-                  title: "Test Purchase Successful!",
-                  text: `You have successfully purchased this item using Sepolia ETH! Transaction Hash: ${transaction.transactionHash}`,
-                  icon: "success",
-                  html: `
-                    <p>Purchase successful!</p>
-                    <p>Transaction Hash: <a href="https://sepolia.etherscan.io/tx/${
-                      transaction.transactionHash
-                    }" target="_blank">${transaction.transactionHash.substring(
-                    0,
-                    10
-                  )}...</a></p>
-                  `,
-                });
-
-                // Rest of success handling...
-              }
-            },
-            error: function (jqXHR) {
-              let errorResponse = jqXHR.responseJSON;
-
-              if (errorResponse && errorResponse.error) {
-                let errorTitle = "Oooopss!";
-                let errorMessage = "An error occurred";
-
-                // Check for a ValidationError with more details
-                if (
-                  errorResponse.error.name === "ValidationError" &&
-                  errorResponse.error.details
-                ) {
-                  const errorDetail = errorResponse.error.details["0"];
-                  const target = errorDetail.target || {};
-                  const constraints = errorDetail.constraints || {};
-
-                  if (constraints.NotYourselfAddress !== undefined) {
-                    errorMessage = `Address '${target.address}' cannot be the same as the destination.`;
-                  }
-                } else {
-                  if (errorResponse.error === "Token is not valid") {
-                    errorTitle = "Oooops!";
-                    errorMessage =
-                      "You have to be signed in to purchase a coupon.";
-                  } else {
-                    errorMessage = errorResponse.error;
-                  }
-                }
-
-                Swal.fire({
-                  title: errorTitle,
-                  text: errorMessage,
-                  icon: "error",
-                });
-              } else {
-                alert("Error: An unexpected error occurred.");
-              }
-            },
-            complete: function () {
-              purchaseButton.show();
-              $("#cover-spin").hide(0);
-            },
-          });
-        } catch (error) {
-          console.error("Error during purchase:", error);
-          Swal.fire({
-            title: "Purchase Failed",
-            text:
-              error.message ||
-              "There was an error processing your purchase. Please try again.",
-            icon: "error",
-          });
-          $("#cover-spin").hide(0);
-        }
+          },
+        });
       });
-  }
-  // End: handle purchase
-</script>
-
-<script>
-  function saveCouponData(collectionId, tokenId) {
-    // Store the collectionId and tokenId in localStorage
-    localStorage.setItem("collectionId", collectionId);
-    localStorage.setItem("tokenId", tokenId);
-
-    // You can optionally add a redirect or any other action here
-    console.log(
-      `Coupon data saved: collectionId=${collectionId}, tokenId=${tokenId}`
-    );
   }
 </script>
 
@@ -943,12 +797,10 @@
         // Refresh the page or update UI as needed
         location.reload();
       } catch (error) {
-        // alert(error.message);
         Swal.fire({
           title: "Error",
           html: 'Metamask extension is not installed or disabled. Please <a href="https://metamask.io/download/" target="_blank">install</a> it or activate it in your browser settings.',
           icon: "error",
-          // timer: 2000,
           showConfirmButton: false,
         });
       }
