@@ -3,7 +3,8 @@ import bcrypt from "bcrypt";
 import { generateToken } from "../middleware/generateToken.js";
 import { Sr25519Account } from "@unique-nft/sr25519";
 import { getUserBalance } from "./getUserBalance.js";
-import { Address } from "@unique-nft/utils";
+// import { Address } from "@unique-nft/utils";
+import { assignDailyPoints } from "../utils/dailyPoints.js";
 
 export const createUser = async (req, res) => {
   const { username, email, password } = req.body;
@@ -19,15 +20,17 @@ export const createUser = async (req, res) => {
     const mnemonic = Sr25519Account.generateMnemonic();
     const account = Sr25519Account.fromUri(mnemonic);
 
-    const ethMirror = Address.mirror.substrateToEthereum(account.address);
+    // const ethMirror = Address.mirror.substrateToEthereum(account.address);
 
     const user = await UserModel.create({
       username,
       email,
       password,
       accountAddress: account.address,
-      evmAddress: ethMirror,
+      // evmAddress: ethMirror,
       mnemonic,
+      points: 10,
+      lastPointsAssigned: new Date(),
     });
 
     const token = generateToken(user);
@@ -39,7 +42,7 @@ export const createUser = async (req, res) => {
         username: user.username,
         email: user.email,
         accountAddress: user.accountAddress,
-        evmAddress: user.evmAddress,
+        // evmAddress: user.evmAddress,
       },
       account,
       mnemonic,
@@ -70,6 +73,9 @@ export const loginUser = async (req, res) => {
         error: "Invalid email or password",
       });
     }
+
+    // Assign daily points
+    await assignDailyPoints(user._id);
 
     const token = generateToken(user);
 
