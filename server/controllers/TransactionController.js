@@ -207,7 +207,7 @@ export const purchaseCoupon = async (req, res) => {
 };
 
 export const purchaseItem = async (req, res) => {
-  const { tokenId, collectionId } = req.body;
+  const { tokenId, collectionId, specialTokenId, specialCollectionId } = req.body;
   const buyerId = req.user.id;
 
   if (!tokenId || !collectionId) {
@@ -256,7 +256,9 @@ export const purchaseItem = async (req, res) => {
     const { finalPrice, discountAmount } = await applyCouponDiscount(
       buyer,
       seller,
-      item
+      item, 
+      specialTokenId,
+      specialCollectionId
     );
 
     const buyerAccount = await KeyringProvider.fromMnemonic(buyer.mnemonic);
