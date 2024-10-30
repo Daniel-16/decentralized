@@ -164,42 +164,43 @@
                                 </div>
                                 <div class="col-8">
                                     <div class="name-author">
-                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#">
-                                            <i class="bi bi-x-circle-fill ms-2 text-danger" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="not available" data-bs-original-title="not available"></i>
+                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#" id="connectMetamask">
+                                            <i class="bi bi-patch-check-fill ms-2 text-success" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="available" data-bs-original-title="available"></i>
                                             MetaMask
                                         </a>
-
                                     </div>
                                 </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- polkadot -->
-                    <div class="col-6">
-                        <div class="nft-card card seller-card shadow-sm">
-                            <div class="card-body">
-                                <div class="row align-items-center g-3">
-                                <div class="col-4">
-                                    <div class="img-wrap">
-                                        <img src="/assets/img/bg-img/coinbase.png" alt="">
-                                    </div>
-                                </div>
-                                <div class="col-8">
-                                    <div class="name-author">
-                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#">
-                                            <i class="bi bi bi-x-circle-fill ms-2 text-danger" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="not available" data-bs-original-title="not available"></i>
-                                            Coinbase
-                                        </a>
-
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
+                   <!-- polkadot -->
+          <div class="col-6">
+            <div class="nft-card card seller-card shadow-sm">
+              <div class="card-body">
+                <div class="row align-items-center g-3">
+                  <div class="col-4">
+                    <div class="img-wrap">
+                      <img src="/assets/img/bg-img/polkadot.png" alt="" />
                     </div>
+                  </div>
+                  <div class="col-8">
+                    <div class="name-author">
+                      <a id="connectPolkadot" class="name d-block hover-primary fw-bold text-truncate" href="#">
+                        <i class="bi bi-patch-check-fill ms-2 text-success" 
+                           data-bs-toggle="tooltip" 
+                           data-bs-placement="top"
+                           aria-label="available"
+                           data-bs-original-title="available"></i>
+                        Polkadot
+                      </a>
+                    </div>
+                  </div>
                 </div>
-
+              </div>
+            </div>
+          </div>
+        </div>
                 <div class="row pb-3">
                     <!-- kaikas -->
                     <div class="col-6">
@@ -479,4 +480,53 @@ function attachPurchaseHandlers() {
     });
 }
 // End: handle purchase 
+</script>
+
+<script>
+const detectEthereumProvider = async () => {
+    if (typeof window.ethereum !== "undefined") {
+        return window.ethereum;
+    }
+    return null;
+};
+
+const connectMetaMask = async () => {
+    try {
+        const provider = await detectEthereumProvider();
+        if (provider) {
+            await provider.request({ method: "eth_requestAccounts" });
+            const accounts = await provider.request({ method: "eth_accounts" });
+            return accounts[0];
+        } else {
+            throw new Error("Please install MetaMask!");
+        }
+    } catch (error) {
+        console.error("Error connecting to MetaMask", error);
+        throw error;
+    }
+};
+
+$(document).ready(function() {
+    $("#connectMetamask").on("click", async function(e) {
+        e.preventDefault();
+        try {
+            const address = await connectMetaMask();
+            localStorage.setItem("metamaskAddress", address);
+            localStorage.setItem("walletType", "metamask");
+
+            // Close the modal
+            $("#walletModal").modal("hide");
+
+            // Refresh the page or update UI as needed
+            location.reload();
+        } catch (error) {
+            Swal.fire({
+                title: "Error",
+                html: 'Metamask extension is not installed or disabled. Please <a href="https://metamask.io/download/" target="_blank">install</a> it or activate it in your browser settings.',
+                icon: "error",
+                showConfirmButton: false,
+            });
+        }
+    });
+});
 </script>
