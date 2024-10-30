@@ -833,49 +833,133 @@
 
 <!-- connect with polkadot -->
 <script>
-const connectPolkadot = async () => {
-  try {
-    // Check if polkadot.js extension is installed
-    if (!window.injectedWeb3['polkadot-js']) {
-      throw new Error('Polkadot.js extension not found!');
+async function connectPolkadot() {
+    // First check if the extension exists
+    if (!window.injectedWeb3) {
+        Swal.fire({
+            title: "Polkadot Extension Not Found",
+            text: "Please install the Polkadot.js extension first",
+            icon: "warning",
+            confirmButtonText: "Install Extension",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.open('https://polkadot.js.org/extension/', '_blank');
+            }
+        });
+        return;
     }
 
-    // Enable the extension
-    const extension = await window.injectedWeb3['polkadot-js'].enable();
-    const accounts = await extension.accounts.get();
-
-    if (accounts.length === 0) {
-      throw new Error('No Polkadot accounts found!');
-    }
-
-    return accounts[0].address;
-  } catch (error) {
-    console.error('Error connecting to Polkadot wallet', error);
-    throw error;
-  }
-};
-
-$(document).ready(function() {
-  $("#connectPolkadot").on("click", async function(e) {
-    e.preventDefault();
     try {
-      const address = await connectPolkadot();
-      localStorage.setItem("polkadotAddress", address);
-      localStorage.setItem("walletType", "polkadot");
+        // Wait for the injection to happen
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        
+        // Get all extensions
+        const allInjected = await window.injectedWeb3;
+        
+        // Look specifically for polkadot-js
+        const injected = allInjected['polkadot-js'];
+        
+        if (!injected) {
+            throw new Error('Polkadot{.js} extension not found');
+        }
 
-      // Close the modal
-      $("#walletModal").modal("hide");
+        // Enable the extension
+        const extension = await injected.enable('KooponCraft');
+        
+        // Debug log to see the structure
+        console.log('Extension response:', extension);
 
-      // Refresh the page or update UI as needed
-      location.reload();
+        // Get accounts
+        const accounts = await extension.accounts.get();
+        console.log('Accounts:', accounts);
+
+        if (!accounts || accounts.length === 0) {
+            Swal.fire({
+                title: "No Accounts Found",
+                text: "Please create or import an account in your Polkadot.js extension first",
+                icon: "warning",
+                confirmButtonText: "Open Extension",
+                showCancelButton: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // This will trigger the extension popup
+                    if (chrome && chrome.runtime && chrome.runtime.sendMessage) {
+                        chrome.runtime.sendMessage('mgmcbmgbmgjnhaapjfdamiibidkgalli', { method: 'open' });
+                    }
+                }
+            });
+            return;
+        }
+
+        const account = accounts[0];
+        
+        // Store account info
+        const accountData = {
+            address: account.address,
+            name: account.name || account.meta.name,
+            type: account.type,
+            genesisHash: account.genesisHash
+        };
+        
+//        localStorage.setItem('polkadotAccount', JSON.stringify(accountData));
+        
+        Swal.fire({
+            title: "Connected!",
+            text: `Successfully connected to account: ${accountData.name || accountData.address.slice(0, 10)}...`,
+            icon: "success",
+            confirmButtonText: "OK"
+        });
+        
+        $('#walletModal').modal('hide');
+
     } catch (error) {
-      Swal.fire({
-        title: "Error",
-        html: 'Polkadot.js extension is not installed or disabled. Please <a href="https://polkadot.js.org/extension/" target="_blank">install</a> it or activate it in your browser settings.',
-        icon: "error",
-        showConfirmButton: false,
-      });
+        console.error('Polkadot connection error:', error);
+        
+        let errorMessage = error.message;
+        if (error.message.includes('Authorization')) {
+            errorMessage = "Please accept the connection request in the Polkadot.js extension popup";
+        }
+        
+        Swal.fire({
+            title: "Connection Error",
+            text: errorMessage,
+            icon: "error",
+            confirmButtonText: "OK"
+        });
     }
-  });
+}
+
+// Update document ready function
+$(document).ready(function() {
+    $('#connectPolkadot').off('click').on('click', async function(e) {
+        e.preventDefault();
+        
+        // Check if we already have a connected account
+        const existingAccountStr = localStorage.getItem('polkadotAccount');
+        if (existingAccountStr) {
+            try {
+                const existingAccount = JSON.parse(existingAccountStr);
+                Swal.fire({
+                    title: "Already Connected",
+                    text: `Currently connected to account: ${existingAccount.name || existingAccount.address.slice(0, 10)}...`,
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Connect Different Account",
+                    cancelButtonText: "OK"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        localStorage.removeItem('polkadotAccount');
+                        connectPolkadot();
+                    }
+                });
+                return;
+            } catch (e) {
+                localStorage.removeItem('polkadotAccount');
+            }
+        }
+        
+        connectPolkadot();
+    });
 });
 </script>
