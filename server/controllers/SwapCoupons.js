@@ -194,6 +194,9 @@ export const acceptCouponSwap = async (req, res) => {
     swapOffer.status = "completed";
     await swapOffer.save();
 
+    initiator.points += 5;
+    await initiator.save();
+
     res.status(200).json({
       success: true,
       message: "Swap completed successfully",

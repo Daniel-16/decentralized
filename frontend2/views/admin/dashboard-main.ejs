@@ -98,6 +98,38 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Points Card -->
+                    <div class="col-12 col-sm-6">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h5 class="mb-2">
+                                            Points Gained
+                                            <i class="bi bi-info-circle text-primary" 
+                                               data-bs-toggle="popover" 
+                                               data-bs-trigger="hover focus" 
+                                               data-bs-title="How to Earn Points" 
+                                               data-bs-html="true"
+                                               data-bs-content="
+                                                <ul class='list-unstyled mb-0'>
+                                                    <li>✓ Daily logins</li>
+                                                    <li>✓ Register on the platform</li>
+                                                    <li>✓ Purchase an item</li>
+                                                    <li>✓ Purchase a coupon</li>
+                                                    <li>✓ Swap a coupon</li>
+                                                </ul>">
+                                            </i>
+                                        </h5>
+                                        <span id="userPoints">Loading...</span>
+                                    </div>
+                                    <div class="ms-auto">
+                                        <i class="bi bi-star-fill text-warning" style="font-size: 24px;"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-12 col-xxl-6">
@@ -532,14 +564,27 @@ function populateSwapOffers(offers, currentUserId) {
           if (!response.user.isAdmin) {
             // console.log("user.dase happening");
             $("#redeemReqPanel").hide();
-          } else {
-            console.error("Failed to fetch user details:", response.error);
           }
+          // Display user points
+          $("#userPoints").text(response.user.points || 0);
+        } else {
+          console.error("Failed to fetch user details:", response.error);
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.error("Error fetching user details:", errorThrown);
+        $("#userPoints").text("Error loading points");
       },
     });
   });
+</script>
+
+<script>
+    $(document).ready(function () {
+        // Initialize all popovers
+        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl)
+        })
+    });
 </script>
