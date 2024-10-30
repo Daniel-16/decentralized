@@ -195,7 +195,8 @@ router.get("/getAllCoupons", getAllCoupons);
  * @route GET /api/getAllMyCoupons/:accountAddress
  * @description Get all coupons of a user
  */
-router.get("/getAllMyCoupons/:accountAddress", verifyToken, getAllMyCoupons);
+// router.get("/getAllMyCoupons/:accountAddress", verifyToken, getAllMyCoupons);
+router.get("/getAllMyCoupons", verifyToken, getAllMyCoupons);
 
 
 /**

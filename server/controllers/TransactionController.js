@@ -234,8 +234,9 @@ export const purchaseItem = async (req, res) => {
   const {
     tokenId,
     collectionId,
-    specialTokenId,
-    specialCollectionId,
+    applyTokenId,
+    applyCollectionId,
+    tokenType
     // ethAddress,
     // transactionHash,
   } = req.body;
@@ -288,8 +289,9 @@ export const purchaseItem = async (req, res) => {
       buyer,
       seller,
       item,
-      specialTokenId,
-      specialCollectionId
+      applyTokenId,
+      applyCollectionId,
+      tokenType
     );
 
     const buyerAccount = await KeyringProvider.fromMnemonic(buyer.mnemonic);
@@ -311,6 +313,8 @@ export const purchaseItem = async (req, res) => {
     const buyerBalance = await sdk.balance.get({
       address: buyerAddress,
     });
+
+    // console.log(finalPrice);
 
     if (buyerBalance.availableBalance.amount < finalPrice) {
       return res.status(400).json({

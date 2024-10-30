@@ -218,18 +218,30 @@ export const getItem = async (req, res) => {
       })
     );
 
+    // console.log(moreCouponsWithOwnerDetails);
+
     // Fetch user's coupons based on the account address
     const myCoupons = await TokenModel.find({
-      tokenOwnerAddress: coupon.tokenOwnerAddress,
-      isPurchased: false,
-    });
+      // tokenOwnerAddress: coupon.tokenOwnerAddress,
+      // isPurchased: false,
+      priceOfCoupon: { $lte: coupon.priceOfCoupon },
+      _id: { $ne: coupon._id }
+    }).lean();
 
     // Fetch user's special coupons
     const mySpecialCoupons = await SpecialTokenModel.find({
-      tokenOwnerAddress: coupon.tokenOwnerAddress,
-      isPurchased: false,
-      priceOfCoupon: { $gt: 5000 },
-    });
+      // tokenOwnerAddress: coupon.tokenOwnerAddress,
+      // isPurchased: false,
+      priceOfCoupon: { $lte: coupon.priceOfCoupon },
+      _id: { $ne: coupon._id }
+    }).lean();
+
+    const combinedCoupons = [
+      ...myCoupons.map((coupon) => ({ ...coupon, type: "standard" })),
+      ...mySpecialCoupons.map((coupon) => ({ ...coupon, type: "special" })),
+    ];
+
+    // console.log(combinedCoupons)
 
 
     res.render("items/itemDetail", {
@@ -243,6 +255,7 @@ export const getItem = async (req, res) => {
       moreCoupons: moreCouponsWithOwnerDetails,
       myCoupons,
       mySpecialCoupons,
+      combinedCoupons,
     });
   } catch (error) {
     res.status(500).json({
@@ -255,7 +268,10 @@ export const getItem = async (req, res) => {
 export const getMoreCouponsByCollectionId = async (req, res) => {
   const { collectionId } = req.params;
   try {
-    const coupons = await TokenModel.find({ collectionId, isPurchased: false });
+    const coupons = await TokenModel.find({ 
+      collectionId, 
+      isPurchased: false,
+    });
     res.status(200).json({
       success: true,
       coupons,
@@ -271,6 +287,8 @@ export const getMoreCouponsByCollectionId = async (req, res) => {
 
 export const getAllMyCoupons = async (req, res) => {
   const { accountAddress } = req.params;
+  const { expectedPriceOfCoupon } = req.query;
+  // console.log(expectedPriceOfCoupon);
   const userId = req.user.id;
 
   try {
@@ -282,23 +300,40 @@ export const getAllMyCoupons = async (req, res) => {
       });
     }
 
+    // console.log(loggedInUser._id)
+
 
     const coupons = await TokenModel.find({
-      tokenOwnerAddress: accountAddress,
-      isPurchased: false,
-    });
+      tokenOwnerId: loggedInUser._id,
+      // isPurchased: false,
+      isItem: false,
+      priceOfCoupon: { $lte: expectedPriceOfCoupon },
+    })
+      .select("collectionId tokenId tokenName priceOfCoupon tokenDescription")
+      .lean();
 
     const specialCoupons = await SpecialTokenModel.find({
-      tokenOwnerAddress: accountAddress,
-      isPurchased: false,
-      priceOfCoupon: { $gt: 5000 },
-    });
+      tokenOwnerId: loggedInUser._id,
+      // tokenOwnerAddress: accountAddress,
+      // isPurchased: false,
+      // priceOfCoupon: { $gt: 5000 },
+      priceOfCoupon: { $lte: expectedPriceOfCoupon },
+    })
+      .select("collectionId tokenId tokenName priceOfCoupon tokenDescription")
+      .lean();
+
+
+    const combinedCoupons = [
+      ...coupons.map((coupon) => ({ ...coupon, type: "standard" })),
+      ...specialCoupons.map((coupon) => ({ ...coupon, type: "special" })),
+    ];
 
 
     res.status(200).json({
       success: true,
       coupons,
       specialCoupons,
+      combinedCoupons,
     });
   } catch (error) {
     res.status(500).json({

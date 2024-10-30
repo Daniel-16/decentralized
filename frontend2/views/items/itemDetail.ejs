@@ -247,68 +247,12 @@
 
           <div class="border-top w-75 mt-4 mb-4"></div>
           <!-- use mySpecialCoupons instead -->
-          <% if (myCoupons.length > 0) { %>
-          <h5>Apply a coupon</h5>
+          <!-- <h5>Apply a coupon</h5> -->
+          
           <div class="row">
-            <% myCoupons.forEach(coupon => { %>
-            <div
-              style="width: 50%"
-              class="col-12 col-sm-10 col-md-6 col-lg-5 col-xl-6 pb-3"
-            >
-              <label>
-                <input
-                  type="radio"
-                  name="specialToken"
-                  class="card-input-element"
-                  data-token-id="<%= coupon.tokenId %>"
-                  data-collection-id="<%= coupon.collectionId %>"
-                />
-                <div class="card card-default card-input">
-                  <div class="card-header">Special Coupon</div>
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col-3">
-                        <div
-                          class="img-wrap"
-                          style="max-height: 100px; overflow: hidden"
-                        >
-                          <div
-                            class="badge bg-danger position-absolute px-2 py-1"
-                          >
-                            #<%= coupon.tokenId %>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="col-9">
-                        <%= coupon.tokenName %>
-                        <a
-                          class="author d-block fz-12 hover-primary text-truncate"
-                          href="#"
-                        >
-                          @my_token
-                        </a>
-
-                        <div
-                          class="price-bid d-flex justify-content-center mt-3"
-                        >
-                          <div class="price me-3">
-                            <h6
-                              class="mb-0 d-inline-block fz-14 border border-2 rounded py-1 px-2"
-                            >
-                              <%= coupon.priceOfCoupon %> UNQ
-                            </h6>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </label>
-            </div>
-            <% }) %>
+            <div id="coupon-container"></div>
           </div>
-          <% } else { %> <% } %>
+
         </div>
       </div>
     </div>
@@ -718,25 +662,37 @@
           return;
         }
 
-        // Add your purchase logic here without web3 integration
+        $('#cover-spin').show(0); 
+
+
+        // Retrieve tokenId and collectionId from the Purchase button itself
+        const tokenId = $(this).data("token-id");
+        const collectionId = $(this).data("collection-id");
+
+        // Retrieve tokenId and collectionId from the selected applyToken radio button
+        const selectedApplyToken = $("input[name='applyToken']:checked");
+        const applyTokenId = selectedApplyToken.data("token-id");
+        const applyCollectionId = selectedApplyToken.data("collection-id");
+        const tokenType = selectedApplyToken.data("token-type");
+        
+
+        const token = localStorage.getItem("token");
+
+
         $.ajax({
           url: "/api/purchaseItem",
           method: "POST",
           contentType: "application/json",
           data: JSON.stringify({
-            tokenId: $(this).data("token-id"),
-            collectionId: $(this).data("collection-id"),
-            specialTokenId: $("input[name='specialToken']:checked").data(
-              "token-id"
-            ),
-            specialCollectionId: $("input[name='specialToken']:checked").data(
-              "collection-id"
-            ),
+            tokenId,
+            collectionId,
+            applyTokenId,       
+            applyCollectionId,
+            tokenType
           }),
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
           success: function (response) {
+            $('#cover-spin').hide(0); 
             if (response.success) {
               Swal.fire({
                 title: "Purchase Successful!",
@@ -746,6 +702,7 @@
             }
           },
           error: function (jqXHR) {
+            $('#cover-spin').hide(0); 
             let errorResponse = jqXHR.responseJSON;
             Swal.fire({
               title: "Error",
@@ -756,6 +713,77 @@
         });
       });
   }
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        const token = localStorage.getItem('token');
+        const couponPrice = '<%= token.priceOfCoupon %>';
+        $.ajax({
+            url: `/api/getAllMyCoupons?expectedPriceOfCoupon=${couponPrice}`,
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            success: function (response) {
+                let couponHtml = '';
+                console.log(response.combinedCoupons)
+
+                if (response.combinedCoupons && response.combinedCoupons.length > 0) {
+                    couponHtml += '<h5>Apply a coupon</h5><div class="row">';
+
+                    response.combinedCoupons.forEach(coupon => {
+                        couponHtml += `
+                        <div style="width: 50%" class="col-12 col-sm-10 col-md-6 col-lg-5 col-xl-6 pb-3">
+                            <label>
+                                <input
+                                type="radio"
+                                name="applyToken"
+                                class="card-input-element"
+                                data-token-id="${coupon.tokenId}"
+                                data-collection-id="${coupon.collectionId}"
+                                data-token-type="${coupon.type}"
+                                />
+                                <div class="card card-default card-input">
+                                    <div class="card-header">Special Coupon</div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <div class="img-wrap" style="max-height: 100px; overflow: hidden">
+                                                    <div class="badge bg-danger position-absolute px-2 py-1">#${coupon.tokenId}</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-9">
+                                                ${coupon.tokenName}
+                                                <a class="author d-block fz-12 hover-primary text-truncate" href="#">@my_token</a>
+                                                <div class="price-bid d-flex justify-content-center mt-3">
+                                                    <div class="price me-3">
+                                                        <h6 class="mb-0 d-inline-block fz-14 border border-2 rounded py-1 px-2">
+                                                            ${coupon.priceOfCoupon} UNQ
+                                                        </h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>`;
+                    });
+
+                    couponHtml += '</div>';
+                } else {
+                    couponHtml = '<p>No coupons available.</p>';
+                }
+
+                $('#coupon-container').html(couponHtml);
+            },
+            error: function (err) {
+                console.error("Error fetching coupons:", err);
+            }
+        });
+    });
 </script>
 
 <!-- connect with metamask -->

@@ -107,6 +107,7 @@ router.get("/store/:accountAddress", async function (req, res) {
  */
 router.get("/getCoupon/:collectionId/:tokenId", getCoupon);
 
+// add jwt check so i can get current logged in user
 router.get("/getItem/:collectionId/:tokenId", getItem);
 
 
