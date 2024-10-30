@@ -316,30 +316,25 @@
               </div>
             </div>
           </div>
-          <!-- coinbase -->
+          <!-- polkadot -->
           <div class="col-6">
             <div class="nft-card card seller-card shadow-sm">
               <div class="card-body">
                 <div class="row align-items-center g-3">
                   <div class="col-4">
                     <div class="img-wrap">
-                      <img src="/assets/img/bg-img/coinbase.png" alt="" />
+                      <img src="/assets/img/bg-img/polkadot.png" alt="" />
                     </div>
                   </div>
                   <div class="col-8">
                     <div class="name-author">
-                      <a
-                        class="name d-block hover-primary fw-bold text-truncate"
-                        href="#"
-                      >
-                        <i
-                          class="bi bi bi-x-circle-fill ms-2 text-danger"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="top"
-                          aria-label="not available"
-                          data-bs-original-title="not available"
-                        ></i>
-                        Coinbase
+                      <a id="connectPolkadot" class="name d-block hover-primary fw-bold text-truncate" href="#">
+                        <i class="bi bi-patch-check-fill ms-2 text-success" 
+                           data-bs-toggle="tooltip" 
+                           data-bs-placement="top"
+                           aria-label="available"
+                           data-bs-original-title="available"></i>
+                        Polkadot
                       </a>
                     </div>
                   </div>
@@ -834,4 +829,53 @@
       }
     });
   });
+</script>
+
+<!-- connect with polkadot -->
+<script>
+const connectPolkadot = async () => {
+  try {
+    // Check if polkadot.js extension is installed
+    if (!window.injectedWeb3['polkadot-js']) {
+      throw new Error('Polkadot.js extension not found!');
+    }
+
+    // Enable the extension
+    const extension = await window.injectedWeb3['polkadot-js'].enable();
+    const accounts = await extension.accounts.get();
+
+    if (accounts.length === 0) {
+      throw new Error('No Polkadot accounts found!');
+    }
+
+    return accounts[0].address;
+  } catch (error) {
+    console.error('Error connecting to Polkadot wallet', error);
+    throw error;
+  }
+};
+
+$(document).ready(function() {
+  $("#connectPolkadot").on("click", async function(e) {
+    e.preventDefault();
+    try {
+      const address = await connectPolkadot();
+      localStorage.setItem("polkadotAddress", address);
+      localStorage.setItem("walletType", "polkadot");
+
+      // Close the modal
+      $("#walletModal").modal("hide");
+
+      // Refresh the page or update UI as needed
+      location.reload();
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        html: 'Polkadot.js extension is not installed or disabled. Please <a href="https://polkadot.js.org/extension/" target="_blank">install</a> it or activate it in your browser settings.',
+        icon: "error",
+        showConfirmButton: false,
+      });
+    }
+  });
+});
 </script>
