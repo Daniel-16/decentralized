@@ -788,7 +788,7 @@
       e.preventDefault();
       try {
         const address = await connectMetaMask();
-        localStorage.setItem("accountAddress", address);
+        localStorage.setItem("metamaskAddress", address);
         localStorage.setItem("walletType", "metamask");
 
         // Close the modal

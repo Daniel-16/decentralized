@@ -1,88 +1,106 @@
 <%- include('../partials/home/header') %>
 
-
 <style>
-    .fixed-size {
-        width: 100%; /* Ensures the image takes full width of its container */
-        height: 300px; /* Set a fixed height */
-        object-fit: cover; /* Ensures the image scales without distorting aspect ratio */
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-    }
+  .fixed-size {
+    width: 100%; /* Ensures the image takes full width of its container */
+    height: 300px; /* Set a fixed height */
+    object-fit: cover; /* Ensures the image scales without distorting aspect ratio */
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
 </style>
-
-
 
 <!-- Breadcrumb -->
 <div class="breadcrumb-wrapper">
-    <div class="container">
+  <div class="container">
     <div class="breadcrumb-content">
-        <div class="d-flex align-items-center justify-content-center">
+      <div class="d-flex align-items-center justify-content-center">
         <!-- <div class="spinner-grow text-danger me-1" role="status"><span class="visually-hidden">Loading...</span></div> -->
         <h2 class="breadcrumb-title mb-0">KooponCraft Marketplace</h2>
-        </div>
-        <nav aria-label="breadcrumb">
+      </div>
+      <nav aria-label="breadcrumb">
         <ol class="breadcrumb justify-content-center">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">KooponCraft Marketplace</li>
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            KooponCraft Marketplace
+          </li>
         </ol>
-        </nav>
+      </nav>
     </div>
-    </div>
+  </div>
 </div>
 <div class="divider"></div>
 <div class="live-bids-wrapper">
-    <div class="container">
-        <div class="row g-4 justify-content-center" id="itemsContainer">
-            
-        </div>
+  <div class="container">
+    <div class="row g-4 justify-content-center" id="itemsContainer"></div>
+  </div>
+  <div class="container">
+    <div class="text-center mt-70">
+      <a class="btn btn-primary btn-sm rounded-pill" href="#"
+        >Load more<i class="ms-1 bi bi-arrow-repeat"></i
+      ></a>
     </div>
-    <div class="container">
-        <div class="text-center mt-70"><a class="btn btn-primary btn-sm rounded-pill" href="#">Load more<i class="ms-1 bi bi-arrow-repeat"></i></a></div>
-    </div>
+  </div>
 </div>
 <div class="divider"></div>
 <!-- Dark Light Wrapper -->
-<div class="dark-light-wrapper" data-aos="zoom-in" data-aos-duration="750" data-aos-delay="200">
-    <div class="container">
-        <div class="d-flex align-items-center justify-content-between">
-            <h5 class="mb-0 text-white" data-aos="fade-up" data-aos-duration="750" data-aos-delay="500">Light mode is available!</h5>
-            <!-- Switch -->
-            <div class="dark-light-mode" data-aos="fade-up" data-aos-duration="750" data-aos-delay="800">
-                <input id="darkLightSwitch" type="checkbox">
-                <label class="shadow" for="darkLightSwitch">Toggle</label>
-            </div>
-        </div>
+<div
+  class="dark-light-wrapper"
+  data-aos="zoom-in"
+  data-aos-duration="750"
+  data-aos-delay="200"
+>
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between">
+      <h5
+        class="mb-0 text-white"
+        data-aos="fade-up"
+        data-aos-duration="750"
+        data-aos-delay="500"
+      >
+        Light mode is available!
+      </h5>
+      <!-- Switch -->
+      <div
+        class="dark-light-mode"
+        data-aos="fade-up"
+        data-aos-duration="750"
+        data-aos-delay="800"
+      >
+        <input id="darkLightSwitch" type="checkbox" />
+        <label class="shadow" for="darkLightSwitch">Toggle</label>
+      </div>
     </div>
+  </div>
 </div>
-
-
-
-
 
 <%- include('../partials/home/footer') %>
 
 <!-- load items and handle purchase -->
 <script>
-$(document).ready(function () {
+  $(document).ready(function () {
     // Fetch and display items
     function loadItems() {
-        $.ajax({
-            url: "/api/getAllCoupons",
-            method: "GET",
-            success: function (response) {
-                console.log(response);
-                if (response.success) {
-                    const coupons = response.coupons;
-                    let itemsHTML = "";
-                    coupons.forEach((coupon) => {
-                        itemsHTML += `
+      $.ajax({
+        url: "/api/getAllCoupons",
+        method: "GET",
+        success: function (response) {
+          console.log(response);
+          if (response.success) {
+            const coupons = response.coupons;
+            let itemsHTML = "";
+            coupons.forEach((coupon) => {
+              itemsHTML += `
                         <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
                             <div class="nft-card card shadow-sm">
                             <div class="card-body">
                                 <div class="img-wrap">
-                                <a href="/getCoupon/${coupon.collectionId}/${coupon.tokenId}">
-                                    <img class="fixed-size" src="${coupon.tokenImageUrl}" alt="${coupon.tokenName}">
+                                <a href="/getCoupon/${coupon.collectionId}/${
+                coupon.tokenId
+              }">
+                                    <img class="fixed-size" src="${
+                                      coupon.tokenImageUrl
+                                    }" alt="${coupon.tokenName}">
                                 </a>
                                 </div>
                                 <!-- Others Info -->
@@ -103,117 +121,127 @@ $(document).ready(function () {
                                         <i class="bi bi-check position-absolute bg-success"></i>
                                     </div>
                                     <div class="name-author">
-                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="${coupon.tokenName}">${coupon.tokenName}</a>
-                                        <a class="author d-block fz-12 hover-primary text-truncate" href="#">@${coupon.ownerName}</a>
+                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="${
+                                          coupon.tokenName
+                                        }">${coupon.tokenName}</a>
+                                        <a class="author d-block fz-12 hover-primary text-truncate" href="#">@${
+                                          coupon.ownerName
+                                        }</a>
                                     </div>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="price text-end">
                                     <span class="fz-12 d-block">Current Price</span>
-                                    <h6 class="mb-0">UNQ ${new Intl.NumberFormat('en-US', { 
-                                        minimumFractionDigits: 2, 
-                                        maximumFractionDigits: 2 
-                                    }).format(coupon.priceOfCoupon)}</h6>
+                                    <h6 class="mb-0">UNQ ${new Intl.NumberFormat(
+                                      "en-US",
+                                      {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                      }
+                                    ).format(coupon.priceOfCoupon)}</h6>
                                     </div>
                                 </div>
                                 <div class="col-12">
-                                    <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="/getCoupon/${coupon.collectionId}/${coupon.tokenId}">View</a>
+                                    <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="/getCoupon/${
+                                      coupon.collectionId
+                                    }/${coupon.tokenId}">View</a>
                                 </div>
                                 </div>
                             </div>
                             </div>
                         </div>
                         `;
-                    });
+            });
 
-                    // Populate items into the #itemsContainer
-                    $("#itemsContainer").html(itemsHTML);
+            // Populate items into the #itemsContainer
+            $("#itemsContainer").html(itemsHTML);
 
-                    // Connect click handler to dynamically created buttons
-                    attachPurchaseHandlers();
-                } else {
-                    $("#itemsContainer").html("<p>No items found.</p>");
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                $("#itemsContainer").html("<p>Error fetching items.</p>");
-            },
-        });
+            // Connect click handler to dynamically created buttons
+            attachPurchaseHandlers();
+          } else {
+            $("#itemsContainer").html("<p>No items found.</p>");
+          }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          $("#itemsContainer").html("<p>Error fetching items.</p>");
+        },
+      });
     }
     // End: fetch and display items
 
-    // Handle purchase 
+    // Handle purchase
     function attachPurchaseHandlers() {
-        $('.purchase-btn').off('click').on('click', function(event) {
-            event.preventDefault();
+      $(".purchase-btn")
+        .off("click")
+        .on("click", function (event) {
+          event.preventDefault();
 
-            const purchaseButton = $(this); 
-            const itemId = purchaseButton.data('item-id'); 
-            const tokenId = purchaseButton.data('token-id'); 
-            const collectionId = purchaseButton.data('collection-id'); 
-            const pleaseWaitButton = $(`#pleaseWait-${itemId}`);
+          const purchaseButton = $(this);
+          const itemId = purchaseButton.data("item-id");
+          const tokenId = purchaseButton.data("token-id");
+          const collectionId = purchaseButton.data("collection-id");
+          const pleaseWaitButton = $(`#pleaseWait-${itemId}`);
 
-            purchaseButton.hide();
-            pleaseWaitButton.show().prop('disabled', true);
+          purchaseButton.hide();
+          pleaseWaitButton.show().prop("disabled", true);
 
-            const token = localStorage.getItem("token");
+          const token = localStorage.getItem("token");
 
-            $.ajax({
-                url: '/api/purchaseCoupon',
-                method: 'POST',
-                contentType: 'application/json', 
-                data: JSON.stringify({
-                    tokenId: tokenId,
-                    collectionId: collectionId
-                }),
-                headers: {
-                    Authorization: `Bearer ${token}` 
-                },
-                success: function(response) {
-                    if (response.success) {
-                        Swal.fire({
-                            title: "Purchase Successful!",
-                            text: "You have successfully purchased this coupon! Visit your KooponCraft dashboard to redeem it.",
-                            icon: "success"
-                        });
-                        location.reload();
-                        // toastr.success("Successfully purchased 1 unit!");
-                    } else {
-                        alert('Error: ' + response.error);
-                    }
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    let errorResponse = jqXHR.responseJSON;
-                    if (errorResponse && errorResponse.error) {
-                        Swal.fire({
-                            title: "Oooops!",
-                            text: errorResponse.error,
-                            icon: "error"
-                        });
-                        if(errorResponse.error === 'Token is not valid') {
-                        Swal.fire({
-                            title: "Oooops!",
-                            text: "You have to be signed in to purchase a coupon.",
-                            icon: "error"
-                        });
-                    }
-                        // alert('Error: ' + errorResponse.error); 
-                    } 
-                    else {
-                        alert('Error: An unexpected error occurred.');
-                    }
-                },
-                complete: function() {
-                    pleaseWaitButton.hide();
-                    purchaseButton.show();
+          $.ajax({
+            url: "/api/purchaseCoupon",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+              tokenId: tokenId,
+              collectionId: collectionId,
+            }),
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            success: function (response) {
+              if (response.success) {
+                Swal.fire({
+                  title: "Purchase Successful!",
+                  text: "You have successfully purchased this coupon! Visit your KooponCraft dashboard to redeem it.",
+                  icon: "success",
+                });
+                location.reload();
+                // toastr.success("Successfully purchased 1 unit!");
+              } else {
+                alert("Error: " + response.error);
+              }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              let errorResponse = jqXHR.responseJSON;
+              if (errorResponse && errorResponse.error) {
+                Swal.fire({
+                  title: "Oooops!",
+                  text: errorResponse.error,
+                  icon: "error",
+                });
+                if (errorResponse.error === "Token is not valid") {
+                  Swal.fire({
+                    title: "Oooops!",
+                    text: "You have to be signed in to purchase a coupon.",
+                    icon: "error",
+                  });
                 }
-            });
+                // alert('Error: ' + errorResponse.error);
+              } else {
+                alert("Error: An unexpected error occurred.");
+              }
+            },
+            complete: function () {
+              pleaseWaitButton.hide();
+              purchaseButton.show();
+            },
+          });
         });
     }
-    // End: handle purchase 
+    // End: handle purchase
 
     // Load items when ready
     loadItems();
-});
+  });
 </script>
