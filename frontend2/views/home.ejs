@@ -389,8 +389,18 @@ $(document).ready(function () {
                           </div>
                       </div>
                       <div class="col-12">
-                          <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="/getItem/${item.collectionId}/${item.tokenId}" data-token-id="${item._id}" data-item-id="${item._id}" data-store-owner="${item.tokenOwnerAddress}" data-item-price="${item.priceOfCoupon}">Purchase</a>                                    
-                          <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 pleasewait-btn" id="pleaseWait-${item._id}" href="#" style="display: none;" disabled>Please wait...</a>
+                          <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 purchase-link" 
+                             onclick="handlePurchaseClick(event, '${item.collectionId}', '${item.tokenId}')" 
+                             href="/getItem/${item.collectionId}/${item.tokenId}" 
+                             data-token-id="${item._id}" 
+                             data-item-id="${item._id}" 
+                             data-store-owner="${item.tokenOwnerAddress}" 
+                             data-item-price="${item.priceOfCoupon}">Purchase</a>                                    
+                          <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 pleasewait-btn" 
+                             id="pleaseWait-${item._id}" 
+                             href="#" 
+                             style="display: none;" 
+                             disabled>Please wait...</a>
                       </div>
                       </div>
                   </div>
@@ -430,6 +440,30 @@ $(document).ready(function () {
     loadItems(currentLimit); // Load more items
   });
 });
+
+function handlePurchaseClick(event, collectionId, tokenId) {
+    event.preventDefault();
+    
+    const token = localStorage.getItem("token");
+    if (!token) {
+        Swal.fire({
+            title: "Authentication Required",
+            text: "Please sign in to view and purchase items",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sign In",
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "/login";
+            }
+        });
+        return;
+    }
+    
+    // If user is authenticated, proceed to item page
+    window.location.href = `/getItem/${collectionId}/${tokenId}`;
+}
 </script>
 
 
