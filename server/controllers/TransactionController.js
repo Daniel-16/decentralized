@@ -360,8 +360,8 @@ export const purchaseItem = async (req, res) => {
       to: buyer.accountAddress,
     });
 
-    const parsedTransfer = txTransfer.parsed;
-    const transferCompleted = txTransfer.isCompleted;
+    const parsedTransfer = txTransfer?.parsed;
+    const transferCompleted = txTransfer?.isCompleted;
     console.log(`Transfer completed: ${transferCompleted}`);
 
     if (transferCompleted) {
