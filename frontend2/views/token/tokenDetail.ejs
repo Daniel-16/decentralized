@@ -109,7 +109,7 @@
               <div class="row align-items-end">
                 <div class="col-6 col-sm-4">
                   <p class="mb-2">Price</p>
-                  <h5 class="text-center mb-0 border border-2 px-3 py-2 border-primary d-inline-block rounded text-primary w-100"><%= token.priceOfCoupon %> UNQ </h5>
+                  <h5 class="text-center mb-0 border border-2 px-3 py-2 border-primary d-inline-block rounded text-primary w-100"><%= token.finalPriceOfCoupon %> UNQ </h5>
                 </div>
                 <% if(!token.isPurchased) { %>
                 <div class="col-6 col-sm-4 col-lg-5">
@@ -117,6 +117,7 @@
                         Buy
                     </a>
                 </div>
+                <small>VAT is included</small>
                 <% } %>
               </div>
               <div class="border-top w-75 my-4"></div>
