@@ -57,7 +57,12 @@ export const getAllItems = async (req, res) => {
 export const getStoreItems = async (req, res) => {
   try {
     const user = await UserModel.findById(req.user.id);
-    const items = await ItemModel.find({ itemOwnerAddress: user.accountAddress });
+    // const items = await ItemModel.find({ itemOwnerAddress: user.accountAddress });
+    const items = await TokenModel.find({
+      isItem: true,
+      isPurchased: false,
+      tokenOwnerAddress: user.accountAddress,
+    });
     res.status(200).json({
       success: true,
       items,

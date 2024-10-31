@@ -66,7 +66,7 @@ $(document).ready(function () {
         Authorization: `Bearer ${token}`, 
         },
         success: function (response) {
-        console.log(response);
+        // console.log(response);
         if (response.success) {
             // Check if there are items
             if (response.items && response.items.length > 0) {
@@ -78,7 +78,7 @@ $(document).ready(function () {
                 <div class="col-12 col-sm-6 col-md-12 col-lg-6 col-xxl-4">
                         <div class="nft-card card shadow-sm">
                             <div class="card-body">
-                                <div class="img-wrap"><img src="${item.itemImage}" alt="${item.nameOfItem}">
+                                <div class="img-wrap"><img src="${item.tokenImageUrl}" alt="${item.tokenName}">
                                 </div>
                             <br>
                             <div class="row gx-2 align-items-center mt-2">
@@ -93,13 +93,13 @@ $(document).ready(function () {
                                         href="#" 
                                         data-bs-toggle="tooltip" 
                                         data-bs-placement="top" 
-                                        title="${item.nameOfItem}">${item.nameOfItem}</a>
-                                        <a class="author d-block fz-12 hover-primary text-truncate" href="#">@${item.itemOwner}</a></div>
+                                        title="${item.tokenName}">${item.tokenName}</a>
+                                        <a class="author d-block fz-12 hover-primary text-truncate" href="#">@${item.tokenOwnerAddress}</a></div>
                                 </div>
                                 </div>
                                 <div class="col-4">
                                 <div class="price text-end"><span class="fz-12 d-block">Current Price</span>
-                                    <h6 class="mb-0">UNQ ${item.priceOfItem}</h6>
+                                    <h6 class="mb-0">UNQ ${item.priceOfCoupon}</h6>
                                 </div>
                                 </div>
                             </div>
