@@ -45,6 +45,8 @@ import {
   getAllRedeemRequests,
   redeemCoupon,
 } from "../controllers/RedeemCoupons.js";
+import { createAdminWallet, getAdminWallet, updateAdminWallet } from "../controllers/AdminWalletController.js";
+
 const router = express.Router();
 
 /**
@@ -262,6 +264,25 @@ router.delete(
   acceptRedeemRequest
 );
 
+/**
+ * @route POST /api/admin/wallet
+ * @description Create a new admin wallet
+ * @access Private
+ */
+router.post("/admin/wallet", createAdminWallet);
 
+/**
+ * @route GET /api/admin/wallet
+ * @description Get admin wallet information
+ * @access Private
+ */
+router.get("/admin/wallet", getAdminWallet);
+
+/**
+ * @route PUT /api/admin/wallet
+ * @description Update admin wallet information
+ * @access Private
+ */
+router.put("/admin/wallet", updateAdminWallet);
 
 export default router;
