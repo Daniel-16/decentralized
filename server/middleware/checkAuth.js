@@ -7,6 +7,9 @@ export const checkAuth = (req, res, next) => {
     "/collection/create",
     "/collection/my-collections",
     "/tokens",
+    "/initiate-coupon-swap",
+    "/transactions",
+    
   ];
 
   if (authRequiredRoutes.includes(req.path)) {

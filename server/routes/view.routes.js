@@ -94,7 +94,6 @@ router.get("/transactions", async function (req, res) {
   res.render("admin/transactions/my_transactions");
 });
 
-// Assuming you have an express router
 router.get("/store/:accountAddress", async function (req, res) {
   res.render("store/store-coupon");
 });
