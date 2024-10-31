@@ -4,6 +4,7 @@ import CollectionModel from "../models/CollectionModel.js";
 import TokenModel from "../models/TokenModel.js";
 import UserModel from "../models/UserModel.js";
 import SpecialTokenModel from "../models/SpecialToken.js";
+import { usdToUnq } from '../utils/currencyConverter.js';
 
 // Controller to create a new collection
 export const createCollectionController = async (req, res) => {
@@ -84,11 +85,11 @@ export const createCollectionController = async (req, res) => {
       message: "Collection created successfully",
       collectionPayload,
     });
-  } catch (error) {
+  } catch (error) {7
     res.status(500).json({
       success: false,
       message: "An error occurred while creating the collection",
-      error: error.message,
+      error: error.message ? error.message : error,
     });
   }
 };
@@ -154,6 +155,8 @@ export const mintToken = async (req, res) => {
     console.log(`Token minting completed: ${mintTokenCompleted}`);
 
     if (mintTokenCompleted) {
+      const unqPrice = usdToUnq(priceOfCoupon);
+
       const mintToken = await TokenModel.create({
         tokenName,
         tokenId,
@@ -162,7 +165,7 @@ export const mintToken = async (req, res) => {
         tokenOwnerAddress: user.accountAddress,
         tokenOwnerId: user._id,
         tokenDescription,
-        priceOfCoupon,
+        priceOfCoupon: unqPrice,
         tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
         metadata: {
           storeAddress: user.accountAddress,
@@ -353,6 +356,8 @@ export const createSpecialToken = async (req, res) => {
     console.log(`Special token minting completed: ${mintTokenCompleted}`);
 
     if (mintTokenCompleted) {
+      const unqPrice = usdToUnq(priceOfCoupon);
+
       const specialToken = await SpecialTokenModel.create({
         collectionId,
         tokenId,
@@ -362,7 +367,7 @@ export const createSpecialToken = async (req, res) => {
         tokenOwnerAddress: address,
         tokenOwnerId: user._id,
         tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
-        priceOfCoupon,
+        priceOfCoupon: unqPrice,
         metadata: {
           storeAddress: user.accountAddress,
           storeId: user._id,
