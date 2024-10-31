@@ -107,7 +107,8 @@ export const initiateCouponSwap = async (req, res) => {
 
     const swappableCoupons = await TokenModel.find({
       isPurchased: false,
-      priceOfCoupon: {$lte: coupon.priceOfCoupon},
+      isItem: false,
+      // priceOfCoupon: {$lte: coupon.priceOfCoupon},
       _id: { $ne: coupon._id },
       tokenOwnerAddress: { $ne: coupon.tokenOwnerAddress },
     });

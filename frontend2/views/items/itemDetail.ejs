@@ -219,10 +219,8 @@
           <div class="row align-items-end">
             <div class="col-6 col-sm-4">
               <p class="mb-2">Price</p>
-              <h5
-                class="text-center mb-0 border border-2 px-3 py-2 border-primary d-inline-block rounded text-primary w-100"
-              >
-                <%= token.priceOfCoupon %> UNQ
+              <h5 class="text-center mb-0 border border-2 px-3 py-2 border-primary d-inline-block rounded text-primary w-100">
+                <%= token.finalPriceOfCoupon || '0' %> UNQ
               </h5>
             </div>
             <% if(!token.isPurchased) { %>
@@ -237,6 +235,7 @@
                 Buy
               </a>
             </div>
+            <small>VAT is included</small>
             <% } %> <% if(token.tokenDescription){ %>
             <div class="short-description">
               <h5 class="pt-3">Short Description</h5>
@@ -769,7 +768,8 @@
 
                     couponHtml += '</div>';
                 } else {
-                    couponHtml = '<p>No coupons available.</p>';
+                    // couponHtml = '<p>No coupons available to apply.</p>';
+                    couponHtml = '';
                 }
 
                 $('#coupon-container').html(couponHtml);
