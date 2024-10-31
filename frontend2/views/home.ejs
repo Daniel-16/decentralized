@@ -385,7 +385,7 @@ $(document).ready(function () {
                               ${new Intl.NumberFormat('en-US', { 
                               minimumFractionDigits: 2, 
                               maximumFractionDigits: 2 
-                          }).format(item.priceOfCoupon)}</h6>
+                          }).format(item.finalPriceOfCoupon)}</h6>
                           </div>
                       </div>
                       <div class="col-12">
@@ -395,7 +395,7 @@ $(document).ready(function () {
                              data-token-id="${item._id}" 
                              data-item-id="${item._id}" 
                              data-store-owner="${item.tokenOwnerAddress}" 
-                             data-item-price="${item.priceOfCoupon}">Purchase</a>                                    
+                             data-item-price="${item.finalPriceOfCoupon}">Purchase</a>                                    
                           <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 pleasewait-btn" 
                              id="pleaseWait-${item._id}" 
                              href="#" 
