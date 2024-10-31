@@ -166,7 +166,8 @@ $(document).ready(function() {
     function createCollectionItem(token, tokenType) {
         const couponUrl = tokenType == "standard" ? `/getCoupon/${token.collectionId}/${token.tokenId}` : '#';
         // const swapBtn = tokenType == "standard" ? `
-        const swapBtn = (tokenType == "item" || tokenType == "standard") ? `
+        // const swapBtn = (tokenType == "item" || tokenType == "standard") ? `
+        const swapBtn = (tokenType == "standard") ? `
             <div class="col-6">
                 <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="/initiate-coupon-swap?cid=${token.collectionId}&tid=${token.tokenId}">
                     Swap                          
@@ -198,6 +199,7 @@ $(document).ready(function() {
             tokenStatus = 'In Marketplace';
         } else if(!token.isPurchased && tokenType === 'item'){
             tokenStatus = 'In Store';
+
         } else if(!token.isPurchased && tokenType === 'special'){
             tokenStatus = 'Redeemable';
         } else if(token.isPurchased){
@@ -388,7 +390,7 @@ $(document).ready(function() {
 
         Swal.fire({
             title: 'Are you sure?',
-            text: "You are about to redeem this token.",
+            text: "You are about to request to redeem this token.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',

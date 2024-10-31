@@ -68,6 +68,28 @@
          -webkit-animation: spin .8s linear infinite;
          animation: spin .8s linear infinite;
        }
+
+
+       .coin-container {
+    position: relative;
+    display: inline-block;
+}
+
+.coin-img {
+    height: 35px;
+}
+
+.coin-number {
+    position: absolute;
+    top: -5px;       
+    right: -5px;     
+    background-color: red;
+    color: white;
+    padding: 2px 5px;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: bold;
+}
 </style>
 
 </head>
@@ -120,7 +142,14 @@
                 <!-- <li><a class="dropdown-item" href="settings.html"><i class="me-2 bi bi-gear"></i>Settings</a></li> -->
             </ul>
         </div>
-        <a class="px-4" id="cart" href="/transactions"><i class="me-2 bi bi-cart"></i></a>
+        <a class="px-4" id="cart" href="#">
+          <!-- <i class="me-2 bi bi-cart"></i> -->
+           <!-- <img class="coin-img" src="/assets/img/coins.png" alt=""> -->
+            <div class="coin-container" style="display: none;">
+                <img class="coin-img" src="/assets/img/coins.png" alt="">
+                <span class="coin-number">0</span> 
+            </div>
+        </a>
             <!-- Login New Button -->
              <a id="sys_head_login" class="btn btn-warning btn-sm rounded-pill" href="/login">Login</a>
         </div>
@@ -199,6 +228,39 @@ function showSuccessToast(message) {
 }
 </script>
 <!-- end logout -->
+
+
+<!-- get user -->
+ <script>
+  $(document).ready(function () {
+    var token = localStorage.getItem("token");
+
+    const apiUrl = `/api/getUser`;
+
+    $.ajax({
+      url: apiUrl,
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      success: function (response) {
+        if (response.success) {
+          // Display the container if not already visible
+          $('.coin-container').show();
+          
+          // Update the coin-number with user points
+          $('.coin-number').text(response.user.points);
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.error("Error fetching user details:", errorThrown);
+      },
+    });
+  });
+</script>
+
+<!-- end: get user -->
+
 
 
 <!-- fetch stores -->
