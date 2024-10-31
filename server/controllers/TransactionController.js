@@ -5,15 +5,15 @@ import { KeyringProvider } from "@unique-nft/accounts/keyring";
 import TokenModel from "../models/TokenModel.js";
 import { checkAndTransferSpecialToken } from "../services/SpecialTokenService.js";
 import { applyCouponDiscount } from "../utils/UseCoupon.js";
-import AdminWalletModel from "../models/AdminWallet.js";
+// import AdminWalletModel from "../models/AdminWallet.js";
 
-const getActiveAdminWallet = async () => {
-  const adminWallet = await AdminWalletModel.findOne({ isActive: true });
-  if (!adminWallet) {
-    throw new Error("No active admin wallet found");
-  }
-  return adminWallet.walletAddress;
-}
+// const getActiveAdminWallet = async () => {
+//   const adminWallet = await AdminWalletModel.findOne({ isActive: true });
+//   if (!adminWallet) {
+//     throw new Error("No active admin wallet found");
+//   }
+//   return adminWallet.walletAddress;
+// }
 
 export const checkBuyerPurchases = async (req, res) => {
   const userId = req.user.id;
@@ -170,17 +170,17 @@ export const purchaseCoupon = async (req, res) => {
       
       try {
         // Get admin wallet
-        const adminWalletAddress = await getActiveAdminWallet();
+        // const adminWalletAddress = await getActiveAdminWallet();
         
         // Transfer VAT to admin wallet
-        await sdk.balance.transfer.submitWaitResult(
-          {
-            address: buyerAddress,
-            destination: adminWalletAddress,
-            amount: vatAmount,
-          },
-          { signer: buyerAccount }
-        );
+        // await sdk.balance.transfer.submitWaitResult(
+        //   {
+        //     address: buyerAddress,
+        //     destination: adminWalletAddress,
+        //     amount: vatAmount,
+        //   },
+        //   { signer: buyerAccount }
+        // );
         
         // Transfer remaining amount to seller
         await sdk.balance.transfer.submitWaitResult(
@@ -375,17 +375,17 @@ export const purchaseItem = async (req, res) => {
       
       try {
         // Get admin wallet
-        const adminWalletAddress = await getActiveAdminWallet();
+        // const adminWalletAddress = await getActiveAdminWallet();
         
         // Transfer VAT to admin wallet
-        await sdk.balance.transfer.submitWaitResult(
-          {
-            address: buyerAddress,
-            destination: adminWalletAddress,
-            amount: vatAmount,
-          },
-          { signer: buyerAccount }
-        );
+        // await sdk.balance.transfer.submitWaitResult(
+        //   {
+        //     address: buyerAddress,
+        //     destination: adminWalletAddress,
+        //     amount: vatAmount,
+        //   },
+        //   { signer: buyerAccount }
+        // );
         
         // Transfer remaining amount to seller
         await sdk.balance.transfer.submitWaitResult(
