@@ -5,7 +5,15 @@ import { KeyringProvider } from "@unique-nft/accounts/keyring";
 import TokenModel from "../models/TokenModel.js";
 import { checkAndTransferSpecialToken } from "../services/SpecialTokenService.js";
 import { applyCouponDiscount } from "../utils/UseCoupon.js";
-import Web3 from "web3";
+import AdminWalletModel from "../models/AdminWallet.js";
+
+const getActiveAdminWallet = async () => {
+  const adminWallet = await AdminWalletModel.findOne({ isActive: true });
+  if (!adminWallet) {
+    throw new Error("No active admin wallet found");
+  }
+  return adminWallet.walletAddress;
+}
 
 export const checkBuyerPurchases = async (req, res) => {
   const userId = req.user.id;
@@ -133,7 +141,7 @@ export const purchaseCoupon = async (req, res) => {
     const buyerBalance = await sdk.balance.get({
       address: buyer.accountAddress,
     });
-    if (buyerBalance.availableBalance.amount < token.priceOfCoupon) {
+    if (buyerBalance.availableBalance.amount < token.finalPriceOfCoupon) {
       return res.status(400).json({
         success: false,
         error: "Insufficient balance",
@@ -155,42 +163,64 @@ export const purchaseCoupon = async (req, res) => {
     if (transferCompleted) {
       buyer.points += 10;
       await buyer.save();
-      // Transfer payment from buyer to seller
-      await sdk.balance.transfer.submitWaitResult(
-        {
-          address: buyerAddress,
-          destination: seller.accountAddress,
-          amount: token.priceOfCoupon,
-        },
-        { signer: buyerAccount }
-      );
 
-      await TokenModel.findOneAndUpdate(
-        { tokenId, collectionId },
-        {
-          tokenOwnerAddress: buyer.accountAddress,
-          tokenOwnerId: buyer._id,
-          isPurchased: true,
-        }
-      );
+      // Calculate VAT amount (5% of base price)
+      const vatAmount = Math.floor(token.priceOfCoupon * 0.05);
+      const sellerAmount = token.finalPriceOfCoupon - vatAmount;
+      
+      try {
+        // Get admin wallet
+        const adminWalletAddress = await getActiveAdminWallet();
+        
+        // Transfer VAT to admin wallet
+        await sdk.balance.transfer.submitWaitResult(
+          {
+            address: buyerAddress,
+            destination: adminWalletAddress,
+            amount: vatAmount,
+          },
+          { signer: buyerAccount }
+        );
+        
+        // Transfer remaining amount to seller
+        await sdk.balance.transfer.submitWaitResult(
+          {
+            address: buyerAddress,
+            destination: seller.accountAddress,
+            amount: sellerAmount,
+          },
+          { signer: buyerAccount }
+        );
 
-      // Update seller's wallet balance
-      await UserModel.findByIdAndUpdate(
-        seller._id,
-        { $inc: { walletBalance: token.priceOfCoupon } },
-        { new: true }
-      );
+        await TokenModel.findOneAndUpdate(
+          { tokenId, collectionId },
+          {
+            tokenOwnerAddress: buyer.accountAddress,
+            tokenOwnerId: buyer._id,
+            isPurchased: true,
+          }
+        );
 
-      // Create transaction record
-      const transaction = new TransactionModel({
-        buyerId: buyer._id,
-        buyerName: buyer.username || buyer.email,
-        nameOfItemPurchased: token.tokenName,
-        storeOwnerId: seller._id,
-        totalPrice: token.priceOfCoupon,
-        item: token._id,
-      });
-      await transaction.save();
+        // Update seller's wallet balance
+        await UserModel.findByIdAndUpdate(
+          seller._id,
+          { $inc: { walletBalance: token.priceOfCoupon } },
+          { new: true }
+        );
+
+        // Create transaction record
+        const transaction = new TransactionModel({
+          buyerId: buyer._id,
+          buyerName: buyer.username || buyer.email,
+          nameOfItemPurchased: token.tokenName,
+          storeOwnerId: seller._id,
+          totalPrice: token.finalPriceOfCoupon,
+          item: token._id,
+        });
+        await transaction.save();
+      } catch (error) {
+        throw new Error(`Failed to process payments: ${error.message}`);
+      }
     }
 
     res.status(201).json({
@@ -337,74 +367,90 @@ export const purchaseItem = async (req, res) => {
     if (transferCompleted) {
       buyer.points += 10;
       await buyer.save();
-      await sdk.balance.transfer.submitWaitResult(
-        {
-          address: buyerAddress,
-          destination: seller.accountAddress,
-          amount: finalPrice,
-        },
-        { signer: buyerAccount }
-      );
+      
+      // Calculate VAT amount (5% of base price)
+      const basePrice = finalPrice / 1.05;
+      const vatAmount = Math.floor(finalPrice - basePrice);
+      const sellerAmount = finalPrice - vatAmount;
+      
+      try {
+        // Get admin wallet
+        const adminWalletAddress = await getActiveAdminWallet();
+        
+        // Transfer VAT to admin wallet
+        await sdk.balance.transfer.submitWaitResult(
+          {
+            address: buyerAddress,
+            destination: adminWalletAddress,
+            amount: vatAmount,
+          },
+          { signer: buyerAccount }
+        );
+        
+        // Transfer remaining amount to seller
+        await sdk.balance.transfer.submitWaitResult(
+          {
+            address: buyerAddress,
+            destination: seller.accountAddress,
+            amount: sellerAmount,
+          },
+          { signer: buyerAccount }
+        );
 
-      await TokenModel.findOneAndUpdate(
-        { tokenId, collectionId, isItem: true },
-        {
-          tokenOwnerAddress: buyer.accountAddress,
-          tokenOwnerId: buyer._id,
-          isPurchased: true,
-        }
-      );
+        // Update seller's wallet balance with only the base amount
+        await UserModel.findByIdAndUpdate(
+          seller._id,
+          { $inc: { walletBalance: sellerAmount } },
+          { new: true }
+        );
 
-      await UserModel.findByIdAndUpdate(
-        seller._id,
-        { $inc: { walletBalance: finalPrice } },
-        { new: true }
-      );
-
-      const transaction = new TransactionModel({
-        buyerId: buyer._id,
-        buyerName: buyer.username || buyer.email,
-        item: item._id,
-        nameOfItemPurchased: item.tokenName,
-        storeOwnerId: seller._id,
-        totalPrice: finalPrice,
-      });
-
-      await transaction.save();
-
-      // if (coupon) {
-      //   await TokenModel.findByIdAndUpdate(coupon._id, { isPurchased: true });
-      // }
-
-      // Check and transfer special token
-      const specialTokenTransferred = await checkAndTransferSpecialToken(
-        buyer,
-        seller,
-        sellerAddress,
-        sellerAccount
-      );
-
-      if (specialTokenTransferred) {
-        console.log("Special token transferred successfully");
-
-        // Send a response indicating the special token transfer was successful
-        return res.status(200).json({
-          success: true,
-          message: "Purchase successful and special token transferred",
-          specialTokenTransferred: true, // indicate the special token transfer
+        const transaction = new TransactionModel({
+          buyerId: buyer._id,
+          buyerName: buyer.username || buyer.email,
+          item: item._id,
+          nameOfItemPurchased: item.tokenName,
+          storeOwnerId: seller._id,
+          totalPrice: finalPrice,
         });
-      }
 
-      res.status(201).json({
-        success: true,
-        message: "Item purchased successfully",
-        transaction,
-        discountApplied: discountAmount > 0,
-        discountAmount,
-        finalPrice,
-        tokenId: parsedTransfer?.tokenId,
-        collectionId: parsedTransfer?.collectionId,
-      });
+        await transaction.save();
+
+        // if (coupon) {
+        //   await TokenModel.findByIdAndUpdate(coupon._id, { isPurchased: true });
+        // }
+
+        // Check and transfer special token
+        const specialTokenTransferred = await checkAndTransferSpecialToken(
+          buyer,
+          seller,
+          sellerAddress,
+          sellerAccount
+        );
+
+        if (specialTokenTransferred) {
+          console.log("Special token transferred successfully");
+
+          // Send a response indicating the special token transfer was successful
+          return res.status(200).json({
+            success: true,
+            message: "Purchase successful and special token transferred",
+            specialTokenTransferred: true, // indicate the special token transfer
+          });
+        }
+
+        res.status(201).json({
+          success: true,
+          message: "Item purchased successfully",
+          transaction,
+          discountApplied: discountAmount > 0,
+          discountAmount,
+          finalPrice,
+          tokenId: parsedTransfer?.tokenId,
+          collectionId: parsedTransfer?.collectionId,
+        });
+      } catch (error) {
+        throw new Error(`Failed to process payments: ${error.message}`);
+      }
     }
   } catch (error) {
     res.status(500).json({

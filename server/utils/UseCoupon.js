@@ -11,9 +11,9 @@ export const applyCouponDiscount = async (
 ) => {
   let discountAmount = 0;
   let coupon = null;
-  let burnTokenResult = null; 
+  let burnTokenResult = null;
 
-  if (item.priceOfCoupon > 500) {
+  if (item.finalPriceOfCoupon > 500) {
     // Check if the buyer has an unused coupon from this store
     if (tokenType === "special") {
       coupon = await SpecialTokenModel.findOne({
@@ -34,11 +34,11 @@ export const applyCouponDiscount = async (
     }
 
     if (coupon) {
-      discountAmount = coupon.priceOfCoupon;
+      discountAmount = coupon.finalPriceOfCoupon;
     }
   }
 
-  const finalPrice = Math.max(item.priceOfCoupon - discountAmount, 0);
+  const finalPrice = Math.max(item.finalPriceOfCoupon - discountAmount, 0);
 
   // Burn the used coupon if one is found
   if (coupon) {

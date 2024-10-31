@@ -17,6 +17,13 @@ const TokenSchema = new mongoose.Schema({
     default: 0,
     required: true,
   },
+  finalPriceOfCoupon: {
+    type: Number,
+    default: function () {
+      return this.priceOfCoupon * 1.05;
+    },
+    required: true,
+  },
   isPurchased: {
     type: Boolean,
     default: false,
