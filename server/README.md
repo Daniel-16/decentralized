@@ -228,3 +228,5 @@
 - `GET /api/getItemsByCategory/:category`: Retrieve all items for a specific category
   - Description: Fetches all items for a specific category.
 - Removed the conversion of UNQ to USD in the `mintToken` endpoint.
+- `GET /api/getLeaderboard`: Retrieve the top 10 users by points for leaderboard
+  - Description: Fetches the top 10 users by points for leaderboard.
