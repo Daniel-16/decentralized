@@ -4,7 +4,7 @@ import CollectionModel from "../models/CollectionModel.js";
 import TokenModel from "../models/TokenModel.js";
 import UserModel from "../models/UserModel.js";
 import SpecialTokenModel from "../models/SpecialToken.js";
-import { usdToUnq } from '../utils/currencyConverter.js';
+// import { usdToUnq } from '../utils/currencyConverter.js';
 
 // Controller to create a new collection
 export const createCollectionController = async (req, res) => {
@@ -101,9 +101,19 @@ export const mintToken = async (req, res) => {
     tokenName,
     tokenDescription,
     tokenImageUrl,
+    category,
     priceOfCoupon,
     isItem,
   } = req.body;
+
+  const validCategories = ["pizza", "coffee", "delivery"];
+  if (!validCategories.includes(category)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid category. Must be one of: pizza, coffee, delivery",
+    });
+  }
+
   const userId = req.user.id;
 
   try {
@@ -155,17 +165,18 @@ export const mintToken = async (req, res) => {
     console.log(`Token minting completed: ${mintTokenCompleted}`);
 
     if (mintTokenCompleted) {
-      const unqPrice = usdToUnq(priceOfCoupon);
+      // const unqPrice = usdToUnq(priceOfCoupon);
 
       const mintToken = await TokenModel.create({
         tokenName,
         tokenId,
         collectionId,
         tokenImageUrl,
+        category,
         tokenOwnerAddress: user.accountAddress,
         tokenOwnerId: user._id,
         tokenDescription,
-        priceOfCoupon: unqPrice,
+        priceOfCoupon,
         tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
         metadata: {
           storeAddress: user.accountAddress,
@@ -231,8 +242,7 @@ export const getUserToken = async (req, res) => {
 
     const userAddress = user.accountAddress;
 
-    // Retrieve standard tokens owned by the user
-    // Retrieve standard tokens owned by the user
+    // Retrieve standard tokens owned by the user    
     const tokens = await TokenModel.find({
       tokenOwnerAddress: userAddress,
       isItem: { $ne: true }, // Ensure standard tokens are not items
@@ -356,7 +366,7 @@ export const createSpecialToken = async (req, res) => {
     console.log(`Special token minting completed: ${mintTokenCompleted}`);
 
     if (mintTokenCompleted) {
-      const unqPrice = usdToUnq(priceOfCoupon);
+      // const unqPrice = usdToUnq(priceOfCoupon);
 
       const specialToken = await SpecialTokenModel.create({
         collectionId,
@@ -367,7 +377,7 @@ export const createSpecialToken = async (req, res) => {
         tokenOwnerAddress: address,
         tokenOwnerId: user._id,
         tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
-        priceOfCoupon: unqPrice,
+        priceOfCoupon,
         metadata: {
           storeAddress: user.accountAddress,
           storeId: user._id,
@@ -392,3 +402,35 @@ export const createSpecialToken = async (req, res) => {
     });
   }
 };
+
+export const getItemsByCategory = async (req, res) => {
+  const { category } = req.params;
+
+  try {
+    const tokens = await TokenModel.find({ 
+      category,
+      isItem: true,
+      isPurchased: false 
+    });
+
+    if (!tokens.length) {
+      return res.status(200).json({
+        success: true,
+        message: `No items found for category: ${category}`,
+        tokens: []
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      tokens
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message ? error.message : error
+    });
+  }
+  
+}

@@ -1,3 +1,4 @@
+// Import required models and dependencies
 import TransactionModel from "../models/TransactionModel.js";
 import UserModel from "../models/UserModel.js";
 import Sdk, { CHAIN_CONFIG } from "@unique-nft/sdk";
@@ -7,6 +8,7 @@ import { checkAndTransferSpecialToken } from "../services/SpecialTokenService.js
 import { applyCouponDiscount } from "../utils/UseCoupon.js";
 // import AdminWalletModel from "../models/AdminWallet.js";
 
+// Helper function to get active admin wallet (currently commented out)
 // const getActiveAdminWallet = async () => {
 //   const adminWallet = await AdminWalletModel.findOne({ isActive: true });
 //   if (!adminWallet) {
@@ -15,6 +17,11 @@ import { applyCouponDiscount } from "../utils/UseCoupon.js";
 //   return adminWallet.walletAddress;
 // }
 
+/**
+ * Get all purchases made by a specific buyer
+ * @param {Object} req - Request object containing user ID
+ * @param {Object} res - Response object
+ */
 export const checkBuyerPurchases = async (req, res) => {
   const userId = req.user.id;
   try {
@@ -37,6 +44,11 @@ export const checkBuyerPurchases = async (req, res) => {
   }
 };
 
+/**
+ * Get all purchases made from a specific store/seller
+ * @param {Object} req - Request object containing store owner ID
+ * @param {Object} res - Response object
+ */
 export const checkStorePurchases = async (req, res) => {
   const itemOwnerId = req.user.id;
 
@@ -80,6 +92,12 @@ export const checkStorePurchases = async (req, res) => {
   }
 };
 
+/**
+ * Handle the purchase of a coupon token
+ * Includes token transfer and payment processing with VAT calculation
+ * @param {Object} req - Request object containing tokenId and collectionId
+ * @param {Object} res - Response object
+ */
 export const purchaseCoupon = async (req, res) => {
   const { tokenId, collectionId } = req.body;
   const buyerId = req.user.id;
@@ -92,6 +110,7 @@ export const purchaseCoupon = async (req, res) => {
   }
 
   try {
+    // Validate buyer exists and has mnemonic
     const buyer = await UserModel.findById(buyerId);
     if (!buyer) {
       return res.status(404).json({
@@ -107,6 +126,7 @@ export const purchaseCoupon = async (req, res) => {
       });
     }
 
+    // Validate token and seller exist
     const token = await TokenModel.findOne({ tokenId, collectionId });
     if (!token) {
       return res.status(404).json({ success: false, error: "Token not found" });
@@ -121,6 +141,7 @@ export const purchaseCoupon = async (req, res) => {
         .json({ success: false, error: "Seller not found" });
     }
 
+    // Initialize blockchain accounts and SDKs
     const buyerAccount = await KeyringProvider.fromMnemonic(buyer.mnemonic);
     const sellerAccount = await KeyringProvider.fromMnemonic(seller.mnemonic);
 
@@ -137,7 +158,7 @@ export const purchaseCoupon = async (req, res) => {
       signer: sellerAccount,
     });
 
-    // Check if buyer's wallet has enough balance
+    // Verify buyer has sufficient balance
     const buyerBalance = await sdk.balance.get({
       address: buyer.accountAddress,
     });
@@ -161,18 +182,17 @@ export const purchaseCoupon = async (req, res) => {
     console.log(`Transfer completed: ${transferCompleted}`);
 
     if (transferCompleted) {
+      // Award points to buyer
       buyer.points += 10;
       await buyer.save();
 
-      // Calculate VAT amount (5% of base price)
+      // Calculate VAT and seller amounts
       const vatAmount = Math.floor(token.priceOfCoupon * 0.05);
       const sellerAmount = token.finalPriceOfCoupon - vatAmount;
       
       try {
-        // Get admin wallet
+        // VAT transfer to admin wallet (currently commented out)
         // const adminWalletAddress = await getActiveAdminWallet();
-        
-        // Transfer VAT to admin wallet
         // await sdk.balance.transfer.submitWaitResult(
         //   {
         //     address: buyerAddress,
@@ -182,7 +202,7 @@ export const purchaseCoupon = async (req, res) => {
         //   { signer: buyerAccount }
         // );
         
-        // Transfer remaining amount to seller
+        // Transfer payment to seller
         await sdk.balance.transfer.submitWaitResult(
           {
             address: buyerAddress,
@@ -192,6 +212,7 @@ export const purchaseCoupon = async (req, res) => {
           { signer: buyerAccount }
         );
 
+        // Update token ownership
         await TokenModel.findOneAndUpdate(
           { tokenId, collectionId },
           {
@@ -238,6 +259,7 @@ export const purchaseCoupon = async (req, res) => {
   }
 };
 
+// Helper function to verify Ethereum transactions (currently commented out)
 // const verifyEthTransaction = async (txHash, expectedAmount) => {
 //   const web3 = new Web3(process.env.ETH_NODE_URL);
 //   try {
@@ -260,6 +282,12 @@ export const purchaseCoupon = async (req, res) => {
 //   }
 // };
 
+/**
+ * Handle the purchase of an item
+ * Includes token transfer, coupon discount application, and payment processing
+ * @param {Object} req - Request object containing purchase details
+ * @param {Object} res - Response object
+ */
 export const purchaseItem = async (req, res) => {
   const {
     tokenId,
@@ -280,6 +308,7 @@ export const purchaseItem = async (req, res) => {
   }
 
   try {
+    // Validate buyer exists and has mnemonic
     const buyer = await UserModel.findById(buyerId);
     if (!buyer) {
       return res.status(404).json({
@@ -295,6 +324,7 @@ export const purchaseItem = async (req, res) => {
       });
     }
 
+    // Validate item and seller exist
     const item = await TokenModel.findOne({
       tokenId,
       collectionId,
@@ -314,7 +344,7 @@ export const purchaseItem = async (req, res) => {
         .json({ success: false, error: "Seller not found" });
     }
 
-    // Apply coupon discount
+    // Calculate final price after applying any coupon discounts
     const { finalPrice, discountAmount } = await applyCouponDiscount(
       buyer,
       seller,
@@ -324,6 +354,7 @@ export const purchaseItem = async (req, res) => {
       tokenType
     );
 
+    // Initialize blockchain accounts and SDKs
     const buyerAccount = await KeyringProvider.fromMnemonic(buyer.mnemonic);
     const sellerAccount = await KeyringProvider.fromMnemonic(seller.mnemonic);
 
@@ -340,11 +371,10 @@ export const purchaseItem = async (req, res) => {
       signer: sellerAccount,
     });
 
+    // Verify buyer has sufficient balance
     const buyerBalance = await sdk.balance.get({
       address: buyerAddress,
     });
-
-    // console.log(finalPrice);
 
     if (buyerBalance.availableBalance.amount < finalPrice) {
       return res.status(400).json({
@@ -353,6 +383,7 @@ export const purchaseItem = async (req, res) => {
       });
     }
 
+    // Transfer item token from seller to buyer
     const txTransfer = await sellerSdk.token.transfer.submitWaitResult({
       collectionId,
       tokenId,
@@ -365,19 +396,18 @@ export const purchaseItem = async (req, res) => {
     console.log(`Transfer completed: ${transferCompleted}`);
 
     if (transferCompleted) {
+      // Award points to buyer
       buyer.points += 10;
       await buyer.save();
       
-      // Calculate VAT amount (5% of base price)
+      // Calculate VAT and seller amounts
       const basePrice = finalPrice / 1.05;
       const vatAmount = Math.floor(finalPrice - basePrice);
       const sellerAmount = finalPrice - vatAmount;
       
       try {
-        // Get admin wallet
+        // VAT transfer to admin wallet (currently commented out)
         // const adminWalletAddress = await getActiveAdminWallet();
-        
-        // Transfer VAT to admin wallet
         // await sdk.balance.transfer.submitWaitResult(
         //   {
         //     address: buyerAddress,
@@ -387,7 +417,7 @@ export const purchaseItem = async (req, res) => {
         //   { signer: buyerAccount }
         // );
         
-        // Transfer remaining amount to seller
+        // Transfer payment to seller
         await sdk.balance.transfer.submitWaitResult(
           {
             address: buyerAddress,
@@ -397,13 +427,14 @@ export const purchaseItem = async (req, res) => {
           { signer: buyerAccount }
         );
 
-        // Update seller's wallet balance with only the base amount
+        // Update seller's wallet balance
         await UserModel.findByIdAndUpdate(
           seller._id,
           { $inc: { walletBalance: sellerAmount } },
           { new: true }
         );
 
+        // Create transaction record
         const transaction = new TransactionModel({
           buyerId: buyer._id,
           buyerName: buyer.username || buyer.email,
@@ -415,11 +446,7 @@ export const purchaseItem = async (req, res) => {
 
         await transaction.save();
 
-        // if (coupon) {
-        //   await TokenModel.findByIdAndUpdate(coupon._id, { isPurchased: true });
-        // }
-
-        // Check and transfer special token
+        // Check and transfer any special tokens if applicable
         const specialTokenTransferred = await checkAndTransferSpecialToken(
           buyer,
           seller,
@@ -430,11 +457,10 @@ export const purchaseItem = async (req, res) => {
         if (specialTokenTransferred) {
           console.log("Special token transferred successfully");
 
-          // Send a response indicating the special token transfer was successful
           return res.status(200).json({
             success: true,
             message: "Purchase successful and special token transferred",
-            specialTokenTransferred: true, // indicate the special token transfer
+            specialTokenTransferred: true,
           });
         }
 

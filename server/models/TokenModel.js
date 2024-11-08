@@ -10,6 +10,11 @@ const TokenSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  category: {
+    type: String,
+    enum: ["pizza", "coffee", "delivery"],
+    required: true,
+  },
   tokenDescription: String,
   tokenUrl: String,
   priceOfCoupon: {
