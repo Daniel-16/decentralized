@@ -50,17 +50,33 @@
                         <input type="text" id="tokenDescription1" class="form-control" name="tokenDescription" required>
                     </div>
 
-                        <div class="mb-3">
-                            <label for="tokenType" class="form-label">Select Token Type:</label>
-                            <div>
-                                <input type="radio" id="standardToken" name="tokenType" value="standard" required>
-                                <label for="standardToken">Standard Token</label>
-                            </div>
-                            <div>
-                                <input type="radio" id="specialToken" name="tokenType" value="special" required>
-                                <label for="specialToken">Special Token</label>
-                            </div>
+                    <div class="mb-3">
+                        <label for="tokenType" class="form-label">Select Token Type:</label>
+                        <div>
+                            <input type="radio" id="standardToken" name="tokenType" value="standard" required>
+                            <label for="standardToken">Standard Token</label>
                         </div>
+                        <div>
+                            <input type="radio" id="specialToken" name="tokenType" value="special" required>
+                            <label for="specialToken">Special Token</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="itemCategory" class="form-label">Select Item Category:</label>
+                        <div>
+                            <input type="radio" id="pizzaCategory" name="itemCategory" value="pizza" required>
+                            <label for="pizzaCategory">Pizza</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="coffeeCategory" name="itemCategory" value="coffee" required>
+                            <label for="coffeeCategory">Coffee</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="deliveryCategory" name="itemCategory" value="delivery" required>
+                            <label for="deliveryCategory">Delivery</label>
+                        </div>
+                    </div>
 
                     <div class="mb-3">
                         <label for="imageUpload" class="form-label">Upload Image:</label>
@@ -109,12 +125,28 @@
 
                     <div class="mb-3">
                         <label for="priceOfCoupon" class="form-label">Price of Coupon:</label>
-                        <input type="text" placeholder="enter price in USD" id="mint_priceOfCoupon" class="form-control" name="mint_priceOfCoupon" required>
+                        <input type="number" min="0" max="5" placeholder="Enter price in UNQ (max 5)" id="mint_priceOfCoupon" class="form-control" name="mint_priceOfCoupon" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="tokenDescription1" class="form-label">Token Description:</label>
                         <input type="text" id="mint_tokenDescription1" class="form-control" name="mint_tokenDescription" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="itemCategory" class="form-label">Select Item Category:</label>
+                        <div>
+                            <input type="radio" id="mint_pizzaCategory" name="mint_itemCategory" value="pizza" required>
+                            <label for="mint_pizzaCategory">Pizza</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="mint_coffeeCategory" name="mint_itemCategory" value="coffee" required>
+                            <label for="mint_coffeeCategory">Coffee</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="mint_deliveryCategory" name="mint_itemCategory" value="delivery" required>
+                            <label for="mint_deliveryCategory">Delivery</label>
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -305,6 +337,7 @@ $(document).ready(function() {
 
             // Get the value of the selected radio button
             const tokenType = $('input[name="tokenType"]:checked').val();
+            const itemCategory = $('input[name="itemCategory"]:checked').val();
             let urlToPost = tokenType === 'standard' ? '/api/mintToken' : '/api/mintSpecialToken';
 
             const formData = {
@@ -313,6 +346,7 @@ $(document).ready(function() {
                 tokenDescription: $('#tokenDescription1').val(),
                 tokenImageUrl: base64Image, 
                 priceOfCoupon: $('#priceOfCoupon').val(),
+                itemCategory: itemCategory
             };
 
             const token = localStorage.getItem('token');
@@ -400,6 +434,7 @@ $(document).ready(function() {
         
         reader.onload = function () {
             const base64Image = reader.result; 
+            const itemCategory = $('input[name="mint_itemCategory"]:checked').val();
 
             const formData = {
                 collectionId: $('#mint_collectionId').val(),
@@ -407,7 +442,8 @@ $(document).ready(function() {
                 tokenDescription: $('#mint_tokenDescription1').val(),
                 tokenImageUrl: base64Image, 
                 priceOfCoupon: $('#mint_priceOfCoupon').val(),
-                isItem: true
+                isItem: true,
+                category: itemCategory
             };
 
             const token = localStorage.getItem('token');
@@ -438,7 +474,7 @@ $(document).ready(function() {
                             icon: "error",
                             title: "An error occurred!",
                             showConfirmButton: false,
-                            timer: 1500,
+                            timer: 3000,
                         });
                         console.error('Failed to mint token:', response.message);
                     }
@@ -537,7 +573,6 @@ $(document).ready(function() {
 
 
 <%- include('../partials/admin/footer') %>
-
 
 
 

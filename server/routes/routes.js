@@ -2,6 +2,7 @@ import express from "express";
 import {
   createCollectionController,
   createSpecialToken,
+  getItemsByCategory,
   getUserCollections,
   getUserToken,
   getUserTokensAndPrizes,
@@ -284,5 +285,7 @@ router.delete(
 //  * @access Private
 //  */
 // router.put("/admin/wallet", updateAdminWallet);
+
+router.get("/getItemsByCategory/:category", verifyToken, getItemsByCategory);
 
 export default router;

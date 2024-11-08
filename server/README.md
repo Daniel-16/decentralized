@@ -221,11 +221,10 @@
 - `GET /api/getStoreCoupons`: Retrieve all coupons for a specific store
   - Description: Fetches all coupons and items available for purchase for a specific store.
 
-### New updates
+### New updates (11/08/24)
 
-No new route was created thus far. Key changes were made to the `TransactionController.js` and `SpecialTokenService.js` files.
-
-When a user purchases an item from a store, the server checks if the user has won the special token for that store. If so, it transfers the special token to the user.
-
-Also, if the user has a coupon from the store, the coupon price is deducted from the total price of the item.
-(This needs review from both of us).
+- Added a category field to the `TokenModel`.
+- Added validation for the category field in the `CreateAndMintToken.js` file.
+- `GET /api/getItemsByCategory/:category`: Retrieve all items for a specific category
+  - Description: Fetches all items for a specific category.
+- Removed the conversion of UNQ to USD in the `mintToken` endpoint.
