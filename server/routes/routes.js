@@ -10,6 +10,7 @@ import {
 } from "../controllers/CreateAndMintToken.js";
 import {
   createUser,
+  getLeaderboard,
   getUser,
   loginUser,
 } from "../controllers/UserController.js";
@@ -286,6 +287,18 @@ router.delete(
 //  */
 // router.put("/admin/wallet", updateAdminWallet);
 
+/**
+ * @route GET /api/getItemsByCategory/:category
+ * @description Get items by category
+ * @access Private
+ */
 router.get("/getItemsByCategory/:category", verifyToken, getItemsByCategory);
+
+/**
+ * @route GET /api/getLeaderboard
+ * @description Get leaderboard
+ * @access Private
+ */
+router.get("/getLeaderboard", getLeaderboard);
 
 export default router;

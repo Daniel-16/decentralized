@@ -152,3 +152,19 @@ export const getDashboard = async (req, res) => {
     });
   }
 };
+
+// Get top 10 users by points for leaderboard
+export const getLeaderboard = async (req, res) => {
+  try {
+    const leaderboard = await UserModel.find().sort({ points: -1 }).limit(10);
+    res.status(200).json({
+      success: true,
+      leaderboard,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
