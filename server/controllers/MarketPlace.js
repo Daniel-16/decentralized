@@ -4,15 +4,24 @@ import UserModel from "../models/UserModel.js";
 
 export const getAllCoupons = async (req, res) => {
   try {
-    const { item } = req.query;
-    
+    const { item, category, priceRange } = req.query;
+
     let searchQuery = {
       isPurchased: false,
-      isItem: false
+      isItem: false,
     };
 
-    if(item){
+    if (item) {
       searchQuery.isItem = true;
+    }
+
+    if (category && category !== "all") {
+      searchQuery.category = category; // Assuming coupons have a `category` field
+    }
+
+    if (priceRange) {
+      const [minPrice, maxPrice] = priceRange.split("-").map(Number);
+      searchQuery.finalPriceOfCoupon = { $gte: minPrice, $lte: maxPrice }; // Assuming coupons have `finalPriceOfCoupon` field
     }
 
     const coupons = await TokenModel.find(searchQuery);
@@ -21,7 +30,7 @@ export const getAllCoupons = async (req, res) => {
       coupons.map(async (coupon) => {
         const ownerDetails = await UserModel.findById(coupon.tokenOwnerId);
         return {
-          ...coupon._doc, // get the plain object of the coupon
+          ...coupon._doc,
           ownerName: ownerDetails ? ownerDetails.username : "Unknown",
         };
       })
@@ -30,7 +39,6 @@ export const getAllCoupons = async (req, res) => {
     res.status(200).json({
       success: true,
       coupons: couponsWithOwners,
-      availableCoupons: coupons,
     });
   } catch (error) {
     res.status(500).json({
@@ -226,7 +234,7 @@ export const getItem = async (req, res) => {
       // tokenOwnerAddress: coupon.tokenOwnerAddress,
       // isPurchased: false,
       priceOfCoupon: { $lte: coupon.priceOfCoupon },
-      _id: { $ne: coupon._id }
+      _id: { $ne: coupon._id },
     }).lean();
 
     // Fetch user's special coupons
@@ -234,7 +242,7 @@ export const getItem = async (req, res) => {
       // tokenOwnerAddress: coupon.tokenOwnerAddress,
       // isPurchased: false,
       priceOfCoupon: { $lte: coupon.priceOfCoupon },
-      _id: { $ne: coupon._id }
+      _id: { $ne: coupon._id },
     }).lean();
 
     const combinedCoupons = [
@@ -243,7 +251,6 @@ export const getItem = async (req, res) => {
     ];
 
     // console.log(combinedCoupons)
-
 
     res.render("items/itemDetail", {
       token: {
@@ -269,8 +276,8 @@ export const getItem = async (req, res) => {
 export const getMoreCouponsByCollectionId = async (req, res) => {
   const { collectionId } = req.params;
   try {
-    const coupons = await TokenModel.find({ 
-      collectionId, 
+    const coupons = await TokenModel.find({
+      collectionId,
       isPurchased: false,
     });
     res.status(200).json({
@@ -284,7 +291,6 @@ export const getMoreCouponsByCollectionId = async (req, res) => {
     });
   }
 };
-
 
 export const getAllMyCoupons = async (req, res) => {
   const { accountAddress } = req.params;
@@ -302,7 +308,6 @@ export const getAllMyCoupons = async (req, res) => {
     }
 
     // console.log(loggedInUser._id)
-
 
     const coupons = await TokenModel.find({
       tokenOwnerId: loggedInUser._id,
@@ -323,12 +328,10 @@ export const getAllMyCoupons = async (req, res) => {
       .select("collectionId tokenId tokenName priceOfCoupon tokenDescription")
       .lean();
 
-
     const combinedCoupons = [
       ...coupons.map((coupon) => ({ ...coupon, type: "standard" })),
       ...specialCoupons.map((coupon) => ({ ...coupon, type: "special" })),
     ];
-
 
     res.status(200).json({
       success: true,

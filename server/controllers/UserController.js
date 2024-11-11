@@ -154,12 +154,50 @@ export const getDashboard = async (req, res) => {
 };
 
 // Get top 10 users by points for leaderboard
+// export const getLeaderboard = async (req, res) => {
+//   try {
+//     const leaderboard = await UserModel.find().sort({ points: -1 }).limit(10);
+//     res.status(200).json({
+//       success: true,
+//       leaderboard,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       error: error.message,
+//     });
+//   }
+// };
+
+// Get paginated leaderboard
+// Get paginated leaderboard excluding users with 0 points
 export const getLeaderboard = async (req, res) => {
+  const { page = 1, limit = 10 } = req.query;
+
   try {
-    const leaderboard = await UserModel.find().sort({ points: -1 }).limit(10);
+    // Get the total count of users with points > 0
+    const totalUsers = await UserModel.countDocuments({ points: { $gt: 0 } });
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    // Fetch the leaderboard for the current page (users with points > 0)
+    const leaderboard = await UserModel.find({ points: { $gt: 0 } })
+      .sort({ points: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    // Mock percentage changes for 1-day and 7-day
+    const enhancedLeaderboard = leaderboard.map((user, index) => ({
+      position: (page - 1) * limit + index + 1, 
+      username: user.username,
+      points: user.points,
+      last1DayChange: ((Math.random() * 2 - 1) * 2).toFixed(2), 
+      last7DaysChange: ((Math.random() * 2 - 1) * 5).toFixed(2), 
+    }));
+
     res.status(200).json({
       success: true,
-      leaderboard,
+      leaderboard: enhancedLeaderboard,
+      totalPages: totalPages,
     });
   } catch (error) {
     res.status(500).json({

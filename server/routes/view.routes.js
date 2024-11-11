@@ -3,6 +3,7 @@ import { redirectIfNotAuthenticated } from "../middleware/redirectIfNotAuthentic
 import { checkAuth } from "../middleware/checkAuth.js";
 import { getCoupon, getItem, getStoreCoupons, initiateCouponSwap } from "../controllers/MarketPlace.js";
 import { getDashboard } from "../controllers/UserController.js";
+import TokenModel from "../models/TokenModel.js";
 const router = express.Router();
 
 router.use(checkAuth);
@@ -33,6 +34,16 @@ router.get("/shop/nft-marketplace", async function (req, res) {
 router.get("/shop/items", async function (req, res) {
   res.render("items/shop");
 });
+
+// get by category
+// get items by category
+router.get("/shop/items/category/:category", async function (req, res) {
+  const category = req.params.category;
+  const items = await TokenModel.find({ category: category });
+  console.log(items);
+  res.render("items/shop_by_category", { category, items });
+});
+
 
 // my store items
 router.get("/my-store-items", async function (req, res) {
@@ -111,6 +122,10 @@ router.get("/getItem/:collectionId/:tokenId", getItem);
 
 
 router.get("/initiate-coupon-swap", initiateCouponSwap);
+
+router.get("/leaderboard", async function (req, res) {
+  res.render("extras/leaderboard");
+});
 
 
 

@@ -11,7 +11,7 @@
     }
 
 
-
+/* 
     .cards {
         display: flex;
     }
@@ -34,7 +34,7 @@
         .content {
             padding: 20px 30px;
         }
-    }
+    } */
 
     .card.is-loading {
     .image,
@@ -103,7 +103,7 @@
           <div class="col-7">
             <div class="section-heading d-flex align-items-center">
               <!-- <div class="spinner-grow text-danger" role="status"><span class="visually-hidden">Loading...</span></div> -->
-              <h2 class="mb-0 ms-3">Latest Items in our stores</h2>
+              <h2 class="mb-0 ms-3">Discover Items</h2>
             </div>
           </div>
           <div class="col-5 text-end"><a class="btn rounded-pill btn-outline-primary btn-sm border-2 mb-5" href="/shop/items">View All Items</a></div>
@@ -231,6 +231,163 @@
       </div>
     </div>
     <!-- end: process of kooponcraft -->
+
+        <div class="divider"></div>
+          <div class="popular-collection-wrapper">
+            <div class="container">
+              <div class="section-heading position-relative z-index-1000 d-flex align-items-center justify-content-center">
+                <h2 class="mb-0">Our Top Performers</h2>
+                <select class="popular-collection-select" id="popularSelect">
+                  <option selected value="1">Everyday</option>
+
+                </select>
+              </div>
+            </div>
+            <div class="container">
+              <div class="row g-4 justify-content-center" id="leaderboard-container">
+                <!-- Single Card -->
+                <div class="col-12 col-sm-10 col-md-6 col-xl-4">
+                  <div class="nft-card card shadow-sm">
+                    <div class="card-body">
+                      <div class="row align-items-center g-3">
+                        <div class="col-4">
+                          <div class="img-wrap"><img src="/assets/img/bg-img/25.jpg" alt="">
+                            <div class="badge bg-danger position-absolute px-2 py-1">#1</div>
+                          </div>
+                        </div>
+                        <div class="col-8">
+                          <!-- Meta Info -->
+                          <div class="meta-info">
+                            <div class="name-info d-flex align-items-center mb-3">
+                              <div class="author-img position-relative"><img class="shadow" src="/assets/img/bg-img/u1.jpg" alt=""><i class="bi bi-check position-absolute bg-success"></i></div>
+                              <div class="name-author"><a class="name d-block hover-primary fw-bold text-truncate" href="item-details.html" data-bs-toggle="tooltip" data-bs-placement="top" title="Trees Growing Seedlings">Trees Growing Seedlings</a><a class="author d-block fz-12 hover-primary text-truncate" href="author.html">@designing_world</a></div>
+                            </div>
+                            <div class="price-bid d-flex align-items-center">
+                              <div class="price me-2 me-sm-3">
+                                <h6 class="mb-0 d-inline-block fz-14 border border-2 border-info rounded py-1 px-2 text-info">0.06 ETH</h6>
+                              </div><a class="btn btn-minimal btn-sm hover-primary d-flex align-items-center" href="#"><img class="me-1" src="/assets/img/core-img/fire.png" alt="">Place bid</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+
+        <div class="divider"></div>
+
+
+        <!-- explore categories -->
+        <div class="collection-wrapper">
+          <div class="container">
+            <div class="row">
+              <div class="col-7">
+                <div class="section-heading">
+                  <h2 class="mb-0 ms-3">Explore Categories</h2>
+                </div>
+              </div>
+              <!-- <div class="col-5 text-end"><a class="btn rounded-pill btn-outline-primary btn-sm border-2" href="collections.html">View all catagories</a></div> -->
+            </div>
+          </div>
+          <div class="container">
+            <div class="row g-4 justify-content-center">
+              <!-- Catagory Card -->
+              <div class="col-12 col-md-10 col-lg-4">
+                <div class="catagory-card card shadow-sm">
+                  <div class="card-body">
+                    <div class="row g-1">
+                      <div class="col-6">
+                        <img class="rounded" src="/assets/img/pizza1.webp" alt="">
+                        <img class="rounded" src="/assets/img/pizza4.jpg" alt=""></div>
+                      <div class="col-6">
+                        <img class="rounded" src="/assets/img/pizza5.webp" alt="">
+                        <!-- <img class="rounded" style="height: 150px;" src="/assets/img/pizza6.gif" alt=""> -->
+                      </div>
+                    </div>
+                    <div class="row mt-3">
+                      <div class="col-8">
+                        <h5 class="mb-0">Pizza
+                          <!-- <span class="badge bg-primary ms-2">206</span> -->
+                        </h5>
+                      </div>
+                      <div class="col-4 text-end">
+                        <a class="btn btn-minimal hover-primary view-all-category" data-category="pizza" href="/shop/items?category=pizza">
+                          View all<i class="ms-1 fz-14 bi bi-arrow-right"></i>
+                        </a>
+                      </div>                    
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Catagory Card -->
+              <div class="col-12 col-md-10 col-lg-4">
+                <div class="catagory-card card shadow-sm">
+                  <div class="card-body">
+                    <div class="row g-1">
+                      <div class="col-6">
+                        <img class="rounded" style="height: 40%;" src="/assets/img/coffe1.jpg" alt="">
+                        <img class="rounded" src="/assets/img/coffee2.png" alt="">
+                      </div>
+                      <div class="col-6">
+                        <img class="rounded" style="height: 345px;" src="/assets/img/coffee4.jpg" alt="">
+                        <!-- <img class="rounded" src="/assets/img/coffee3.webp" alt=""> -->
+                      </div>
+                    </div>
+                    <div class="row mt-3">
+                      <div class="col-8">
+                        <h5 class="mb-0">Coffee
+                          <!-- <span class="badge bg-primary ms-2">973</span> -->
+                        </h5>
+                      </div>
+                      <div class="col-4 text-end">
+                        <a class="btn btn-minimal hover-primary view-all-category" data-category="coffee" href="/shop/items?category=coffee">
+                          View all<i class="ms-1 fz-14 bi bi-arrow-right"></i>
+                        </a>
+                      </div>  
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Catagory Card -->
+              <div class="col-12 col-md-10 col-lg-4">
+                <div class="catagory-card card shadow-sm">
+                  <div class="card-body">
+                    <div class="row g-1">
+                      <div class="col-6">
+                        <img class="rounded" style="height: 50%; width: 100%;" src="/assets/img/delivery1.jpg" alt="">
+                        <img class="rounded" style="height: 170px; width: 100%;" src="/assets/img/delivery2.jpg" alt="">
+                      </div>
+                      <div class="col-6">
+                        <img class="rounded" src="/assets/img/delivery3.jpg" alt="">
+                        <img class="rounded" src="/assets/img/delivery4.jpg" alt="">
+                      </div>
+                    </div>
+                    <div class="row mt-3">
+                      <div class="col-8">
+                        <h5 class="mb-0">Delivery Service
+                          <!-- <span class="badge bg-primary ms-2">1098</span> -->
+                        </h5>
+                      </div>
+                      <div class="col-4 text-end">
+                        <a class="btn btn-minimal hover-primary view-all-category" data-category="delivery" href="/shop/items?category=delivery">
+                          View all<i class="ms-1 fz-14 bi bi-arrow-right"></i>
+                        </a>
+                      </div>  
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    <!-- end: explore categories -->
+
+    
 
 
     <div class="divider"></div>
@@ -478,4 +635,76 @@ function handlePurchaseClick(event, collectionId, tokenId) {
       //   origin: { y: 0.6 },
       // });
     })
+</script>
+
+
+<!-- leaderboard -->
+<script>
+// Fetch leaderboard data and populate the leaderboard container
+async function fetchLeaderboard() {
+  try {
+    let page = 1;
+    let limit = 10; // Define limit variable with a default value
+
+    const response = await fetch(`/api/getLeaderboard?page=${page}&limit=${limit}`);
+    const leaderboardData = await response.json();
+
+    // Check if the leaderboard container exists
+    const container = document.getElementById('leaderboard-container');
+    container.innerHTML = ''; // Clear existing content if any
+
+    if (!leaderboardData.success) {
+      console.error('Failed to fetch leaderboard:', leaderboardData.error);
+      return;
+    }
+
+    // Iterate over leaderboard data to create and insert each card
+    leaderboardData.leaderboard.forEach((user) => {
+      console.log(leaderboardData)
+      const cardHTML = `
+        <div class="col-12 col-sm-10 col-md-6 col-xl-4">
+          <div class="nft-card card shadow-sm">
+            <div class="card-body">
+              <div class="row align-items-center g-3">
+                <div class="col-4">
+                  <div class="img-wrap">
+                    <img src="${user.imageUrl || '/assets/img/bg-img/25.jpg'}" alt="">
+                    <div class="badge bg-danger position-absolute px-2 py-1">#${1}</div>
+                  </div>
+                </div>
+                <div class="col-8">
+                  <div class="meta-info">
+                    <div class="name-info d-flex align-items-center mb-3">
+                      <div class="author-img position-relative">
+                        <img class="shadow" src="${user.authorImage || '/assets/img/bg-img/u1.jpg'}" alt="">
+                        <i class="bi bi-check position-absolute bg-success"></i>
+                      </div>
+                      <div class="name-author">
+                        <a class="name d-block hover-primary fw-bold text-truncate" href="item-details.html" data-bs-toggle="tooltip" data-bs-placement="top" title="${user.username}">${user.username}</a>
+                        <a class="author d-block fz-12 hover-primary text-truncate" href="author.html">@${user.username}</a>
+                      </div>
+                    </div>
+                    <div class="price-bid d-flex align-items-center">
+                      <div class="price me-2 me-sm-3">
+                        <h6 class="mb-0 d-inline-block fz-14 border border-2 border-info rounded py-1 px-2 text-info">${user.points} KPCP</h6>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Insert the card HTML into the container
+      container.insertAdjacentHTML('beforeend', cardHTML);
+    });
+  } catch (error) {
+    console.error('Error fetching leaderboard:', error);
+  }
+}
+
+// Call the function to fetch and render leaderboard on page load
+document.addEventListener('DOMContentLoaded', fetchLeaderboard);
 </script>

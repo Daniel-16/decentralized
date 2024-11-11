@@ -4,8 +4,8 @@
 <style>
 
     .fixed-size {
-        width: 100%; /* Ensures the image takes full width of its container */
-        height: 200px; /* Set a fixed height */
+        width: 160%; /* Ensures the image takes full width of its container */
+        height: 300px; /* Set a fixed height */
         object-fit: cover; /* Ensures the image scales without distorting aspect ratio */
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
@@ -72,95 +72,115 @@
 </style>
 
 
-<!-- Breadcrumb -->
-<div class="breadcrumb-wrapper">
-    <div class="container">
-    <div class="breadcrumb-content">
-        <div class="d-flex align-items-center justify-content-center">
-        <!-- <div class="spinner-grow text-danger me-1" role="status"><span class="visually-hidden">Loading...</span></div> -->
-        <h2 class="breadcrumb-title mb-0">Shop Items</h2>
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-wrapper">
+      <div class="container">
+        <div class="breadcrumb-content">
+          <h2 class="breadcrumb-title">Explore Items</h2>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center">
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Explore</li>
+            </ol>
+          </nav>
         </div>
-        <nav aria-label="breadcrumb">
-        <ol class="breadcrumb justify-content-center">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Shop Items</li>
-        </ol>
-        </nav>
+      </div>
     </div>
-    </div>
-</div>
-<div class="divider"></div>
-<div class="live-bids-wrapper">
-    <div class="container">
-        <div class="row g-4 justify-content-center" id="loading-cards">
-            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-                <div class="cards">
-                    <div class="card is-loading">
-                        <div class="image"></div>
-                        <div class="content">
-                        <h2></h2>
-                        <p></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-                <div class="cards">
-                    <div class="card is-loading">
-                        <div class="image"></div>
-                        <div class="content">
-                        <h2></h2>
-                        <p></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-                <div class="cards">
-                    <div class="card is-loading">
-                        <div class="image"></div>
-                        <div class="content">
-                        <h2></h2>
-                        <p></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-                <div class="cards">
-                    <div class="card is-loading">
-                        <div class="image"></div>
-                        <div class="content">
-                        <h2></h2>
-                        <p></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row justify-content-center" id="itemsContainer">
-            <!-- Items will be populated here -->
+    <div class="divider"></div>
+    <div class="explore-items-2-wrapper">
+      <div class="container">
+        
+        <div class="row g-4 g-xl-5 justify-content-center">
+          <div class="col-12 col-sm-9 col-md-5 col-lg-4 col-xxl-3">
 
-        </div>
-    </div>
-</div>
+            <h5>Category</h5>
+            <select class="filter-select2 bg-gray w-100 mb-4">
+              <option selected value="all">All</option>
+              <option value="pizza">Pizza</option>
+              <option value="coffee">Coffee</option>
+              <option value="delivery">Delivery Service</option>
+            </select>
+            <!-- <h5 class="mb-2">Price</h5>
+            <input id="filterRange" type="text" name="filterValue" value="" data-min="100" data-max="1000" data-from="300" data-to="750" data-type="double" data-prefix="" data-grid="false">             -->
+            
+            <button class="btn btn-primary rounded-pill w-100" type="submit">Apply<i class="ms-1 bi bi-arrow-right"></i></button>
+          </div>
+          <div class="col-12 col-md-7 col-lg-8 col-xxl-9">
+            <div class="row g-4 justify-content-center" id="loading-cards">
+                <div class="col-12 col-sm-6 col-md-12 col-lg-6 col-xxl-4">
+                    <div class="cards">
+                        <div class="card is-loading">
+                            <div class="image"></div>
+                            <div class="content">
+                            <h2></h2>
+                            <p></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-12 col-lg-6 col-xxl-4">
+                    <div class="cards">
+                        <div class="card is-loading">
+                            <div class="image"></div>
+                            <div class="content">
+                            <h2></h2>
+                            <p></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-12 col-lg-6 col-xxl-4">
+                    <div class="cards">
+                        <div class="card is-loading">
+                            <div class="image"></div>
+                            <div class="content">
+                            <h2></h2>
+                            <p></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+            <div class="row g-4 justify-content-center" id="itemsContainer">
 
-<div class="divider"></div>
-<!-- Dark Light Wrapper -->
-<div class="dark-light-wrapper" data-aos="zoom-in" data-aos-duration="750" data-aos-delay="200">
-    <div class="container">
+
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <!-- Pagination -->
+                <!-- <div class="funto-pagination mt-70">
+                  <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center mb-0">
+                      <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                      <li class="page-item"><a class="page-link" href="#">2</a></li>
+                      <li class="page-item"><a class="page-link" href="#">3</a></li>
+                      <li class="page-item"><a class="page-link" href="#">4</a></li>
+                      <li class="page-item"><a class="page-link" href="#">...</a></li>
+                      <li class="page-item"><a class="page-link" href="#">9</a></li>
+                    </ul>
+                  </nav>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <!-- Dark Light Wrapper -->
+    <div class="dark-light-wrapper" data-aos="zoom-in" data-aos-duration="750" data-aos-delay="200">
+      <div class="container">
         <div class="d-flex align-items-center justify-content-between">
-            <h5 class="mb-0 text-white" data-aos="fade-up" data-aos-duration="750" data-aos-delay="500">Light mode is available!</h5>
-            <!-- Switch -->
-            <div class="dark-light-mode" data-aos="fade-up" data-aos-duration="750" data-aos-delay="800">
-                <input id="darkLightSwitch" type="checkbox">
-                <label class="shadow" for="darkLightSwitch">Toggle</label>
-            </div>
+          <h5 class="mb-0 text-white" data-aos="fade-up" data-aos-duration="750" data-aos-delay="500">Light mode is available!</h5>
+          <!-- Switch -->
+          <div class="dark-light-mode" data-aos="fade-up" data-aos-duration="750" data-aos-delay="800">
+            <input id="darkLightSwitch" type="checkbox">
+            <label class="shadow" for="darkLightSwitch">Toggle</label>
+          </div>
         </div>
+      </div>
     </div>
-</div>
-
-
 
 
 
@@ -170,70 +190,66 @@
 <!-- load items and handle purchase -->
 <script>
 $(document).ready(function () {
-    // Fetch and display items
+    
+    function getUrlParameter(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+    }
+
     function loadItems() {
+        // Get category from URL if available, else fallback to the dropdown value
+        const selectedCategory = getUrlParameter("category") || $(".filter-select2").val();
+        const priceRange = $("#filterRange").data("from") + "-" + $("#filterRange").data("to");
+
         $.ajax({
-            url: "/api/getAllCoupons?item=true",
+            // url: "/api/getAllCoupons?item=true&category=" + selectedCategory + "&priceRange=" + priceRange,
+            url: "/api/getAllCoupons?item=true&category=" + selectedCategory,
             method: "GET",
             beforeSend: function () {
                 $("#loading-cards").show();
             },
             success: function (response) {
                 $("#loading-cards").hide();
-                // console.log(response);
                 if (response.success) {
                     const items = response.coupons;
                     let itemsHTML = "";
-                    // TODO: give item image a fixed height
                     items.forEach((item) => {
                         itemsHTML += `
-                        <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                        <div class="col-12 col-sm-6 col-md-12 col-lg-6 col-xxl-4">
+                            <!-- Featured Card -->
                             <div class="nft-card card shadow-sm">
-                            <div class="card-body">
-                                <div class="img-wrap">
-                                <img class="fixed-size" src="${item.tokenImageUrl}" alt="${item.tokenName}">
-                                </div>
-                                <!-- Others Info -->
-                                <div class="row gx-2 align-items-center mt-3">
-                                <div class="col-8">
-                                    <span class="d-block fz-12"><i class="bi bi-bag me-1"></i>Available</span>
-                                </div>
-                                <div class="col-4 text-end">
-                                    <button class="wishlist-btn" type="button"><i class="bi"></i></button>
-                                </div>
-                                </div>
-                                <!-- Meta Info -->
-                                <div class="row gx-2 align-items-center mt-2">
-                                <div class="col-8">
-                                    <div class="name-info d-flex align-items-center">
-                                    <div class="author-img position-relative">
-                                        <img class="shadow" src="/assets/img/bg-img/u2.jpg" alt="">
-                                        <i class="bi bi-check position-absolute bg-success"></i>
+                                <div class="card-body">
+                                    <a href="/getItem/${item.collectionId}/${item.tokenId}">
+                                        <div class="img-wrap">
+                                            <img class="fixed-size" src="${item.tokenImageUrl}" alt="${item.tokenName}">
+                                            <!-- Badge -->
+                                            <div class="badge bg-primary position-absolute"><img src="/assets/img/core-img/fire.png" alt="">Available</div>
+                                        </div>
+                                    </a>
+                                    <br>
+                                    <!-- Meta Info -->
+                                    <div class="row gx-2 align-items-center mt-2">
+                                        <div class="col-8">
+                                            <div class="name-info d-flex align-items-center">
+                                                <div class="author-img position-relative"><img class="shadow" src="/assets/img/bg-img/u1.jpg" alt=""><i class="bi bi-check position-absolute bg-success"></i></div>
+                                                <div class="name-author"><a class="name d-block hover-primary fw-bold text-truncate" href="/getItem/${item.collectionId}/${item.tokenId}" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.tokenName} #${item.tokenId}">${item.tokenName} #${item.tokenId}</a><a class="author d-block fz-12 hover-primary text-truncate" href="#">@${item.ownerName}</a></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="price text-end"><span class="fz-12 d-block">Current Price</span>
+                                                <h6 class="mb-0">UNQ</h6>
+                                                <h6 class="mb-0">${new Intl.NumberFormat('en-US', { 
+                                                    minimumFractionDigits: 2, 
+                                                    maximumFractionDigits: 2 
+                                                }).format(item.finalPriceOfCoupon)}</h6>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="name-author">
-                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.tokenName}">${item.tokenName}</a>
-                                        <a class="author d-block fz-12 hover-primary text-truncate" href="#">@${item.ownerName}</a>
-                                    </div>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="price text-end">
-                                    <span class="fz-12 d-block">Current Price</span>
-                                    <h6 class="mb-0">UNQ</h6>
-                                    <h6 class="mb-0"> 
-
-                                        ${new Intl.NumberFormat('en-US', { 
-                                        minimumFractionDigits: 2, 
-                                        maximumFractionDigits: 2 
-                                    }).format(item.finalPriceOfCoupon)}</h6>
+                                    <!-- Button -->
+                                    <div class="row gx-2 align-items-center justify-content-center mt-3">
+                                        <div class="col-12 text-center"><a class="btn btn-primary btn-sm rounded-pill" href="/getItem/${item.collectionId}/${item.tokenId}">Purchase</a></div>
                                     </div>
                                 </div>
-                                <div class="col-12">
-                                    <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="/getItem/${item.collectionId}/${item.tokenId}" data-token-id="${item._id}" data-item-id="${item._id}" data-store-owner="${item.tokenOwnerAddress}" data-item-price="${item.priceOfCoupon}">Purchase</a>                                    
-                                    <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 pleasewait-btn" id="pleaseWait-${item._id}" href="#" style="display: none;" disabled>Please wait...</a>
-                                </div>
-                                </div>
-                            </div>
                             </div>
                         </div>
                         `;
@@ -241,9 +257,6 @@ $(document).ready(function () {
 
                     // Populate items into the #itemsContainer
                     $("#itemsContainer").html(itemsHTML);
-
-                    // Connect click handler to dynamically created buttons
-                    attachPurchaseHandlers();
                 } else {
                     $("#itemsContainer").html("<p>No items found.</p>");
                 }
@@ -253,120 +266,12 @@ $(document).ready(function () {
             },
         });
     }
-    // End: fetch and display items
 
-    // Handle purchase 
-    function attachPurchaseHandlers() {
-        $('.purchase-btn').off('click').on('click', function(event) {
-            event.preventDefault();
+    // Event listener for filter application
+    $("button[type='submit']").on("click", function () {
+        loadItems();
+    });
 
-            const purchaseButton = $(this);
-            const itemId = purchaseButton.data('item-id'); // Get the item id from data attribute
-            const itemPrice = parseFloat(purchaseButton.data('item-price')); // Get the item price from data attribute
-            const storeOwner = purchaseButton.data('store-owner'); // Get the store owner address
-            const quantity = 1; // Assume quantity is always 1 for simplicity
-            const tokenId = purchaseButton.data('token-id'); 
-            const pleaseWaitButton = $(`#pleaseWait-${itemId}`);
-
-            purchaseButton.hide();
-            pleaseWaitButton.show().prop('disabled', true);
-
-            const token = localStorage.getItem("token");
-
-            $.ajax({
-                url: '/api/purchaseItem', 
-                method: 'POST',
-                contentType: 'application/json', 
-                data: JSON.stringify({
-                    itemId: itemId,
-                    quantity: quantity
-                }),
-                headers: {
-                    Authorization: `Bearer ${token}` 
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Update quantity and total spent in localStorage
-                        let purchasedItems = JSON.parse(localStorage.getItem("purchasedItems")) || {};
-                        let totalSpent = parseFloat(localStorage.getItem("totalSpent")) || 0;
-                        let storeSpendings = JSON.parse(localStorage.getItem("storeSpendings")) || {};
-
-                        // Check if this store has any previous purchases
-                        if (!storeSpendings[storeOwner]) {
-                            storeSpendings[storeOwner] = 0;
-                        }
-
-                        // Add current item's price to store spending and total spent
-                        storeSpendings[storeOwner] += itemPrice * quantity;
-                        totalSpent += itemPrice * quantity;
-
-                        // Update purchased items
-                        if (purchasedItems[itemId]) {
-                            purchasedItems[itemId].quantity += quantity;
-                            purchasedItems[itemId].totalPrice += itemPrice * quantity;
-                        } else {
-                            purchasedItems[itemId] = {
-                                quantity: quantity,
-                                totalPrice: itemPrice * quantity
-                            };
-                        }
-
-                        // Save updated data back to localStorage
-                        localStorage.setItem("purchasedItems", JSON.stringify(purchasedItems));
-                        localStorage.setItem("totalSpent", totalSpent.toFixed(2));
-                        localStorage.setItem("storeSpendings", JSON.stringify(storeSpendings));
-
-                        // Check if customer has spent more than 5000 in this store
-                        // if (storeSpendings[storeOwner] > 5000) {
-                        //     console.log(`Customer has spent over 5000 in store: ${storeOwner}`);
-                        //         confetti({
-                        //             particleCount: 100,
-                        //             spread: 70,
-                        //             origin: { y: 0.6 },
-                        //         });
-                        //         // toastr.success("Successfully purchased 1 unit!");
-                        //     Swal.fire({
-                        //         title: "Coupon won!",
-                        //         text: "You've won a coupon! Check your profile for more details!",
-                        //         icon: "success",
-                        //         timer: 1500,  
-                        //         showConfirmButton: false  
-                        //     });
-                        // }
-
-                        Swal.fire({
-                            title: "Purchase Successful!",
-                            text: "You have successfully purchased 1 unit of this item! Buy more and stand a chance to win exclusive coupons.",
-                            icon: "success",
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
-
-                    } else {
-                        alert('Error: ' + response.error);
-                    }
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    let errorResponse = jqXHR.responseJSON;
-                    if (errorResponse && errorResponse.error) {
-                        Swal.fire({
-                            title: "Oooops!",
-                            text: errorResponse.error,
-                            icon: "error"
-                        });
-                    } else {
-                        alert('Error: An unexpected error occurred.');
-                    }
-                },
-                complete: function() {
-                    pleaseWaitButton.hide();
-                    purchaseButton.show();
-                }
-            });
-        });
-    }
-
-    // Load items when ready
-    loadItems();
+    loadItems(); // Initially load items
 });
 </script>

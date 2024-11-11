@@ -1,6 +1,17 @@
 <%- include('../partials/home/header') %>
 
 
+<style>
+  .fixed-size {
+    width: 100%; /* Ensures the image takes full width of its container */
+    height: 150px; /* Set a fixed height */
+    object-fit: cover; /* Ensures the image scales without distorting aspect ratio */
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+</style>
+
+
 
 
 
@@ -88,7 +99,7 @@ $(document).ready(function () {
                             <div class="nft-card card shadow-sm">
                             <div class="card-body">
                                 <div class="img-wrap">
-                                <img src="${coupon.tokenImageUrl}" alt="${coupon.tokenName}">
+                                <img class="fixed-size" src="${coupon.tokenImageUrl}" alt="${coupon.tokenName}">
                                 </div>
                                 <!-- Others Info -->
                                 <div class="row gx-2 align-items-center mt-3">
@@ -123,7 +134,7 @@ $(document).ready(function () {
                                     </div>
                                 </div>
                                 <div class="col-12">
-                                    <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 purchase-btn" href="#" data-collection-id="${coupon.collectionId}" data-token-id="${coupon.tokenId}" data-item-id="${coupon._id}">Purchase Now</a>
+                                    <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 purchase-btn" href="#" data-collection-id="${coupon.collectionId}" data-token-id="${coupon.tokenId}" data-item-id="${coupon._id}">Purchase</a>
                                     <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 pleasewait-btn" id="pleaseWait-${coupon._id}" href="#" style="display: none;" disabled>Please wait...</a>
                                 </div>
                                 </div>
