@@ -8,7 +8,7 @@ import SpecialTokenModel from "../models/SpecialToken.js";
 
 // Controller to create a new collection
 export const createCollectionController = async (req, res) => {
-  const { tokenPrefix, name, description } = req.body;
+  const { tokenPrefix, name, description, collectionImageUrl } = req.body;
   const userId = req.user.id;
 
   try {
@@ -47,6 +47,12 @@ export const createCollectionController = async (req, res) => {
         name,
         description,
         tokenPrefix,
+        permissions: {
+          nesting: {
+            tokenOwner: true,
+            collectionAdmin: true,
+          },
+        },
       });
 
     console.log(isCompleted);
@@ -78,6 +84,7 @@ export const createCollectionController = async (req, res) => {
       walletAddress: address,
       name,
       description,
+      collectionImageUrl,
     });
 
     res.status(200).json({
@@ -85,7 +92,8 @@ export const createCollectionController = async (req, res) => {
       message: "Collection created successfully",
       collectionPayload,
     });
-  } catch (error) {7
+  } catch (error) {
+    7;
     res.status(500).json({
       success: false,
       message: "An error occurred while creating the collection",
@@ -147,9 +155,9 @@ export const mintToken = async (req, res) => {
       address,
       collectionId,
       data: {
-        image: {
-          ipfsCid: tokenImageUrl,
-        },
+        // image: {
+        //   ipfsCid: tokenImageUrl,
+        // },
         name: {
           _: tokenName,
         },
@@ -184,6 +192,13 @@ export const mintToken = async (req, res) => {
         },
         isItem,
       });
+
+      // Update the collection to include the new token
+      await CollectionModel.findOneAndUpdate(
+        { collectionId },
+        { $push: { tokens: mintToken._id } },
+        { new: true }
+      );
 
       return res.status(200).json({
         success: true,
@@ -242,7 +257,7 @@ export const getUserToken = async (req, res) => {
 
     const userAddress = user.accountAddress;
 
-    // Retrieve standard tokens owned by the user    
+    // Retrieve standard tokens owned by the user
     const tokens = await TokenModel.find({
       tokenOwnerAddress: userAddress,
       isItem: { $ne: true }, // Ensure standard tokens are not items
@@ -256,9 +271,8 @@ export const getUserToken = async (req, res) => {
     // item tokens owned by the user
     const itemTokens = await TokenModel.find({
       tokenOwnerAddress: userAddress,
-      isItem: true, 
+      isItem: true,
     });
-
 
     const allTokens = {
       standardTokens: tokens || [],
@@ -316,6 +330,7 @@ export const createSpecialToken = async (req, res) => {
     tokenDescription,
     tokenImageUrl,
     priceOfCoupon,
+    category,
   } = req.body;
   const userId = req.user.id;
   try {
@@ -374,6 +389,7 @@ export const createSpecialToken = async (req, res) => {
         tokenName,
         tokenDescription,
         tokenImageUrl,
+        category,
         tokenOwnerAddress: address,
         tokenOwnerId: user._id,
         tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
@@ -407,30 +423,28 @@ export const getItemsByCategory = async (req, res) => {
   const { category } = req.params;
 
   try {
-    const tokens = await TokenModel.find({ 
+    const tokens = await TokenModel.find({
       category,
       isItem: true,
-      isPurchased: false 
+      isPurchased: false,
     });
 
     if (!tokens.length) {
       return res.status(200).json({
         success: true,
         message: `No items found for category: ${category}`,
-        tokens: []
+        tokens: [],
       });
     }
 
     res.status(200).json({
       success: true,
-      tokens
+      tokens,
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message ? error.message : error
+      error: error.message ? error.message : error,
     });
   }
-  
-}
+};

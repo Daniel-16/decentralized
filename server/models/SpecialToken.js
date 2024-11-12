@@ -28,6 +28,11 @@ const SpecialTokenSchema = new mongoose.Schema({
     default: 0,
     required: true,
   },
+  category: {
+    type: String,
+    enum: ["pizza", "coffee", "delivery"],
+    required: true,
+  },
   metadata: {
     storeAddress: String,
     storeId: {

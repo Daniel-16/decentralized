@@ -1,18 +1,23 @@
 <%- include('../partials/admin/header') %>
 
-
-
-
-
-
 <div class="admin-wrapper">
-    <div class="container">
-        <h5 class="mb-3">All My Collections</h5>
+    <div class="container-fluid px-4">
+        <div class="collections-header mb-4">
+            <h3 class="mb-3">My Collections</h3>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="search-filter d-flex gap-3">
+                    <input type="text" class="form-control" placeholder="Search collections..." id="searchCollections">
+                    <select class="form-select" id="sortCollections">
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+                        <option value="name">Name</option>
+                    </select>
+                </div>
+                <a href="/collection/create" class="btn btn-primary">Create Collection</a>
+            </div>
+        </div>
         <div class="row g-4" id="collections-container">
-            
-                
-
-
+            <!-- Collections will be dynamically inserted here -->
         </div>
     </div>
 </div>
@@ -206,46 +211,66 @@ $(document).ready(function() {
                             }
 
                             const collectionItem = `
-                            <div class="col-12 col-sm-6 col-xl-4 col-xxl-4">
-                                <div class="nft-card card border-0">
-                                    <div class="card-body">
-                                        <!-- Others Info -->
-                                        <div class="row gx-2 align-items-center mt-3">
-                                            <div class="col-8">
-                                                <span class="d-block fz-12"><i class="bi bi-bag me-1"></i>Tokens available</span>
-                                            </div>
-                                        </div>
-                                        <!-- Meta Info -->
-                                        <div class="row gx-2 align-items-center mt-2">
-                                            <div class="col-12">
-                                                <div class="name-info d-flex align-items-center">
-                                                    <div class="name-author">
-                                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="${collection.name}">Collection Name: ${collection.name}</a>
-                                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="${collection.collectionId}">Collection ID: #${collection.collectionId}</a>
-                                                    </div>
+                            <div class="col-12 col-sm-6 col-lg-4 mb-4">
+                                <div class="collection-card card h-100 border-0 shadow-sm">
+                                    <div class="collection-banner position-relative">
+                                        ${collection.collectionImageUrl ? 
+                                            `<img src="${collection.collectionImageUrl}" 
+                                                 class="card-img-top collection-image" 
+                                                 alt="${collection.name}"
+                                                 style="height: 300px; object-fit: cover;">` 
+                                            : `<div class="placeholder-image bg-light d-flex align-items-center justify-content-center" 
+                                                  style="height: 300px;">
+                                                  <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                                               </div>`
+                                        }
+                                        <div class="collection-stats position-absolute bottom-0 start-0 w-100 p-3 bg-gradient-dark">
+                                            <div class="d-flex justify-content-between text-white">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="bi bi-collection me-1"></i>
+                                                    <small>${collection.tokens ? (collection.tokens.length === 1 ? '1 token' : `${collection.tokens.length} tokens`) : '0 tokens'}</small>
+                                                </div>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="bi bi-calendar me-1"></i>
+                                                    <small>${new Date(collection.createdAt).toLocaleDateString()}</small>
                                                 </div>
                                             </div>
-                                            
-                                            <div class="col-6">
-                                                <a class="btn btn-warning rounded-pill btn-sm mt-3 w-100 btn-mint-token" href="#" 
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-2 text-truncate">${collection.name}</h5>
+                                        
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-sm btn-mint-token flex-grow-1"
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#transferModal" 
                                                     data-token-id="${collection.tokenId}" 
-                                                    data-collection-id="${collection.collectionId}">
-                                                    Mint New Token
-                                                </a>
-                                            </div>
-                                            
-                                            <div class="col-6">
-                                                <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 btn-mint-token" href="#" 
+                                                    data-collection-id="${collection.collectionId}"
+                                                    style="background: linear-gradient(135deg, #6B73FF 0%, #000DFF 100%); 
+                                                           color: white; 
+                                                           border: none;
+                                                           border-radius: 20px;
+                                                           padding: 8px 15px;
+                                                           font-weight: 500;
+                                                           transition: all 0.3s ease;
+                                                           box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                                                <i class="bi bi-plus-circle me-1"></i> Mint Token
+                                            </button>
+                                            <button class="btn btn-sm btn-mint-item flex-grow-1"
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#mintItemModal" 
                                                     data-mtoken-id="${collection.tokenId}" 
-                                                    data-mcollection-id="${collection.collectionId}">
-                                                    Mint New Item
-                                                </a>
-                                            </div>
-                                            
+                                                    data-mcollection-id="${collection.collectionId}"
+                                                    style="background: linear-gradient(135deg, #FF6B6B 0%, #FF000D 100%); 
+                                                           color: white; 
+                                                           border: none;
+                                                           border-radius: 20px;
+                                                           padding: 8px 15px;
+                                                           font-weight: 500;
+                                                           transition: all 0.3s ease;
+                                                           box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                                                <i class="bi bi-box me-1"></i> Mint Item
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -254,8 +279,39 @@ $(document).ready(function() {
 
                             $('#collections-container').append(collectionItem);
 
+                            // Add hover effects with jQuery
+                            $('.btn-mint-token').hover(
+                                function() {
+                                    $(this).css({
+                                        'transform': 'translateY(-2px)',
+                                        'box-shadow': '0 4px 8px rgba(0,0,0,0.3)'
+                                    });
+                                },
+                                function() {
+                                    $(this).css({
+                                        'transform': 'translateY(0)',
+                                        'box-shadow': '0 2px 5px rgba(0,0,0,0.2)'
+                                    });
+                                }
+                            );
+
+                            $('.btn-mint-item').hover(
+                                function() {
+                                    $(this).css({
+                                        'transform': 'translateY(-2px)',
+                                        'box-shadow': '0 4px 8px rgba(0,0,0,0.3)'
+                                    });
+                                },
+                                function() {
+                                    $(this).css({
+                                        'transform': 'translateY(0)',
+                                        'box-shadow': '0 2px 5px rgba(0,0,0,0.2)'
+                                    });
+                                }
+                            );
+
                             // Attach click event handler for mint buttons
-                            $('.btn-mint-token').on('click', function(e) {
+                            $('.btn-mint-token, .btn-mint-item').on('click', function(e) {
                                 e.preventDefault();
                                 // Get token ID and collection ID from data attributes
                                 const tokenId = $(this).data('token-id');
@@ -270,15 +326,13 @@ $(document).ready(function() {
                                 // console.log(mint_collectionId)
                                 $('#mint_tokenId').val(tokenId);
                                 $('#mint_collectionId').val(mint_collectionId);
-                                // Show the modal for token transfer/minting
-                                // $('#transferModal').fadeIn();
                             });
                         });
                     } else {
                         $('#collections-container').append('<p>No collections created for this user.</p>');
                     }
                 } else {
-                    $('#collections-container').append('<p>Error fetching collections.</p>');
+                    $('#collections-container').append('<p>Error fetching collections. Please try again later.</p>');
                 }
             },
             error: function(xhr) {
@@ -301,6 +355,36 @@ $(document).ready(function() {
         if (event.target === $('#transferModal')[0]) {
             $('#transferModal').fadeOut();
         }
+    });
+
+    // Add these event listeners after fetchUserCollections is called
+    $('#searchCollections').on('input', function() {
+        const searchTerm = $(this).val().toLowerCase();
+        $('.collection-card').each(function() {
+            const collectionName = $(this).find('.card-title').text().toLowerCase();
+            $(this).closest('.col-12').toggle(collectionName.includes(searchTerm));
+        });
+    });
+
+    $('#sortCollections').on('change', function() {
+        const sortBy = $(this).val();
+        const $container = $('#collections-container');
+        const $items = $container.children('.col-12').get();
+
+        $items.sort(function(a, b) {
+            const nameA = $(a).find('.card-title').text().toLowerCase();
+            const nameB = $(b).find('.card-title').text().toLowerCase();
+            
+            if (sortBy === 'newest') {
+                return $(b).data('created-at') - $(a).data('created-at');
+            } else if (sortBy === 'oldest') {
+                return $(a).data('created-at') - $(b).data('created-at');
+            } else {
+                return nameA.localeCompare(nameB);
+            }
+        });
+
+        $container.empty().append($items);
     });
 });
 </script>
@@ -513,7 +597,7 @@ $(document).ready(function() {
         const fileError = document.getElementById('fileError');
 
         // Allowed file size (5MB in bytes)
-        const maxSize = 2 * 1024 * 1024 * 1024 * 1024 * 1024;
+        const maxSize = 5 * 1024 * 1024;
 
         // Validate file type
         const validFileTypes = ['image/png', 'image/jpg', 'image/jpeg'];
@@ -525,6 +609,7 @@ $(document).ready(function() {
         if (!fileTypeValid || !fileSizeValid) {
             fileError.style.display = 'block';
             event.target.value = ''; // Clear the input
+            return false;
         } else {
             fileError.style.display = 'none'; // Hide error message
             previewImage(event); // Call the preview image function if validation passes
@@ -573,10 +658,3 @@ $(document).ready(function() {
 
 
 <%- include('../partials/admin/footer') %>
-
-
-
-
-
-
-
