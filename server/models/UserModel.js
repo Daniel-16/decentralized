@@ -54,6 +54,18 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
+  currentStreak: {
+    type: Number,
+    default: 0
+  },
+  lastStreakUpdate: {
+    type: Date,
+    default: null
+  },
+  highestStreak: {
+    type: Number,
+    default: 0
+  },
   createdAt: {
     type: Date,
     default: Date.now

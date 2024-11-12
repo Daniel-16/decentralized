@@ -5,6 +5,7 @@ import { Sr25519Account } from "@unique-nft/sr25519";
 import { getUserBalance } from "./getUserBalance.js";
 // import { Address } from "@unique-nft/utils";
 import { assignDailyPoints } from "../utils/dailyPoints.js";
+import { updateLoginStreak } from "../utils/streakHandler.js";
 
 export const createUser = async (req, res) => {
   const { username, email, password } = req.body;
@@ -74,6 +75,9 @@ export const loginUser = async (req, res) => {
       });
     }
 
+    // Update login streak
+    const streakInfo = await updateLoginStreak(user._id);
+    
     // Assign daily points
     await assignDailyPoints(user._id);
 
@@ -81,7 +85,11 @@ export const loginUser = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      user,
+      user: {
+        ...user.toObject(),
+        currentStreak: streakInfo.currentStreak,
+        highestStreak: streakInfo.highestStreak
+      },
       token,
     });
   } catch (error) {

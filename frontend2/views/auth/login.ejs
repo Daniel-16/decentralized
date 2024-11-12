@@ -96,11 +96,20 @@
                 localStorage.setItem("email", response.user.email);
                 localStorage.setItem("accountAddress", response.user.accountAddress);
                 localStorage.setItem("hasReceivedToken", response.user.hasReceivedToken);
+                localStorage.setItem("currentStreak", response.user.currentStreak);
+                localStorage.setItem("highestStreak", response.user.highestStreak);
+
+                // Update streak display if on dashboard
+                $("#currentStreak").text(response.user.currentStreak);
+                $("#highestStreak").text(response.user.highestStreak);
 
                 Swal.fire({
                     position: "center",
                     icon: "success",
                     title: "Login Successful",
+                    text: response.user.currentStreak > 1 ? 
+                      `🔥 ${response.user.currentStreak} day streak! Keep it up!` : 
+                      "Welcome back!",
                     showConfirmButton: false,
                     timer: 1500,
                 });
