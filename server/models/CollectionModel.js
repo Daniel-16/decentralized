@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const CollecionSchema = new mongoose.Schema({
   collectionOwner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "User", 
     required: true,
   },
   collectionId: {
@@ -22,12 +22,17 @@ const CollecionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  // token: [
-  //   {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: "Token",
-  //   },
-  // ],
+  collectionImageUrl: String,
+  tokens: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Token",
+    },
+  ],
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
 const CollectionModel = mongoose.model("Collection", CollecionSchema);

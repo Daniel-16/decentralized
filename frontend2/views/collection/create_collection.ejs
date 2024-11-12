@@ -42,6 +42,14 @@
                                     </div>
                                 </div>
                                 
+                                <div class="col-12">
+                                    <div class="form-group mb-4">
+                                        <label class="mb-2 fz-16" for="collectionImage">Collection Image</label>
+                                        <input class="form-control" accept=".png, .jpg, .jpeg" name="collectionImage" id="collectionImage" type="file" required>
+                                        <small class="text-danger" id="collectionImageError" style="display: none;">Please upload a valid image (PNG, JPG, JPEG) and make sure it's less than 5MB.</small>
+                                    </div>
+                                </div>
+
                                 <div class="col-12 col-md-12">
                                     <button class="btn btn-primary rounded-pill w-100" type="submit" id="createButton">Create</button>
                                 </div>
@@ -79,70 +87,87 @@
         // Hide the Create button and show the loading message
         $('#createButton').hide();
         $('#loadingMessage').show();
-        // $('#loadingMessage').removeClass('d-none');
 
         const collectionName = $('#name').val();
         const description = $('#description').val();
         const tokenPrefix = $('#tokenPrefix').val();
+        const fileInput = $("#collectionImage")[0].files[0];
 
-        const token = localStorage.getItem('token');
+        if (!fileInput) {
+            alert("Please select an image for the collection.");
+            $('#cover-spin').hide(0);
+            $('#createButton').show();
+            $('#loadingMessage').hide();
+            return;
+        }
 
-        $.ajax({
-            // url: '/api/createAndMint',
-            // url: '/api/mintToken',
-            url: '/api/createCollection',
-            method: 'POST',
-            contentType: 'application/json',
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            data: JSON.stringify({
-                name: collectionName, 
-                description: description,
-                tokenPrefix: tokenPrefix,
-            }),
-            success: function(response) {
-                $('#cover-spin').hide(0);
-                if (response.success) {
+        if (!validateCollectionImage(fileInput)) {
+            alert("Please upload a valid image (PNG, JPG, JPEG) and make sure it's less than 5MB.");
+            $('#cover-spin').hide(0);
+            $('#createButton').show();
+            $('#loadingMessage').hide();
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.readAsDataURL(fileInput);
+        reader.onload = function() {
+            const base64Image = reader.result;
+            const token = localStorage.getItem('token');
+
+            $.ajax({
+                url: '/api/createCollection',
+                method: 'POST',
+                contentType: 'application/json',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                data: JSON.stringify({
+                    name: collectionName,
+                    description: description,
+                    tokenPrefix: tokenPrefix,
+                    collectionImageUrl: base64Image
+                }),
+                success: function(response) {
+                    $('#cover-spin').hide(0);
+                    if (response.success) {
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: response.message,
+                            showConfirmButton: true,
+                            timer: 1500,
+                        });
+                        fetchUserBalance();
+                        location.assign('/collection/my-collections')
+                    } else {
+                        $('#loadingMessage').hide();
+                        $('#createButton').show();
+                        $('#response').html(`<p class="error">Error: ${response.error}</p>`);
+                    }
+                },
+                error: function(jqXHR) {
+                    $('#loadingMessage').hide();
+                    $('#createButton').show();
+                    $('#cover-spin').hide(0);
+                    $('#response').html(`<p class="error">An error occurred: ${jqXHR.responseText}</p>`);
                     Swal.fire({
                         position: "center",
-                        icon: "success",
-                        title: response.message,
+                        icon: "error",
+                        title: "An error occurred",
                         showConfirmButton: true,
                         timer: 1500,
                     });
-                    $('#response').html(
-                        `
-                        <div class="alert">
-                        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                        ${response.message} <br> Collection ID: ${response.collectionPayload.collectionId} <br> Token ID: ${response.collectionPayload.tokenId}
-                        </div>
-                        `
-                    );
-                    // Refresh user balance after creating a collection
-                    fetchUserBalance();
-
-                    // location.reload();
-                    location.assign('/collection/my-collections')
-                } else {
-                    $('#loadingMessage').hide();
-                    $('#response').html(`<p class="error">Error: ${response.error}</p>`);
                 }
-            },
-            error: function(jqXHR) {
-                $('#loadingMessage').hide();
-                $('#createButton').show();
-                $('#cover-spin').hide(0);
-                $('#response').html(`<p class="error">An error occurred: ${jqXHR.responseText}</p>`);
-                Swal.fire({
-                    position: "center",
-                    icon: "error",
-                    title: response.message,
-                    showConfirmButton: true,
-                    timer: 1500,
-                });
-            }
-        });
+            });
+        };
+
+        reader.onerror = function() {
+            alert("There was an error reading the file.");
+            $('#cover-spin').hide(0);
+            $('#createButton').show();
+            $('#loadingMessage').hide();
+        };
     });
 
     // Function to fetch user balance
@@ -168,6 +193,20 @@
                 console.log(jqXHR);
             }
         });
+    }
+
+    function validateCollectionImage(file) {
+        // Allowed file size (5MB in bytes)
+        const maxSize = 5 * 1024 * 1024;
+        
+        // Validate file type
+        const validFileTypes = ['image/png', 'image/jpg', 'image/jpeg'];
+        const fileTypeValid = validFileTypes.includes(file.type);
+        
+        // Validate file size
+        const fileSizeValid = file.size <= maxSize;
+        
+        return fileTypeValid && fileSizeValid;
     }
 });
 </script>
