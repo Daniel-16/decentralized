@@ -4,7 +4,7 @@ import UserModel from "../models/UserModel.js";
 
 export const getAllCoupons = async (req, res) => {
   try {
-    const { item, category, priceRange } = req.query;
+    const { item, category, priceRange, recent } = req.query;
 
     let searchQuery = {
       isPurchased: false,
@@ -16,15 +16,19 @@ export const getAllCoupons = async (req, res) => {
     }
 
     if (category && category !== "all") {
-      searchQuery.category = category; // Assuming coupons have a `category` field
+      searchQuery.category = category;
     }
 
     if (priceRange) {
       const [minPrice, maxPrice] = priceRange.split("-").map(Number);
-      searchQuery.finalPriceOfCoupon = { $gte: minPrice, $lte: maxPrice }; // Assuming coupons have `finalPriceOfCoupon` field
+      searchQuery.finalPriceOfCoupon = { $gte: minPrice, $lte: maxPrice };
     }
 
-    const coupons = await TokenModel.find(searchQuery);
+    const sortQuery = recent === "true" ? { createdAt: -1 } : {};
+
+    const coupons = await TokenModel.find(searchQuery).sort(sortQuery);
+
+    // const coupons = await TokenModel.find(searchQuery);
 
     const couponsWithOwners = await Promise.all(
       coupons.map(async (coupon) => {

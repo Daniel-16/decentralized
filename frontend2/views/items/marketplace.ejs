@@ -8,6 +8,31 @@
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
   }
+  
+  /* Add new ribbon styles */
+  .ribbon-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    overflow: hidden;
+    width: 100px;
+    height: 100px;
+  }
+  
+  .ribbon {
+    position: absolute;
+    top: 15px;
+    right: -35px;
+    padding: 5px 40px;
+    transform: rotate(45deg);
+    background: #ff6b6b;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+    text-align: center;
+  }
 </style>
 
 <!-- Breadcrumb -->
@@ -94,13 +119,12 @@
                         <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
                             <div class="nft-card card shadow-sm">
                             <div class="card-body">
-                                <div class="img-wrap">
-                                <a href="/getCoupon/${coupon.collectionId}/${
-                coupon.tokenId
-              }">
-                                    <img class="fixed-size" src="${
-                                      coupon.tokenImageUrl
-                                    }" alt="${coupon.tokenName}">
+                                <div class="img-wrap position-relative">
+                                <a href="/getCoupon/${coupon.collectionId}/${coupon.tokenId}">
+                                    <img class="fixed-size" src="${coupon.tokenImageUrl}" alt="${coupon.tokenName}">
+                                    <div class="ribbon-wrapper">
+                                        <div class="ribbon">${coupon.discount || 'COUPON'}</div>
+                                    </div>
                                 </a>
                                 </div>
                                 <!-- Others Info -->

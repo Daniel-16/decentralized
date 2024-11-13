@@ -11,6 +11,39 @@
     }
 
 
+  .fixed-size-coupon {
+    width: 100%; /* Ensures the image takes full width of its container */
+    height: 150px; /* Set a fixed height */
+    object-fit: cover; /* Ensures the image scales without distorting aspect ratio */
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+
+      /* Add new ribbon styles */
+  .ribbon-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    overflow: hidden;
+    width: 100px;
+    height: 100px;
+  }
+  
+  .ribbon {
+    position: absolute;
+    top: 15px;
+    right: -35px;
+    padding: 5px 40px;
+    transform: rotate(45deg);
+    background: #ff6b6b;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+    text-align: center;
+  }
+
 /* 
     .cards {
         display: flex;
@@ -25,7 +58,7 @@
 
     .image {
         img {
-            max-width: 100%;
+            max-widIth: 100%;
             border-top-left-radius: 5px;
             border-top-right-radius: 5px;
         }
@@ -96,193 +129,8 @@
 </div>
     <div class="divider"></div>
 
-    <!-- new items container -->
-    <div class="live-bidding-wrapper">
-      <div class="container">
-        <div class="row align-items-center">
-          <div class="col-7">
-            <div class="section-heading d-flex align-items-center">
-              <!-- <div class="spinner-grow text-danger" role="status"><span class="visually-hidden">Loading...</span></div> -->
-              <h2 class="mb-0 ms-3">Discover Items</h2>
-            </div>
-          </div>
-          <div class="col-5 text-end"><a class="btn rounded-pill btn-outline-primary btn-sm border-2 mb-5" href="/shop/items">View All Items</a></div>
-        </div>
-      </div>
-      <div class="container">
-        <div class="row g-4 justify-content-center" id="loading-cards">
-            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-                <div class="cards">
-                    <div class="card is-loading">
-                        <div class="image"></div>
-                        <div class="content">
-                        <h2></h2>
-                        <p></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-                <div class="cards">
-                    <div class="card is-loading">
-                        <div class="image"></div>
-                        <div class="content">
-                        <h2></h2>
-                        <p></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-                <div class="cards">
-                    <div class="card is-loading">
-                        <div class="image"></div>
-                        <div class="content">
-                        <h2></h2>
-                        <p></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-                <div class="cards">
-                    <div class="card is-loading">
-                        <div class="image"></div>
-                        <div class="content">
-                        <h2></h2>
-                        <p></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row g-4 justify-content-center" id="itemsContainer">
-
-
-
-        </div>
-      </div>
-    </div>
-  <!-- end: new items container -->
-
-    <div class="divider"></div>
-
-
-    <!-- process of kooponcraft -->
-    <div class="process-wrapper" data-aos="zoom-in" data-aos-duration="500" data-aos-delay="200">
-      <div class="container">
-        <div class="row g-4 g-xxl-5 align-items-center justify-content-center">
-          <div class="col-12 col-sm-6 col-xl-3">
-            <!-- Single Card-->
-            <div class="single-process-card card bg-gray border-0" data-aos="fade-up" data-aos-duration="750" data-aos-delay="400">
-              <div class="card-body p-4 text-center"><img class="mb-3 mx-auto" src="/assets/img/illustrator/4.png" alt="">
-                <h5 class="mb-3">Sign Up &amp; Create wallet</h5>
-                <p class="mb-0">
-                    Join the KooponCraft community by signing up and creating your digital wallet.
-                </p>
-              </div>
-              <!-- Step -->
-              <div class="step-number">1</div>
-            </div>
-          </div>
-          <div class="col-12 col-sm-6 col-xl-3">
-            <!-- Single Card-->
-            <div class="single-process-card card bg-gray border-0" data-aos="fade-up" data-aos-duration="750" data-aos-delay="600">
-              <div class="card-body p-4 text-center"><img class="mb-3 mx-auto" src="/assets/img/illustrator/2.png" alt="">
-                <h5 class="mb-3">Start shopping. Browse the Marketplace</h5>
-                <p class="mb-0">
-                    Explore stores on the KooponCraft marketplace to find exciting items like 
-                    home appliances, materials, and other exclusive products.
-                </p>
-              </div>
-              <!-- Step -->
-              <div class="step-number">2</div>
-            </div>
-          </div>
-          <div class="col-12 col-sm-6 col-xl-3">
-            <!-- Single Card-->
-            <div class="single-process-card card bg-gray border-0" data-aos="fade-up" data-aos-duration="750" data-aos-delay="800">
-              <div class="card-body p-4 text-center"><img class="mb-3 mx-auto" src="/assets/img/illustrator/3.png" alt="">
-                <h5 class="mb-3">Make a Purchase</h5>
-                <p class="mb-0">
-                    Purchase any item using your wallet, and automatically stand a chance to 
-                    win a coupon that can be redeemed, sold, or traded within the platform.
-                </p>
-              </div>
-              <!-- Step -->
-              <div class="step-number">3</div>
-            </div>
-          </div>
-          <div class="col-12 col-sm-6 col-xl-3">
-            <!-- Single Card-->
-            <div class="single-process-card card bg-gray border-0" data-aos="fade-up" data-aos-duration="750" data-aos-delay="1000">
-              <div class="card-body p-4 text-center"><img class="mb-3 mx-auto" src="/assets/img/illustrator/1.png" alt="">
-                <h5 class="mb-3">Redeem or Trade Your Coupons</h5>
-                <p class="mb-0">
-                    After winning a coupon, use it to unlock discounts, 
-                    or trade it with other users on the platform. You control how 
-                    you use your winnings!</p>
-              </div>
-              <!-- Step -->
-              <div class="step-number">4</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- end: process of kooponcraft -->
-
-        <div class="divider"></div>
-          <div class="popular-collection-wrapper">
-            <div class="container">
-              <div class="section-heading position-relative z-index-1000 d-flex align-items-center justify-content-center">
-                <h2 class="mb-0">Our Top Performers</h2>
-                <select class="popular-collection-select" id="popularSelect">
-                  <option selected value="1">Everyday</option>
-
-                </select>
-              </div>
-            </div>
-            <div class="container">
-              <div class="row g-4 justify-content-center" id="leaderboard-container">
-                <!-- Single Card -->
-                <div class="col-12 col-sm-10 col-md-6 col-xl-4">
-                  <div class="nft-card card shadow-sm">
-                    <div class="card-body">
-                      <div class="row align-items-center g-3">
-                        <div class="col-4">
-                          <div class="img-wrap"><img src="/assets/img/bg-img/25.jpg" alt="">
-                            <div class="badge bg-danger position-absolute px-2 py-1">#1</div>
-                          </div>
-                        </div>
-                        <div class="col-8">
-                          <!-- Meta Info -->
-                          <div class="meta-info">
-                            <div class="name-info d-flex align-items-center mb-3">
-                              <div class="author-img position-relative"><img class="shadow" src="/assets/img/bg-img/u1.jpg" alt=""><i class="bi bi-check position-absolute bg-success"></i></div>
-                              <div class="name-author"><a class="name d-block hover-primary fw-bold text-truncate" href="item-details.html" data-bs-toggle="tooltip" data-bs-placement="top" title="Trees Growing Seedlings">Trees Growing Seedlings</a><a class="author d-block fz-12 hover-primary text-truncate" href="author.html">@designing_world</a></div>
-                            </div>
-                            <div class="price-bid d-flex align-items-center">
-                              <div class="price me-2 me-sm-3">
-                                <h6 class="mb-0 d-inline-block fz-14 border border-2 border-info rounded py-1 px-2 text-info">0.06 ETH</h6>
-                              </div><a class="btn btn-minimal btn-sm hover-primary d-flex align-items-center" href="#"><img class="me-1" src="/assets/img/core-img/fire.png" alt="">Place bid</a>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-
-              </div>
-            </div>
-          </div>
-
-        <div class="divider"></div>
-
-
-        <!-- explore categories -->
+    
+            <!-- explore categories -->
         <div class="collection-wrapper">
           <div class="container">
             <div class="row">
@@ -387,28 +235,359 @@
         </div>
     <!-- end: explore categories -->
 
-    
 
 
-    <div class="divider"></div>
-    <div class="discover-nft-wrapper bg-gray pt-120 pb-120">
+    <!-- new items container -->
+    <!-- <div class="live-bidding-wrapper">
       <div class="container">
-        <div class="section-heading">
-          <h2 class="mb-0">Discover Stores</h2>
+        <div class="row align-items-center">
+          <div class="col-7">
+            <div class="section-heading d-flex align-items-center">
+              <h2 class="mb-0 ms-3">Discover Items</h2>
+            </div>
+          </div>
+          <div class="col-5 text-end"><a class="btn rounded-pill btn-outline-primary btn-sm border-2 mb-5" href="/shop/items">View All Items</a></div>
         </div>
       </div>
-      <!-- Discover Filter Options-->
-      <div class="discover-filter-options mb-5">
-        <div class="container">
-          <div class="row g-4 justify-content-center">
-            <div class="col-12 col-sm-6 col-lg-6">
-              <h3>Oops!🤧 We're currently working on this. Stay tuned🙏 </h3>
+      <div class="container">
+        <div class="row g-4 justify-content-center" id="loading-cards">
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <div class="cards">
+                    <div class="card is-loading">
+                        <div class="image"></div>
+                        <div class="content">
+                        <h2></h2>
+                        <p></p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <div class="cards">
+                    <div class="card is-loading">
+                        <div class="image"></div>
+                        <div class="content">
+                        <h2></h2>
+                        <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <div class="cards">
+                    <div class="card is-loading">
+                        <div class="image"></div>
+                        <div class="content">
+                        <h2></h2>
+                        <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <div class="cards">
+                    <div class="card is-loading">
+                        <div class="image"></div>
+                        <div class="content">
+                        <h2></h2>
+                        <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-4 justify-content-center" id="itemsContainer">
+
+
+
+        </div>
+      </div>
+    </div> -->
+  <!-- end: new items container -->
+
+
+
+
+      <div class="divider"></div>
+
+      <!-- trending in stores -->
+    <div class="featured-nfts-wrap">
+      <div class="container">
+        <div class="row">
+          <div class="col-7">
+            <div class="section-heading">
+              <h2 class="mb-0">Trending In Stores</h2>
+            </div>
+          </div>
+          <div class="col-4 text-end"><a class="btn rounded-pill btn-outline-primary btn-sm border-2 mb-5" href="/shop/items">View All Items</a></div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <!-- Featured NFT's Slide-->
+             
+            <div class="featured-nfts-slide">
+
+            </div>
+          </div>
+        </div>
+      </div>
+            <div class="container">
+        <div class="row g-4 justify-content-center" id="loading-cards">
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <div class="cards">
+                    <div class="card is-loading">
+                        <div class="image"></div>
+                        <div class="content">
+                        <h2></h2>
+                        <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <div class="cards">
+                    <div class="card is-loading">
+                        <div class="image"></div>
+                        <div class="content">
+                        <h2></h2>
+                        <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <div class="cards">
+                    <div class="card is-loading">
+                        <div class="image"></div>
+                        <div class="content">
+                        <h2></h2>
+                        <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <div class="cards">
+                    <div class="card is-loading">
+                        <div class="image"></div>
+                        <div class="content">
+                        <h2></h2>
+                        <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-4 justify-content-center" id="itemsContainer">
+
+
+
+        </div>
+      </div>
+    </div>
+    <!-- end: trending in stores -->
+
+
+
+    
+
+    <div class="divider"></div>
+
+
+    <!-- process of kooponcraft -->
+    <div class="process-wrapper" data-aos="zoom-in" data-aos-duration="500" data-aos-delay="200">
+      <div class="container">
+        <div class="row g-4 g-xxl-5 align-items-center justify-content-center">
+          <div class="col-12 col-sm-6 col-xl-3">
+            <!-- Single Card-->
+            <div class="single-process-card card bg-gray border-0" data-aos="fade-up" data-aos-duration="750" data-aos-delay="400">
+              <div class="card-body p-4 text-center"><img class="mb-3 mx-auto" src="/assets/img/illustrator/4.png" alt="">
+                <h5 class="mb-3">Sign Up &amp; Create wallet</h5>
+                <p class="mb-0">
+                    Join the KooponCraft community by signing up and creating your digital wallet.
+                </p>
+              </div>
+              <!-- Step -->
+              <div class="step-number">1</div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-xl-3">
+            <!-- Single Card-->
+            <div class="single-process-card card bg-gray border-0" data-aos="fade-up" data-aos-duration="750" data-aos-delay="600">
+              <div class="card-body p-4 text-center"><img class="mb-3 mx-auto" src="/assets/img/illustrator/2.png" alt="">
+                <h5 class="mb-3">Start shopping. Browse the Marketplace</h5>
+                <p class="mb-0">
+                    Explore stores on the KooponCraft marketplace to find exciting items like 
+                    home appliances, materials, and other exclusive products.
+                </p>
+              </div>
+              <!-- Step -->
+              <div class="step-number">2</div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-xl-3">
+            <!-- Single Card-->
+            <div class="single-process-card card bg-gray border-0" data-aos="fade-up" data-aos-duration="750" data-aos-delay="800">
+              <div class="card-body p-4 text-center"><img class="mb-3 mx-auto" src="/assets/img/illustrator/3.png" alt="">
+                <h5 class="mb-3">Make a Purchase</h5>
+                <p class="mb-0">
+                    Purchase any item using your wallet, and automatically stand a chance to 
+                    win a coupon that can be redeemed, sold, or traded within the platform.
+                </p>
+              </div>
+              <!-- Step -->
+              <div class="step-number">3</div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-xl-3">
+            <!-- Single Card-->
+            <div class="single-process-card card bg-gray border-0" data-aos="fade-up" data-aos-duration="750" data-aos-delay="1000">
+              <div class="card-body p-4 text-center"><img class="mb-3 mx-auto" src="/assets/img/illustrator/1.png" alt="">
+                <h5 class="mb-3">Redeem or Trade Your Coupons</h5>
+                <p class="mb-0">
+                    After winning a coupon, use it to unlock discounts, 
+                    or trade it with other users on the platform. You control how 
+                    you use your winnings!</p>
+              </div>
+              <!-- Step -->
+              <div class="step-number">4</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <!-- end: process of kooponcraft -->
+
+        <div class="divider"></div>
+        <!-- our top performers -->
+          <div class="popular-collection-wrapper">
+            <div class="container">
+              <div class="section-heading position-relative z-index-1000 d-flex align-items-center justify-content-center">
+                <h2 class="mb-0">Our Top Performers</h2>
+                <select class="popular-collection-select" id="popularSelect">
+                  <option selected value="1">Daily</option>
+
+                </select>
+              </div>
+            </div>
+            <div class="container">
+              <div class="row g-4 justify-content-center" id="leaderboard-container">
+                <!-- Single Card -->
+                <div class="col-12 col-sm-10 col-md-6 col-xl-4">
+                  <div class="nft-card card shadow-sm">
+                    <div class="card-body">
+                      <div class="row align-items-center g-3">
+                        <div class="col-4">
+                          <div class="img-wrap"><img src="/assets/img/bg-img/25.jpg" alt="">
+                            <div class="badge bg-danger position-absolute px-2 py-1">#1</div>
+                          </div>
+                        </div>
+                        <div class="col-8">
+                          <!-- Meta Info -->
+                          <div class="meta-info">
+                            <div class="name-info d-flex align-items-center mb-3">
+                              <div class="author-img position-relative"><img class="shadow" src="/assets/img/bg-img/u1.jpg" alt=""><i class="bi bi-check position-absolute bg-success"></i></div>
+                              <div class="name-author"><a class="name d-block hover-primary fw-bold text-truncate" href="item-details.html" data-bs-toggle="tooltip" data-bs-placement="top" title="Trees Growing Seedlings">Trees Growing Seedlings</a><a class="author d-block fz-12 hover-primary text-truncate" href="author.html">@designing_world</a></div>
+                            </div>
+                            <div class="price-bid d-flex align-items-center">
+                              <div class="price me-2 me-sm-3">
+                                <h6 class="mb-0 d-inline-block fz-14 border border-2 border-info rounded py-1 px-2 text-info">0.06 ETH</h6>
+                              </div><a class="btn btn-minimal btn-sm hover-primary d-flex align-items-center" href="#"><img class="me-1" src="/assets/img/core-img/fire.png" alt="">Place bid</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+        <!-- end: our top performers -->
+        <div class="divider"></div>
+
+
+
+
+    
+
+
+    <div class="divider"></div>
+
+
+    <div class="live-bidding-wrapper bg-gray pt-120 pb-120">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-7">
+            <div class="section-heading d-flex align-items-center">
+              <div class="spinner-grow text-danger" role="status"><span class="visually-hidden">Loading...</span></div>
+              <h2 class="mb-0 ms-2">Latest Coupon Deals</h2>
+            </div>
+          </div>
+          <div class="col-5 text-end"><a class="btn rounded-pill btn-outline-primary btn-sm border-2 mb-5" href="/shop/nft-marketplace">View All Coupons</a></div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="row g-4 justify-content-center" id="couponsContainer">
+          
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="row g-4 justify-content-center" id="loading-cards-2">
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <div class="cards">
+                    <div class="card is-loading">
+                        <div class="image"></div>
+                        <div class="content">
+                        <h2></h2>
+                        <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <div class="cards">
+                    <div class="card is-loading">
+                        <div class="image"></div>
+                        <div class="content">
+                        <h2></h2>
+                        <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <div class="cards">
+                    <div class="card is-loading">
+                        <div class="image"></div>
+                        <div class="content">
+                        <h2></h2>
+                        <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <div class="cards">
+                    <div class="card is-loading">
+                        <div class="image"></div>
+                        <div class="content">
+                        <h2></h2>
+                        <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
     <div class="divider"></div>
 
 
@@ -497,77 +676,98 @@ $(document).ready(function () {
       beforeSend: function () {
         $("#loading-cards").show();
       },
-      success: function (response) {
+            success: function (response) {
         $("#loading-cards").hide();
         if (response.success) {
           const items = response.coupons;
           let itemsHTML = "";
-          items.forEach((item) => {
-            itemsHTML += `
-              <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-                  <div class="nft-card card shadow-sm">
-                  <div class="card-body">
-                      <div class="img-wrap">
-                      <img class="fixed-size" src="${item.tokenImageUrl}" alt="${item.tokenName}">
-                      </div>
-                      <!-- Others Info -->
-                      <div class="row gx-2 align-items-center mt-3">
-                      <div class="col-8">
-                          <span class="d-block fz-12"><i class="bi bi-bag me-1"></i>Available</span>
-                      </div>
-                      <div class="col-4 text-end">
-                          <button class="wishlist-btn" type="button"><i class="bi"></i></button>
-                      </div>
-                      </div>
-                      <!-- Meta Info -->
-                      <div class="row gx-2 align-items-center mt-2">
-                      <div class="col-8">
-                          <div class="name-info d-flex align-items-center">
-                          <div class="author-img position-relative">
-                              <img class="shadow" src="/assets/img/bg-img/u2.jpg" alt="">
-                              <i class="bi bi-check position-absolute bg-success"></i>
-                          </div>
-                          <div class="name-author">
-                              <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.tokenName}">${item.tokenName}</a>
-                              <a class="author d-block fz-12 hover-primary text-truncate" href="#">@${item.ownerName}</a>
-                          </div>
-                          </div>
-                      </div>
-                      <div class="col-4">
-                          <div class="price text-end">
-                          <span class="fz-12 d-block">Current Price</span>
-                          <h6 class="mb-0">UNQ</h6>
-                          <h6 class="mb-0"> 
 
-                              ${new Intl.NumberFormat('en-US', { 
+          items.forEach((item) => {
+            // Construct HTML for each item based on data from the API response
+            itemsHTML += `
+            <div>
+              <div class="nft-card card featured-card border-0 bg-gray">
+                <div class="img-wrap">
+                  <img class="fixed-size" src="${item.tokenImageUrl || '/assets/img/bg-img/40.jpg'}" alt="">
+                  <!-- Badge -->
+                  <div class="badge bg-primary position-absolute">
+                    <img src="/assets/img/core-img/fire.png" alt="">Featured
+                  </div>
+                  <!-- Dropdown -->
+                  
+                </div>
+                <div class="card-body">
+                  
+                  <div class="row gx-2 align-items-center mt-2">
+                    <div class="col-8">
+                      <div class="name-info d-flex align-items-center">
+                        <div class="author-img position-relative">
+                          <img class="shadow" src="${item.authorImage || '/assets/img/bg-img/u1.jpg'}" alt="">
+                          <i class="bi bi-check position-absolute bg-success"></i>
+                        </div>
+                        <div class="name-author">
+                          <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" title="${item.tokenName}">${item.tokenName}</a>
+                          <a class="author d-block fz-12 hover-primary text-truncate" href="#">@${item.ownerName}</a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-4">
+                      <div class="price text-end">
+                        <span class="fz-12 d-block">Current Price</span>
+                        <h6 class="mb-0">UNQ</h6>
+                        <h6 class="mb-0">
+                           ${new Intl.NumberFormat('en-US', { 
                               minimumFractionDigits: 2, 
                               maximumFractionDigits: 2 
-                          }).format(item.finalPriceOfCoupon)}</h6>
-                          </div>
+                          }).format(item.finalPriceOfCoupon)}
+                          </h6>
                       </div>
-                      <div class="col-12">
-                          <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 purchase-link" 
-                             onclick="handlePurchaseClick(event, '${item.collectionId}', '${item.tokenId}')" 
-                             href="/getItem/${item.collectionId}/${item.tokenId}" 
-                             data-token-id="${item._id}" 
-                             data-item-id="${item._id}" 
-                             data-store-owner="${item.tokenOwnerAddress}" 
-                             data-item-price="${item.finalPriceOfCoupon}">Purchase</a>                                    
-                          <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100 pleasewait-btn" 
-                             id="pleaseWait-${item._id}" 
-                             href="#" 
-                             style="display: none;" 
-                             disabled>Please wait...</a>
-                      </div>
-                      </div>
+                    </div>
                   </div>
-                  </div>
+                    <div class="row gx-2 align-items-center justify-content-center mt-3">
+                                        <div class="col-12 text-center"><a class="btn btn-primary btn-sm rounded-pill" href="/getItem/${item.collectionId}/${item.tokenId}">Purchase</a></div>
+                                    </div>
+                </div>
               </div>
-              `;
+              </div>
+            `;
           });
 
-          // Append items to the #itemsContainer
-          $("#itemsContainer").append(itemsHTML);
+          // Insert the constructed HTML into the container
+          $(".featured-nfts-slide").html(itemsHTML);
+
+
+          // Initialize the Tiny Slider here
+          if ($(".featured-nfts-slide").length > 0) {
+            tns({
+              container: ".featured-nfts-slide",
+              items: 4,
+              gutter: 24,
+              slideBy: 1,
+              autoplay: true,
+              autoplayButtonOutput: false,
+              autoplayTimeout: 5000,
+              speed: 900,
+              loop: true,
+              mouseDrag: true,
+              nav: false,
+              controls: true,
+              controlsPosition: "top",
+              controlsText: [
+                '<i class="bi bi-arrow-left"></i>',
+                '<i class="bi bi-arrow-right"></i>',
+              ],
+              responsive: {
+                320: { items: 1 },
+                480: { items: 1.3 },
+                576: { items: 1.5 },
+                768: { items: 2.4 },
+                992: { items: 3 },
+                1200: { items: 3.5 },
+                1400: { items: 4 },
+              },
+            });
+          }
 
           // If fewer items are returned than requested, hide the "Load More" button
           if (items.length < increment) {
@@ -595,6 +795,128 @@ $(document).ready(function () {
   $("#load-more").on('click', function() {
     currentLimit += increment; // Increase the limit
     loadItems(currentLimit); // Load more items
+  });
+});
+
+function handlePurchaseClick(event, collectionId, tokenId) {
+    event.preventDefault();
+    
+    const token = localStorage.getItem("token");
+    if (!token) {
+        Swal.fire({
+            title: "Authentication Required",
+            text: "Please sign in to view and purchase items",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sign In",
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "/login";
+            }
+        });
+        return;
+    }
+    
+    // If user is authenticated, proceed to item page
+    window.location.href = `/getItem/${collectionId}/${tokenId}`;
+}
+</script>
+
+
+
+
+<!-- list coupons -->
+<script>
+$(document).ready(function () {
+  let currentLimit = 3; // Start with 10 items
+  const increment = 10; // Number of items to load each time
+
+  // Fetch and display items
+  function loadCoupons(limit) {
+    $.ajax({
+      url: `/api/getAllCoupons?created_at=recent`,
+      method: "GET",
+      beforeSend: function () {
+        $("#loading-cards-2").show();
+      },
+      success: function (response) {
+        $("#loading-cards-2").hide();
+        if (response.success) {
+          const items = response.coupons;
+          let itemsHTML = "";
+
+          items.forEach((item) => {
+            // Construct HTML for each item based on data from the API response
+            itemsHTML += `
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
+            <!-- Featured Card -->
+            <div class="nft-card card border-0"> 
+              <div class="card-body">
+                <div class="img-wrap pb-3"><img class="fixed-size-coupon" src="${item.tokenImageUrl || '/assets/img/bg-img/9.jpg'}" alt="${item.tokenName}">
+                  <div class="ribbon-wrapper">
+                                        <div class="ribbon">${item.discount || 'COUPON'}</div>
+                                    </div>
+                  <!-- Badge -->
+                  <div class="badge bg-dark position-absolute"><img src="/assets/img/core-img/fire.png" alt="">New</div>
+                  
+                </div>
+                <!-- Meta Info -->
+                <div class="row gx-2 align-items-center mt-2">
+                  <div class="col-8">
+                    <div class="name-info d-flex align-items-center">
+                      <div class="author-img position-relative"><img class="fixed-ask" shadow" src="/assets/img/bg-img/u4.jpg" alt=""><i class="bi bi-check position-absolute bg-success"></i></div>
+                      <div class="name-author"><a class="name d-block hover-primary fw-bold text-truncate" href="/getCoupon/${item.collectionId}/${item.tokenId}" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.tokenName}">${item.tokenName}</a><a class="author d-block fz-12 hover-primary text-truncate" href="#">@${item.ownerName}</a></div>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="price text-end"><span class="fz-12 d-block">Current Price</span>
+                      <h6 class="mb-0">UNQ</h6>
+                      <h6 class="mb-0">${item.finalPriceOfCoupon}</h6>
+                    </div>
+                  </div>
+                  <div class="col-12"><a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="#">Buy</a></div>
+                </div>
+              </div>
+            </div>
+          </div>
+            `;
+          });
+
+
+
+          // Insert the constructed HTML into the container
+          $("#couponsContainer").html(itemsHTML);
+
+
+          
+
+          // If fewer items are returned than requested, hide the "Load More" button
+          if (items.length < increment) {
+            $("#load-more").hide();
+          } else {
+            $("#load-more").show();
+          }
+
+        } else {
+          $("#couponsContainer").html("<p>No items found.</p>");
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        $("#couponsContainer").html("<p>Error fetching items.</p>");
+      },
+    });
+  }
+  // End: fetch and display items
+
+
+  // Load initial items
+  loadCoupons(currentLimit);
+
+  // Handle Load More button click
+  $("#load-more").on('click', function() {
+    currentLimit += increment; // Increase the limit
+    loadCoupons(currentLimit); // Load more items
   });
 });
 
@@ -660,7 +982,7 @@ async function fetchLeaderboard() {
 
     // Iterate over leaderboard data to create and insert each card
     leaderboardData.leaderboard.forEach((user) => {
-      console.log(leaderboardData)
+      // console.log(leaderboardData)
       const cardHTML = `
         <div class="col-12 col-sm-10 col-md-6 col-xl-4">
           <div class="nft-card card shadow-sm">

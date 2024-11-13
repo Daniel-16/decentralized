@@ -183,6 +183,7 @@ if (scrollButton) {
 // :: Featured Slide
 
 if (document.querySelectorAll(".featured-nfts-slide").length > 0) {
+  // console.log("featured-nfts-slide");
   tns({
     container: ".featured-nfts-slide",
     items: 4,

@@ -44,6 +44,10 @@ const TokenSchema = new mongoose.Schema({
       ref: "User",
     },
   },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
 const TokenModel = mongoose.model("Token", TokenSchema);
