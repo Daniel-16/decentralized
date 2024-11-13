@@ -116,7 +116,7 @@ export const acceptCouponSwap = async (req, res) => {
     const recipientAddress = recipientAccount.address;
 
     const initiatorSdk = new Sdk({
-      baseUrl: CHAIN_CONFIG.opal.restUrl,
+      baseUrl: "https://rest.unique.network/opal/v1",
       signer: initiatorAccount,
     });
 
@@ -144,7 +144,7 @@ export const acceptCouponSwap = async (req, res) => {
     await new Promise((resolve) => setTimeout(resolve, 10000));
 
     const recipientSdk = new Sdk({
-      baseUrl: CHAIN_CONFIG.opal.restUrl,
+      baseUrl: "https://rest.unique.network/opal/v1",
       signer: recipientAccount,
     });
 

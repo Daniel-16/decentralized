@@ -47,7 +47,7 @@
 
                     <div class="mb-3">
                         <label for="priceOfCoupon" class="form-label">Price of Coupon:</label>
-                        <input type="text" placeholder="enter price in USD" id="priceOfCoupon" class="form-control" name="priceOfCoupon" required>
+                        <input type="number" min="0" max="5" placeholder="Enter price in UNQ (max 5)" id="priceOfCoupon" class="form-control" name="priceOfCoupon" required>
                     </div>
 
                     <div class="mb-3">
@@ -430,7 +430,7 @@ $(document).ready(function() {
                 tokenDescription: $('#tokenDescription1').val(),
                 tokenImageUrl: base64Image, 
                 priceOfCoupon: $('#priceOfCoupon').val(),
-                itemCategory: itemCategory
+                category: itemCategory
             };
 
             const token = localStorage.getItem('token');
