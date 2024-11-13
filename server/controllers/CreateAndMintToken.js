@@ -1,4 +1,4 @@
-import Sdk, { CHAIN_CONFIG } from "@unique-nft/sdk";
+import Sdk from "@unique-nft/sdk";
 import { KeyringProvider } from "@unique-nft/accounts/keyring";
 import CollectionModel from "../models/CollectionModel.js";
 import TokenModel from "../models/TokenModel.js";
@@ -36,7 +36,7 @@ export const createCollectionController = async (req, res) => {
 
     // Initialize the SDK
     const sdk = new Sdk({
-      baseUrl: CHAIN_CONFIG.opal.restUrl,
+      baseUrl: "https://rest.unique.network/opal/v1",
       signer: account,
     });
 
@@ -144,9 +144,10 @@ export const mintToken = async (req, res) => {
     const account = await KeyringProvider.fromMnemonic(mnemonic);
     const address = account.address;
 
+    
     // Initialize the SDK
     const sdk = new Sdk({
-      baseUrl: CHAIN_CONFIG.opal.restUrl,
+      baseUrl: "https://rest.unique.network/opal/v1",
       signer: account,
     });
 
@@ -354,8 +355,9 @@ export const createSpecialToken = async (req, res) => {
     const account = await KeyringProvider.fromMnemonic(mnemonic);
     const address = account.address;
 
+    
     const sdk = new Sdk({
-      baseUrl: CHAIN_CONFIG.opal.restUrl,
+      baseUrl: "https://rest.unique.network/opal/v1",
       signer: account,
     });
 

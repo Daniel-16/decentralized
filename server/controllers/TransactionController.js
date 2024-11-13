@@ -148,13 +148,14 @@ export const purchaseCoupon = async (req, res) => {
     const buyerAddress = buyerAccount.address;
     const sellerAddress = sellerAccount.address;
 
+
     const sdk = new Sdk({
-      baseUrl: CHAIN_CONFIG.opal.restUrl,
+      baseUrl: "https://rest.unique.network/opal/v1",
       signer: buyerAccount,
     });
 
     const sellerSdk = new Sdk({
-      baseUrl: CHAIN_CONFIG.opal.restUrl,
+      baseUrl: "https://rest.unique.network/opal/v1",
       signer: sellerAccount,
     });
 
@@ -189,7 +190,7 @@ export const purchaseCoupon = async (req, res) => {
       // Calculate VAT and seller amounts
       const vatAmount = Math.floor(token.priceOfCoupon * 0.05);
       const sellerAmount = token.finalPriceOfCoupon - vatAmount;
-      
+
       try {
         // VAT transfer to admin wallet (currently commented out)
         // const adminWalletAddress = await getActiveAdminWallet();
@@ -201,7 +202,7 @@ export const purchaseCoupon = async (req, res) => {
         //   },
         //   { signer: buyerAccount }
         // );
-        
+
         // Transfer payment to seller
         await sdk.balance.transfer.submitWaitResult(
           {
@@ -294,7 +295,7 @@ export const purchaseItem = async (req, res) => {
     collectionId,
     applyTokenId,
     applyCollectionId,
-    tokenType
+    tokenType,
     // ethAddress,
     // transactionHash,
   } = req.body;
@@ -361,13 +362,14 @@ export const purchaseItem = async (req, res) => {
     const buyerAddress = buyerAccount.address;
     const sellerAddress = sellerAccount.address;
 
+    
     const sdk = new Sdk({
-      baseUrl: CHAIN_CONFIG.opal.restUrl,
+      baseUrl: "https://rest.unique.network/opal/v1",
       signer: buyerAccount,
     });
 
     const sellerSdk = new Sdk({
-      baseUrl: CHAIN_CONFIG.opal.restUrl,
+      baseUrl: "https://rest.unique.network/opal/v1",
       signer: sellerAccount,
     });
 
@@ -399,12 +401,12 @@ export const purchaseItem = async (req, res) => {
       // Award points to buyer
       buyer.points += 10;
       await buyer.save();
-      
+
       // Calculate VAT and seller amounts
       const basePrice = finalPrice / 1.05;
       const vatAmount = Math.floor(finalPrice - basePrice);
       const sellerAmount = finalPrice - vatAmount;
-      
+
       try {
         // VAT transfer to admin wallet (currently commented out)
         // const adminWalletAddress = await getActiveAdminWallet();
@@ -416,7 +418,7 @@ export const purchaseItem = async (req, res) => {
         //   },
         //   { signer: buyerAccount }
         // );
-        
+
         // Transfer payment to seller
         await sdk.balance.transfer.submitWaitResult(
           {

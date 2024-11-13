@@ -10,7 +10,7 @@ export async function checkAndTransferSpecialToken(
   sellerAccount
 ) {
   const sdk = new Sdk({
-    baseUrl: CHAIN_CONFIG.opal.restUrl,
+    baseUrl: "https://rest.unique.network/opal/v1",
     signer: sellerAccount,
   });
 
