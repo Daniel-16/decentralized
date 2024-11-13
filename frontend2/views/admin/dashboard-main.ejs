@@ -140,7 +140,44 @@
                                             Login Streak
                                             <i class="bi bi-fire text-danger" style="font-size: 24px;"></i>
                                         </h5>
-                                        <span id="streakInfo">Current: <span id="currentStreak">0</span> days | Best: <span id="highestStreak">0</span> days</span>
+                                        <span id="streakInfo">Current: <span id="currentStreak">Loading...</span> days | Best: <span id="highestStreak">Loading...</span> days</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Game Availability Card -->
+                    <div class="col-12 col-sm-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body p-4">
+                                <div class="d-flex flex-column">
+                                    <div class="mb-3">
+                                        <h5 class="d-flex align-items-center">
+                                            <i class="bi bi-controller text-primary me-2"></i>
+                                            Coupon Match Game
+                                        </h5>
+                                        <div id="gameStatus" class="mt-2">
+                                            <div class="d-flex align-items-center">
+                                                <span id="gameAvailability" class="text-muted">Loading...</span>
+                                                <div class="ms-2" id="gameTooltip">
+                                                    <i class="bi bi-info-circle text-primary"
+                                                       data-bs-toggle="popover"
+                                                       data-bs-trigger="hover focus"
+                                                       data-bs-title="Game Requirements"
+                                                       data-bs-html="true"
+                                                       data-bs-content="You need at least 100 points to play the Coupon Match game. Earn points through daily logins, purchases, and trades!">
+                                                    </i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-auto text-end">
+                                        <a id="playGameBtn" href="/coupon-match" class="btn btn-sm btn-primary" style="display: none;">
+                                            Play Now
+                                        </a>
+                                        <button id="insufficientPointsBtn" class="btn btn-sm btn-secondary" disabled style="display: none;">
+                                            Need 100 Points
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -582,7 +619,31 @@ function populateSwapOffers(offers, currentUserId) {
             $("#redeemReqPanel").hide();
           }
           // Display user points
-          $("#userPoints").text(response.user.points || 0);
+          const userPoints = response.user.points || 0;
+          $("#userPoints").text(userPoints);
+
+          // Display streak information
+          const currentStreak = response.user.currentStreak || 0;
+          const highestStreak = response.user.highestStreak || 0;
+          $("#currentStreak").text(currentStreak);
+          $("#highestStreak").text(highestStreak);
+
+          // Update game availability
+          const gameAvailability = document.getElementById('gameAvailability');
+          const playGameBtn = document.getElementById('playGameBtn');
+          const insufficientPointsBtn = document.getElementById('insufficientPointsBtn');
+
+          if (userPoints >= 100) {
+            gameAvailability.textContent = 'Available to Play!';
+            gameAvailability.className = 'text-success';
+            playGameBtn.style.display = 'block';
+            insufficientPointsBtn.style.display = 'none';
+          } else {
+            gameAvailability.textContent = `Need ${100 - userPoints} more points`;
+            gameAvailability.className = 'text-warning';
+            playGameBtn.style.display = 'none';
+            insufficientPointsBtn.style.display = 'block';
+          }
         } else {
           console.error("Failed to fetch user details:", response.error);
         }
@@ -590,6 +651,8 @@ function populateSwapOffers(offers, currentUserId) {
       error: function (jqXHR, textStatus, errorThrown) {
         console.error("Error fetching user details:", errorThrown);
         $("#userPoints").text("Error loading points");
+        $("#currentStreak").text("Error");
+        $("#highestStreak").text("Error");
       },
     });
   });

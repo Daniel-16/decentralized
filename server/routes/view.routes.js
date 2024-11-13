@@ -127,6 +127,9 @@ router.get("/leaderboard", async function (req, res) {
   res.render("extras/leaderboard");
 });
 
+router.get('/coupon-match', (req, res) => {
+  res.render('games/coupon-match');
+}); 
 
 
 export default router;

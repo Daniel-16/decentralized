@@ -9,6 +9,7 @@ import { fileURLToPath } from "url";
 import "./utils/scheduler.js";
 import "./utils/scheduleWinningUser.js";
 import "./utils/logHighPointUsers.js";
+import gameRouter from "./routes/game.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,6 +30,7 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // api routes
 app.use("/api", router);
+app.use("/api/game", gameRouter);
 
 // view routes
 app.use("/", viewRouter);
