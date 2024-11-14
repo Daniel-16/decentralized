@@ -200,17 +200,16 @@
               ></i>
             </div>
             <div class="name-author">
-              <span class="d-block fz-14">Created by</span
-              ><a
-                class="author d-block fz-16 hover-primary text-truncate"
-                href="#"
-                >@<%= token.ownerName %>
-                <strong>
-                  <span class="text-primary font-weight-bold"
-                    ><%= token.tokenOwnerAddress %></span
-                  ></strong
-                ></a
-              >
+              <span class="d-block fz-14">Created by</span>
+              <a class="author d-block fz-16 hover-primary text-truncate" href="#">
+                @<%= token.ownerName %>
+              </a>
+              <span class="d-block fz-14 mt-1">Owner</span>
+              <strong>
+                <span class="text-primary font-weight-bold" title="<%= token.tokenOwnerAddress %>">
+                  <%= token.tokenOwnerAddress.substring(0, 6) %>...<%=token.tokenOwnerAddress.slice(-5) %>
+                </span>
+              </strong>
             </div>
           </div>
 
@@ -224,7 +223,7 @@
               </h5>
             </div>
             <% if(!token.isPurchased) { %>
-            <div class="col-6 col-sm-4 col-lg-5">
+            <div class="col-6 col-sm-4 col-lg-5" id="buyButtonContainer" style="display: none;">
               <a
                 class="btn btn-primary rounded-pill w-100"
                 href="#"
@@ -961,5 +960,17 @@ $(document).ready(function() {
         
         connectPolkadot();
     });
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tokenOwnerAddress = '<%= token.tokenOwnerAddress %>'.toLowerCase();
+    const userWalletAddress = localStorage.getItem('accountAddress')?.toLowerCase();
+    const buyButtonContainer = document.getElementById('buyButtonContainer');
+    
+    if (userWalletAddress && tokenOwnerAddress !== userWalletAddress) {
+        buyButtonContainer.style.display = 'block';
+    }
 });
 </script>
