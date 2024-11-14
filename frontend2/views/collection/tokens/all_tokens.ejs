@@ -165,9 +165,12 @@ $(document).ready(function() {
 
     function createCollectionItem(token, tokenType) {
         const couponUrl = tokenType == "standard" ? `/getCoupon/${token.collectionId}/${token.tokenId}` : '#';
-        // const swapBtn = tokenType == "standard" ? `
-        // const swapBtn = (tokenType == "item" || tokenType == "standard") ? `
-        const swapBtn = (tokenType == "standard") ? `
+        
+        // Check if token is owned by the store that created it
+        const isOwnedByStore = token.metadata && token.metadata.storeAddress === token.tokenOwnerAddress;
+        
+        // Only show swap button if not owned by store and is standard token
+        const swapBtn = (!isOwnedByStore && tokenType == "standard") ? `
             <div class="col-6">
                 <a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="/initiate-coupon-swap?cid=${token.collectionId}&tid=${token.tokenId}">
                     Swap                          
@@ -175,10 +178,7 @@ $(document).ready(function() {
             </div>
         ` : '';
                 
-        // const tokenStatus = !token.isPurchased ? 'In Marketplace' : 'Redeemable';
-        // const tokenClass = tokenType === 'special' ? 'badge bg-warning' : 'badge bg-dark';
         let tokenClass = '';
-
         switch (tokenType) {
             case 'special':
                 tokenClass = 'badge bg-warning'
@@ -186,28 +186,35 @@ $(document).ready(function() {
             case 'item':
                 tokenClass = 'badge bg-primary'
                 break;
-        
             default:
                 tokenClass = 'badge bg-dark'
                 break;
         }
         
-        
         let tokenStatus = '';
-
         if (!token.isPurchased && tokenType === 'standard') {
             tokenStatus = 'In Marketplace';
         } else if(!token.isPurchased && tokenType === 'item'){
             tokenStatus = 'In Store';
-
         } else if(!token.isPurchased && tokenType === 'special'){
             tokenStatus = 'Redeemable';
         } else if(token.isPurchased){
             tokenStatus = 'Redeemable';
         }
-        
 
-        // console.log("token: ", token)
+        // Create buttons row based on ownership
+        const buttonsRow = !isOwnedByStore ? `
+            <div class="row">
+                ${swapBtn}
+                <div class="col-${swapBtn ? '6' : '12'}">
+                    <a class="btn btn-danger rounded-pill btn-sm mt-3 w-100 redeem-coupon" href="#"  
+                        data-token-id="${token.tokenId}" 
+                        data-collection-id="${token.collectionId}">
+                        Redeem                                    
+                    </a>
+                </div>
+            </div>
+        ` : '';
 
         return `
         <div class="col-12 col-sm-6 col-xl-4 col-xxl-4">
@@ -250,16 +257,7 @@ $(document).ready(function() {
                                 }).format(token.priceOfCoupon)}</h6>
                             </div>
                         </div>
-                        <div class="row">
-                            ${swapBtn}
-                            <div class="col-6">
-                                <a class="btn btn-danger rounded-pill btn-sm mt-3 w-100 redeem-coupon" href="#"  
-                                    data-token-id="${token.tokenId}" 
-                                    data-collection-id="${token.collectionId}">
-                                    Redeem                                    
-                                </a>
-                            </div>
-                        </div>
+                        ${buttonsRow}
                     </div>
                 </div>
             </div>
