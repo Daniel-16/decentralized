@@ -199,20 +199,31 @@ $(document).ready(function () {
     function loadItems() {
         // Get category from URL if available, else fallback to the dropdown value
         const selectedCategory = getUrlParameter("category") || $(".filter-select2").val();
-        const priceRange = $("#filterRange").data("from") + "-" + $("#filterRange").data("to");
+        
+        // Set the dropdown value to match URL parameter if present
+        if (getUrlParameter("category")) {
+            $(".filter-select2").val(getUrlParameter("category"));
+        }
 
         $.ajax({
-            // url: "/api/getAllCoupons?item=true&category=" + selectedCategory + "&priceRange=" + priceRange,
-            url: "/api/getAllCoupons?item=true&category=" + selectedCategory,
+            url: "/api/getAllCoupons?item=true" + (selectedCategory && selectedCategory !== 'all' ? `&category=${selectedCategory}` : ''),
             method: "GET",
             beforeSend: function () {
                 $("#loading-cards").show();
+                $("#itemsContainer").hide();
             },
             success: function (response) {
                 $("#loading-cards").hide();
+                $("#itemsContainer").show();
                 if (response.success) {
                     const items = response.coupons;
                     let itemsHTML = "";
+                    
+                    if (items.length === 0) {
+                        $("#itemsContainer").html("<div class='col-12 text-center'><p>No items found for this category.</p></div>");
+                        return;
+                    }
+
                     items.forEach((item) => {
                         itemsHTML += `
                         <div class="col-12 col-sm-6 col-md-12 col-lg-6 col-xxl-4">
@@ -251,24 +262,34 @@ $(document).ready(function () {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        `;
+                        </div>`;
                     });
 
                     // Populate items into the #itemsContainer
                     $("#itemsContainer").html(itemsHTML);
                 } else {
-                    $("#itemsContainer").html("<p>No items found.</p>");
+                    $("#itemsContainer").html("<div class='col-12 text-center'><p>No items found.</p></div>");
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $("#itemsContainer").html("<p>Error fetching items.</p>");
+                $("#loading-cards").hide();
+                $("#itemsContainer").show();
+                $("#itemsContainer").html("<div class='col-12 text-center'><p>Error fetching items.</p></div>");
             },
         });
     }
 
     // Event listener for filter application
     $("button[type='submit']").on("click", function () {
+        const selectedCategory = $(".filter-select2").val();
+        // Update URL with selected category without page reload
+        const newUrl = new URL(window.location);
+        if (selectedCategory && selectedCategory !== 'all') {
+            newUrl.searchParams.set('category', selectedCategory);
+        } else {
+            newUrl.searchParams.delete('category');
+        }
+        window.history.pushState({}, '', newUrl);
         loadItems();
     });
 
