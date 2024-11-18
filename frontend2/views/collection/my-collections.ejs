@@ -212,10 +212,10 @@ $(document).ready(function() {
 
                             const collectionItem = `
                             <div class="col-12 col-sm-6 col-lg-4 mb-4">
-                                <div class="collection-card card h-100 border-0 shadow-sm" 
-                                     onclick="window.location.href='/collection/${collection.collectionId}'"
-                                     style="cursor: pointer;">
-                                    <div class="collection-banner position-relative">
+                                <div class="collection-card card h-100 border-0 shadow-sm">
+                                    <div class="collection-banner position-relative" 
+                                         onclick="window.location.href='/collection/${collection.collectionId}'"
+                                         style="cursor: pointer;">
                                         ${collection.collectionImageUrl ? 
                                             `<img src="${collection.collectionImageUrl}" 
                                                  class="card-img-top collection-image" 
@@ -314,18 +314,15 @@ $(document).ready(function() {
 
                             // Attach click event handler for mint buttons
                             $('.btn-mint-token, .btn-mint-item').on('click', function(e) {
-                                e.preventDefault();
+                                e.stopPropagation();
                                 // Get token ID and collection ID from data attributes
                                 const tokenId = $(this).data('token-id');
                                 const collectionId = $(this).data('collection-id');
-                                
-                                // const mint_tokenId = $(this).data('mtoken-id');
                                 const mint_collectionId = $(this).data('mcollection-id');
+                                
                                 // Pre-populate the modal form fields
                                 $('#tokenId').val(tokenId);
                                 $('#collectionId').val(collectionId);
-                                
-                                // console.log(mint_collectionId)
                                 $('#mint_tokenId').val(tokenId);
                                 $('#mint_collectionId').val(mint_collectionId);
                             });
