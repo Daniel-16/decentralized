@@ -4,7 +4,7 @@ import UserModel from "../models/UserModel.js";
 
 export const getAllCoupons = async (req, res) => {
   try {
-    const { item, category, priceRange, recent } = req.query;
+    const { item, category, priceRange, recent, userAddress } = req.query;
 
     // Base search query: items not purchased
     let searchQuery = {
@@ -20,6 +20,11 @@ export const getAllCoupons = async (req, res) => {
     if (priceRange) {
       const [minPrice, maxPrice] = priceRange.split("-").map(Number);
       searchQuery.finalPriceOfCoupon = { $gte: minPrice, $lte: maxPrice };
+    }
+
+    // Exclude coupons where the userAddress matches the tokenOwnerAddress
+    if (userAddress) {
+      searchQuery.tokenOwnerAddress = { $ne: userAddress };
     }
 
     // Sort by most recent if requested

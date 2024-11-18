@@ -835,7 +835,7 @@ $(document).ready(function () {
   // Fetch and display items
   function loadCoupons(limit) {
     $.ajax({
-      url: `/api/getAllCoupons?created_at=recent`,
+      url: `/api/getAllCoupons?created_at=recent&userAddress=${localStorage.getItem("accountAddress")}`,
       method: "GET",
       beforeSend: function () {
         $("#loading-cards-2").show();
