@@ -6,30 +6,29 @@ export const getAllCoupons = async (req, res) => {
   try {
     const { item, category, priceRange, recent } = req.query;
 
+    // Base search query: items not purchased
     let searchQuery = {
       isPurchased: false,
-      isItem: false,
     };
 
-    if (item) {
-      searchQuery.isItem = true;
-    }
-
+    // Add category filter if specified and not "all"
     if (category && category !== "all") {
       searchQuery.category = category;
     }
 
+    // Add price range filter if specified
     if (priceRange) {
       const [minPrice, maxPrice] = priceRange.split("-").map(Number);
       searchQuery.finalPriceOfCoupon = { $gte: minPrice, $lte: maxPrice };
     }
 
+    // Sort by most recent if requested
     const sortQuery = recent === "true" ? { createdAt: -1 } : {};
 
+    // Query database for matching coupons
     const coupons = await TokenModel.find(searchQuery).sort(sortQuery);
 
-    // const coupons = await TokenModel.find(searchQuery);
-
+    // Fetch owner details for each coupon
     const couponsWithOwners = await Promise.all(
       coupons.map(async (coupon) => {
         const ownerDetails = await UserModel.findById(coupon.tokenOwnerId);
@@ -40,11 +39,13 @@ export const getAllCoupons = async (req, res) => {
       })
     );
 
+    // Send the response
     res.status(200).json({
       success: true,
       coupons: couponsWithOwners,
     });
   } catch (error) {
+    // Handle errors
     res.status(500).json({
       success: false,
       error: error.message,

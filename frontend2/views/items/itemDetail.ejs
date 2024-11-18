@@ -966,12 +966,36 @@ $(document).ready(function() {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Convert tokenOwnerAddress to lowercase and log it
     const tokenOwnerAddress = '<%= token.tokenOwnerAddress %>'.toLowerCase();
+    console.log("Token Owner Address:", tokenOwnerAddress);
+
+    // Log tokenStatus and ensure it's treated correctly as a boolean
+    const tokenStatus = '<%= token.isPurchased %>';
+    console.log("Token Status (raw):", tokenStatus);
+
+    // Convert tokenStatus to a boolean if it's a string
+    const isTokenPurchased = tokenStatus === 'true' ? true : false;
+    console.log("Token Status (converted):", isTokenPurchased);
+
+    // Get user wallet address and log it
     const userWalletAddress = localStorage.getItem('accountAddress')?.toLowerCase();
+    console.log("User Wallet Address:", userWalletAddress);
+
+    // Select the buy button container and log it
     const buyButtonContainer = document.getElementById('buyButtonContainer');
-    
-    if (userWalletAddress && tokenOwnerAddress !== userWalletAddress) {
+    console.log("Buy Button Container:", buyButtonContainer);
+
+    // Check conditions and show the button if met
+    if (userWalletAddress && tokenOwnerAddress !== userWalletAddress && !isTokenPurchased) {
+        console.log("Conditions met. Showing the buy button.");
         buyButtonContainer.style.display = 'block';
+    } else {
+        console.log("Conditions not met. Button will not be displayed.");
+        console.log("Condition checks: ");
+        console.log("  - userWalletAddress exists:", !!userWalletAddress);
+        console.log("  - tokenOwnerAddress !== userWalletAddress:", tokenOwnerAddress !== userWalletAddress);
+        console.log("  - Token is not purchased:", !isTokenPurchased);
     }
 });
 </script>
