@@ -4,6 +4,7 @@ import { checkAuth } from "../middleware/checkAuth.js";
 import { getCoupon, getItem, getStoreCoupons, initiateCouponSwap } from "../controllers/MarketPlace.js";
 import { getDashboard } from "../controllers/UserController.js";
 import TokenModel from "../models/TokenModel.js";
+import CollectionModel from "../models/CollectionModel.js";
 const router = express.Router();
 
 router.use(checkAuth);
@@ -131,5 +132,21 @@ router.get('/coupon-match', (req, res) => {
   res.render('games/coupon-match');
 }); 
 
+// Add this new route for collection detail
+router.get("/collection/:collectionId", async function (req, res) {
+  try {
+    const collectionId = req.params.collectionId;
+    const collection = await CollectionModel.findOne({ collectionId }).populate('tokens');
+    
+    if (!collection) {
+      return res.redirect('/collection/my-collections');
+    }
+
+    res.render("collection/collection-detail", { collection });
+  } catch (error) {
+    console.error("Error fetching collection:", error);
+    res.redirect('/collection/my-collections');
+  }
+});
 
 export default router;
