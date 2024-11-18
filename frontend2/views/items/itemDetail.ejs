@@ -192,7 +192,7 @@
             <!-- Badge-->
             <!-- <div class="badge border px-3 py-2 rounded-pill text-dark fz-14 d-inline-block ms-1 ms-sm-4"><i class="me-1 bi bi-eye"></i>8,634 people views this</div> -->
           </div>
-          <h2 class="my-3"><%= token.tokenName %> #<%= token.tokenId %></h2>
+          <h2 class="my-3"><%= token.tokenName %> <span class="text-primary">#<%= token.tokenId %></span></h2>
           <div class="d-flex align-items-center mb-4">
             <div class="author-img position-relative me-3">
               <img class="shadow" src="/assets/img/bg-img/u2.jpg" alt="" /><i
@@ -200,10 +200,10 @@
               ></i>
             </div>
             <div class="name-author">
-              <span class="d-block fz-14">Created by</span>
+              <!-- <span class="d-block fz-14">Created by</span>
               <a class="author d-block fz-16 hover-primary text-truncate" href="#">
                 @<%= token.ownerName %>
-              </a>
+              </a> -->
               <span class="d-block fz-14 mt-1">Owner</span>
               <strong>
                 <span class="text-primary font-weight-bold" title="<%= token.tokenOwnerAddress %>">
@@ -237,7 +237,8 @@
             <small>VAT is included</small>
             <% } %> <% if(token.tokenDescription){ %>
             <div class="short-description">
-              <h5 class="pt-3">Short Description</h5>
+              <br>
+              <h5 class="pt-3">Description</h5>
               <p class="mb-0"><%= token.tokenDescription %></p>
             </div>
             <% } %>
