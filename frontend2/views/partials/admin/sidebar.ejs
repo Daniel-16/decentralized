@@ -43,7 +43,14 @@
       <!-- User Name -->
       <div class="user-name mb-5">
         <div class="d-flex align-items-center">
-          <img src="/assets/img/bg-img/u2.jpg" alt="profile-user-pic" />
+
+          <img 
+            id="profileImg" 
+            src="" 
+            alt="profile-user-pic" 
+            onerror="this.onerror=null; this.src='https://api.dicebear.com/6.x/identicon/svg?seed=default';" 
+          />
+
           <div class="ms-3">
             <h6 class="lh-1 text-dark fz-18" id="usernameDisplay">
               Designing W.
@@ -258,6 +265,11 @@
             $("#myStoreLink").hide();
             $(".create-new-button").hide();
             $("#userType").text("Premium User");
+            const avatarUrl = `https://api.dicebear.com/6.x/identicon/svg?seed=${encodeURIComponent(response.username)}`;
+            const profileImgUrl = response.user.profileImageUrl || avatarUrl; 
+            if (profileImgUrl) {
+              $("#profileImg").attr("src", profileImgUrl); // Directly update the src attribute
+            }
           } else {
             // console.log('admin. happening')
             $("#userType").text("Store Owner");

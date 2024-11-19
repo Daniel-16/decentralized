@@ -331,6 +331,7 @@ export const purchaseItem = async (req, res) => {
       collectionId,
       isItem: true,
     });
+    console.log(tokenId, collectionId);
     if (!item) {
       return res.status(404).json({ success: false, error: "Item not found" });
     }

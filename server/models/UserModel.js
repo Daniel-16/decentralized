@@ -56,20 +56,28 @@ const UserSchema = new mongoose.Schema({
   },
   currentStreak: {
     type: Number,
-    default: 0
+    default: 0,
   },
   lastStreakUpdate: {
     type: Date,
-    default: null
+    default: null,
   },
   highestStreak: {
     type: Number,
-    default: 0
+    default: 0,
   },
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
+  profileImageUrl: {
+    type: String,
+    default: "",
+  },
+  firstUse: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 UserSchema.pre("save", async function (next) {

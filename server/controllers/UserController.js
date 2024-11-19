@@ -21,6 +21,11 @@ export const createUser = async (req, res) => {
     const mnemonic = Sr25519Account.generateMnemonic();
     const account = Sr25519Account.fromUri(mnemonic);
 
+    // Generate a DiceBear avatar URL using the username
+    const avatarUrl = `https://api.dicebear.com/6.x/identicon/svg?seed=${encodeURIComponent(
+      username
+    )}`;
+
     // const ethMirror = Address.mirror.substrateToEthereum(account.address);
 
     const user = await UserModel.create({
@@ -32,6 +37,7 @@ export const createUser = async (req, res) => {
       mnemonic,
       points: 10,
       lastPointsAssigned: new Date(),
+      profileImageUrl: avatarUrl,
     });
 
     const token = generateToken(user);
@@ -44,6 +50,7 @@ export const createUser = async (req, res) => {
         email: user.email,
         accountAddress: user.accountAddress,
         // evmAddress: user.evmAddress,
+        profileImageUrl: user.profileImageUrl,
       },
       account,
       mnemonic,
@@ -75,9 +82,15 @@ export const loginUser = async (req, res) => {
       });
     }
 
+    // Update firstUse if it's the user's first login
+    if (!user.firstUse) {
+      user.firstUse = true;
+      await user.save();
+    }
+
     // Update login streak
     const streakInfo = await updateLoginStreak(user._id);
-    
+
     // Assign daily points
     await assignDailyPoints(user._id);
 
@@ -88,7 +101,7 @@ export const loginUser = async (req, res) => {
       user: {
         ...user.toObject(),
         currentStreak: streakInfo.currentStreak,
-        highestStreak: streakInfo.highestStreak
+        highestStreak: streakInfo.highestStreak,
       },
       token,
     });

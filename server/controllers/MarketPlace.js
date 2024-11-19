@@ -4,7 +4,8 @@ import UserModel from "../models/UserModel.js";
 
 export const getAllCoupons = async (req, res) => {
   try {
-    const { item, category, priceRange, recent, userAddress } = req.query;
+    const { item, category, priceRange, recent, userAddress, limit } =
+      req.query;
 
     // Base search query: items not purchased
     let searchQuery = {
@@ -30,8 +31,13 @@ export const getAllCoupons = async (req, res) => {
     // Sort by most recent if requested
     const sortQuery = recent === "true" ? { createdAt: -1 } : {};
 
+    // Convert limit to a number (default to 10 if not provided)
+    const limitNumber = limit ? parseInt(limit, 10) : 10;
+
     // Query database for matching coupons
-    const coupons = await TokenModel.find(searchQuery).sort(sortQuery);
+    const coupons = await TokenModel.find(searchQuery)
+      .sort(sortQuery)
+      .limit(limitNumber);
 
     // Fetch owner details for each coupon
     const couponsWithOwners = await Promise.all(
@@ -174,6 +180,7 @@ export const getCoupon = async (req, res) => {
         return {
           ...moreCoupon._doc,
           ownerName: ownerDetail ? ownerDetail.username : "Unknown",
+          profileImageUrl: ownerDetail ? ownerDetail.profileImageUrl : "",
         };
       })
     );

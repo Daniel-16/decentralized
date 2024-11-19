@@ -33,6 +33,41 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.25);
     text-align: center;
   }
+
+
+
+    .card.is-loading {
+      .image,
+      h2,
+      p {
+          background: #eee;
+          background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+          border-radius: 5px;
+          background-size: 200% 100%;
+          animation: 1.5s shine linear infinite;
+      }
+
+      .image {
+          height: 200px;
+          border-bottom-left-radius: 0;
+          border-bottom-right-radius: 0;
+      }
+
+      h2 {
+          height: 30px;
+      }
+
+      p {
+          height: 70px;
+      }
+    }
+
+    @keyframes shine {
+        to {
+            background-position-x: -200%;
+        }
+    }
+    
 </style>
 
 <!-- Breadcrumb -->
@@ -41,13 +76,13 @@
     <div class="breadcrumb-content">
       <div class="d-flex align-items-center justify-content-center">
         <!-- <div class="spinner-grow text-danger me-1" role="status"><span class="visually-hidden">Loading...</span></div> -->
-        <h2 class="breadcrumb-title mb-0">KooponCraft Marketplace</h2>
+        <h2 class="breadcrumb-title mb-0">KooponCraft Coupon Marketplace</h2>
       </div>
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb justify-content-center">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
           <li class="breadcrumb-item active" aria-current="page">
-            KooponCraft Marketplace
+            KooponCraft Coupon Marketplace
           </li>
         </ol>
       </nav>
@@ -57,6 +92,44 @@
 <div class="divider"></div>
 <div class="live-bids-wrapper">
   <div class="container">
+    <div class="row g-4 justify-content-center" id="loading-cards">
+      <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
+          <div class="cards">
+              <div class="card is-loading">
+                  <div class="image"></div>
+                  <div class="content">
+                  <h2></h2>
+                  <p></p>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
+          <div class="cards">
+              <div class="card is-loading">
+                  <div class="image"></div>
+                  <div class="content">
+                  <h2></h2>
+                  <p></p>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
+          <div class="cards">
+              <div class="card is-loading">
+                  <div class="image"></div>
+                  <div class="content">
+                  <h2></h2>
+                  <p></p>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+
+
+
     <div class="row g-4 justify-content-center" id="itemsContainer"></div>
   </div>
   <div class="container">
@@ -109,8 +182,12 @@
       $.ajax({
         url: "/api/getAllCoupons",
         method: "GET",
+        beforeSend: function () {
+          $("#loading-cards").show();
+        },
         success: function (response) {
-          console.log(response);
+          // console.log(response);
+          $("#loading-cards").hide();
           if (response.success) {
             const coupons = response.coupons;
             let itemsHTML = "";

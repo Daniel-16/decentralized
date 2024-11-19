@@ -70,29 +70,29 @@
     } */
 
     .card.is-loading {
-    .image,
-    h2,
-    p {
-        background: #eee;
-        background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
-        border-radius: 5px;
-        background-size: 200% 100%;
-        animation: 1.5s shine linear infinite;
-    }
+      .image,
+      h2,
+      p {
+          background: #eee;
+          background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+          border-radius: 5px;
+          background-size: 200% 100%;
+          animation: 1.5s shine linear infinite;
+      }
 
-    .image {
-        height: 200px;
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-    }
+      .image {
+          height: 200px;
+          border-bottom-left-radius: 0;
+          border-bottom-right-radius: 0;
+      }
 
-    h2 {
-        height: 30px;
-    }
+      h2 {
+          height: 30px;
+      }
 
-    p {
-        height: 70px;
-    }
+      p {
+          height: 70px;
+      }
     }
 
     @keyframes shine {
@@ -737,33 +737,7 @@
             <div class="container">
               <div class="row g-4 justify-content-center" id="leaderboard-container">
                 <!-- Single Card -->
-                <div class="col-12 col-sm-10 col-md-6 col-xl-4">
-                  <div class="nft-card card shadow-sm">
-                    <div class="card-body">
-                      <div class="row align-items-center g-3">
-                        <div class="col-4">
-                          <div class="img-wrap"><img src="/assets/img/bg-img/25.jpg" alt="">
-                            <div class="badge bg-danger position-absolute px-2 py-1">#1</div>
-                          </div>
-                        </div>
-                        <div class="col-8">
-                          <!-- Meta Info -->
-                          <div class="meta-info">
-                            <div class="name-info d-flex align-items-center mb-3">
-                              <div class="author-img position-relative"><img class="shadow" src="/assets/img/bg-img/u1.jpg" alt=""><i class="bi bi-check position-absolute bg-success"></i></div>
-                              <div class="name-author"><a class="name d-block hover-primary fw-bold text-truncate" href="item-details.html" data-bs-toggle="tooltip" data-bs-placement="top" title="Trees Growing Seedlings">Trees Growing Seedlings</a><a class="author d-block fz-12 hover-primary text-truncate" href="author.html">@designing_world</a></div>
-                            </div>
-                            <div class="price-bid d-flex align-items-center">
-                              <div class="price me-2 me-sm-3">
-                                <h6 class="mb-0 d-inline-block fz-14 border border-2 border-info rounded py-1 px-2 text-info">0.06 ETH</h6>
-                              </div><a class="btn btn-minimal btn-sm hover-primary d-flex align-items-center" href="#"><img class="me-1" src="/assets/img/core-img/fire.png" alt="">Place bid</a>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                
 
 
               </div>
@@ -838,7 +812,6 @@
                 <div class="cards">
                     <div class="card is-loading">
                         <div class="image"></div>
-                        <div class="content">
                         <h2></h2>
                         <p></p>
                         </div>
@@ -938,7 +911,7 @@ $(document).ready(function () {
       beforeSend: function () {
         $("#loading-cards").show();
       },
-            success: function (response) {
+      success: function (response) {
         $("#loading-cards").hide();
         if (response.success) {
           const items = response.coupons;
@@ -964,7 +937,7 @@ $(document).ready(function () {
                     <div class="col-8">
                       <div class="name-info d-flex align-items-center">
                         <div class="author-img position-relative">
-                          <img class="shadow" src="${item.authorImage || '/assets/img/bg-img/u1.jpg'}" alt="">
+                          <img class="shadow" src="${item.profileImageUrl || `https://api.dicebear.com/6.x/identicon/svg?seed=${encodeURIComponent(item.ownerName)}`}" alt="">
                           <i class="bi bi-check position-absolute bg-success"></i>
                         </div>
                         <div class="name-author">
@@ -1097,7 +1070,7 @@ $(document).ready(function () {
   // Fetch and display items
   function loadCoupons(limit) {
     $.ajax({
-      url: `/api/getAllCoupons?created_at=recent&userAddress=${localStorage.getItem("accountAddress")}`,
+      url: `/api/getAllCoupons?created_at=recent&userAddress=${localStorage.getItem("accountAddress")}&limit=${limit}`,
       method: "GET",
       beforeSend: function () {
         $("#loading-cards-2").show();
@@ -1127,7 +1100,7 @@ $(document).ready(function () {
                 <div class="row gx-2 align-items-center mt-2">
                   <div class="col-8">
                     <div class="name-info d-flex align-items-center">
-                      <div class="author-img position-relative"><img class="fixed-ask" shadow" src="/assets/img/bg-img/u4.jpg" alt=""><i class="bi bi-check position-absolute bg-success"></i></div>
+                      <div class="author-img position-relative"><img class="fixed-ask" shadow" src="${item.profileImageUrl || `https://api.dicebear.com/6.x/identicon/svg?seed=${encodeURIComponent(item.ownerName)}`}" alt=""><i class="bi bi-check position-absolute bg-success"></i></div>
                       <div class="name-author"><a class="name d-block hover-primary fw-bold text-truncate" href="/getCoupon/${item.collectionId}/${item.tokenId}" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.tokenName}">${item.tokenName}</a><a class="author d-block fz-12 hover-primary text-truncate" href="#">@${item.ownerName}</a></div>
                     </div>
                   </div>
@@ -1243,7 +1216,7 @@ async function fetchLeaderboard() {
     }
 
     // Iterate over leaderboard data to create and insert each card
-    leaderboardData.leaderboard.forEach((user) => {
+    leaderboardData.leaderboard.forEach((user, index) => {
       // console.log(leaderboardData)
       const cardHTML = `
         <div class="col-12 col-sm-10 col-md-6 col-xl-4">
@@ -1252,25 +1225,24 @@ async function fetchLeaderboard() {
               <div class="row align-items-center g-3">
                 <div class="col-4">
                   <div class="img-wrap">
-                    <img src="${user.imageUrl || '/assets/img/bg-img/25.jpg'}" alt="">
-                    <div class="badge bg-danger position-absolute px-2 py-1">#${1}</div>
+                    <img src="${user.profileImageUrl || `https://api.dicebear.com/6.x/identicon/svg?seed=${encodeURIComponent(user.username )}`}" alt="">
+                    <div class="badge bg-danger position-absolute px-2 py-1">#${index + 1}</div>
                   </div>
                 </div>
                 <div class="col-8">
                   <div class="meta-info">
                     <div class="name-info d-flex align-items-center mb-3">
                       <div class="author-img position-relative">
-                        <img class="shadow" src="${user.authorImage || '/assets/img/bg-img/u1.jpg'}" alt="">
-                        <i class="bi bi-check position-absolute bg-success"></i>
+                        <!-- <i class="bi bi-check position-absolute bg-success"></i>  --> 
                       </div>
                       <div class="name-author">
-                        <a class="name d-block hover-primary fw-bold text-truncate" href="item-details.html" data-bs-toggle="tooltip" data-bs-placement="top" title="${user.username}">${user.username}</a>
-                        <a class="author d-block fz-12 hover-primary text-truncate" href="author.html">@${user.username}</a>
+                        <a class="name d-block hover-primary fw-bold text-truncate" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="${user.username}">${user.username}</a>
+                        <a class="author d-block fz-12 hover-primary text-truncate" href="#">@${user.username}</a>
                       </div>
                     </div>
-                    <div class="price-bid d-flex align-items-center">
+                    <div class="px-5 price-bid d-flex align-items-center">
                       <div class="price me-2 me-sm-3">
-                        <h6 class="mb-0 d-inline-block fz-14 border border-2 border-info rounded py-1 px-2 text-info">${user.points} KPCP</h6>
+                        <h6 class="mb-0 d-inline-block fz-14 border border-2 border-info rounded py-1 px-2 text-info">${user.points} XP</h6>
                       </div>
                     </div>
                   </div>

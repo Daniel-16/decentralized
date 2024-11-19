@@ -98,6 +98,7 @@
                 localStorage.setItem("hasReceivedToken", response.user.hasReceivedToken);
                 localStorage.setItem("currentStreak", response.user.currentStreak);
                 localStorage.setItem("highestStreak", response.user.highestStreak);
+                localStorage.setItem("profileImageUrl", response.user.profileImageUrl);
 
                 // Update streak display if on dashboard
                 $("#currentStreak").text(response.user.currentStreak);
