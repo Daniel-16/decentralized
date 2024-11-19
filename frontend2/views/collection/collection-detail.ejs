@@ -72,7 +72,9 @@
                     <% collection.tokens.forEach(token => { %>
                         <div class="col-12 col-sm-6 col-lg-3 mb-4 item-card" 
                              data-name="<%= token.tokenName.toLowerCase() %>"
-                             data-description="<%= token.tokenDescription.toLowerCase() %>">
+                             data-description="<%= token.tokenDescription.toLowerCase() %>"
+                             data-price="<%= token.priceOfCoupon %>"
+                             data-created="<%= token.createdAt || Date.now() %>">
                             <div class="nft-card card h-100 border-0 shadow-sm">
                                 <div class="card-img-top position-relative">
                                     <img src="<%= token.tokenImageUrl %>" 
@@ -211,6 +213,32 @@
 </style>
 
 <script>
+// Helper function to sort items
+function sortItems(sortBy) {
+    const container = document.getElementById('items-container');
+    const items = Array.from(container.getElementsByClassName('item-card'));
+    
+    items.sort((a, b) => {
+        switch(sortBy) {
+            case 'newest':
+                // Assuming we add data-created attribute with timestamp
+                return b.dataset.created - a.dataset.created;
+            case 'oldest':
+                return a.dataset.created - b.dataset.created;
+            case 'price-asc':
+                return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+            case 'price-desc':
+                return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+            default:
+                return 0;
+        }
+    });
+
+    // Re-append sorted items
+    items.forEach(item => container.appendChild(item));
+}
+
+// Search functionality
 document.getElementById('searchItems').addEventListener('input', function(e) {
     const searchTerm = e.target.value.toLowerCase();
     const items = document.getElementsByClassName('item-card');
@@ -221,6 +249,11 @@ document.getElementById('searchItems').addEventListener('input', function(e) {
         const isVisible = name.includes(searchTerm) || description.includes(searchTerm);
         item.style.display = isVisible ? 'block' : 'none';
     });
+});
+
+// Sort functionality
+document.getElementById('sortItems').addEventListener('change', function(e) {
+    sortItems(e.target.value);
 });
 </script>
 
