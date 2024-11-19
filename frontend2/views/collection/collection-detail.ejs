@@ -70,7 +70,9 @@
                 <!-- Items Grid -->
                 <div class="row g-4" id="items-container">
                     <% collection.tokens.forEach(token => { %>
-                        <div class="col-12 col-sm-6 col-lg-3 mb-4">
+                        <div class="col-12 col-sm-6 col-lg-3 mb-4 item-card" 
+                             data-name="<%= token.tokenName.toLowerCase() %>"
+                             data-description="<%= token.tokenDescription.toLowerCase() %>">
                             <div class="nft-card card h-100 border-0 shadow-sm">
                                 <div class="card-img-top position-relative">
                                     <img src="<%= token.tokenImageUrl %>" 
@@ -207,5 +209,19 @@
     color: #ffc107;
 }
 </style>
+
+<script>
+document.getElementById('searchItems').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const items = document.getElementsByClassName('item-card');
+
+    Array.from(items).forEach(item => {
+        const name = item.dataset.name;
+        const description = item.dataset.description;
+        const isVisible = name.includes(searchTerm) || description.includes(searchTerm);
+        item.style.display = isVisible ? 'block' : 'none';
+    });
+});
+</script>
 
 <%- include('../partials/admin/footer') %>
