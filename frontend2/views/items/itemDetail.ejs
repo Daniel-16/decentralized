@@ -195,7 +195,9 @@
           <h2 class="my-3"><%= token.tokenName %> <span class="text-primary">#<%= token.tokenId %></span></h2>
           <div class="d-flex align-items-center mb-4">
             <div class="author-img position-relative me-3">
-              <img class="shadow" src="/assets/img/bg-img/u2.jpg" alt="" /><i
+              <img class="shadow" style="height: 400px;" src="<%= token.profileImageUrl || `https://api.dicebear.com/6.x/identicon/svg?seed=${encodeURIComponent(token.ownerName)}` %>" alt="" />
+              
+              <i
                 class="bi bi-check position-absolute bg-primary"
               ></i>
             </div>
@@ -206,8 +208,8 @@
               </a> -->
               <span class="d-block fz-14 mt-1">Owner</span>
               <strong>
-                <span class="text-primary font-weight-bold" title="<%= token.tokenOwnerAddress %>">
-                  <%= token.tokenOwnerAddress.substring(0, 6) %>...<%=token.tokenOwnerAddress.slice(-5) %>
+                <span class="text-primary font-weight-bold" title="<%= token.ownerName %>">
+                  @<%= token.ownerName %>
                 </span>
               </strong>
             </div>
@@ -465,7 +467,8 @@
 <div class="related-project-area">
   <div class="container">
     <div class="section-heading">
-      <h2 class="mb-0">More NFTs From This Collection</h2>
+      <!-- <h2 class="mb-0">More NFTs From This Collection</h2> -->
+      <h2 class="mb-0">Other Coupons From This Collection</h2>
     </div>
     <!-- Slide -->
     <div class="related-project-slide">
@@ -518,17 +521,7 @@
                 </ul>
               </div>
             </div>
-            <!-- Others Info -->
-            <div class="row gx-2 align-items-center mt-3">
-              <div class="col-8">
-                <span class="d-block fz-12"> Available </span>
-              </div>
-              <div class="col-4 text-end">
-                <button class="wishlist-btn" type="button">
-                  <i class="bi"></i>
-                </button>
-              </div>
-            </div>
+            <br>
             <!-- Meta Info -->
             <div class="row gx-2 align-items-center mt-2">
               <div class="col-8">
@@ -536,7 +529,7 @@
                   <div class="author-img position-relative">
                     <img
                       class="shadow"
-                      src="/assets/img/bg-img/u2.jpg"
+                      src="<%= coupon.profileImageUrl || `https://api.dicebear.com/6.x/identicon/svg?seed=${encodeURIComponent(coupon.ownerName)}` %>"
                       alt=""
                     />
                     <i class="bi bi-check position-absolute bg-success"></i>
@@ -565,15 +558,13 @@
               </div>
             </div>
             <!-- Button -->
-            <div class="row gx-2 align-items-center mt-3">
-              <div class="col-12">
-                <a
-                  class="btn btn-primary btn-sm rounded-pill"
-                  href="/getCoupon/<%= coupon.collectionId %>/<%= coupon.tokenId %>"
-                  >View</a
-                >
+             <div class="row gx-2 align-items-center justify-content-center mt-3">
+                <div class="col-12 text-center">
+                  <a class="btn btn-primary btn-sm rounded-pill" href="/getCoupon/<%= coupon.collectionId %>/<%= coupon.tokenId %>">Buy</a>
+                </div>
               </div>
-            </div>
+
+            
           </div>
         </div>
       </div>

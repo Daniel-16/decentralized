@@ -74,19 +74,14 @@
 <div class="breadcrumb-wrapper">
   <div class="container">
     <div class="breadcrumb-content">
-      <div class="d-flex align-items-center justify-content-center">
-        <!-- <div class="spinner-grow text-danger me-1" role="status"><span class="visually-hidden">Loading...</span></div> -->
-        <h2 class="breadcrumb-title mb-0">KooponCraft Coupon Marketplace</h2>
-      </div>
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb justify-content-center">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item active" aria-current="page">
-            KooponCraft Coupon Marketplace
-          </li>
-        </ol>
-      </nav>
-    </div>
+          <h2 class="breadcrumb-title">Coupon Marketplace</h2>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center">
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Marketplace</li>
+            </ol>
+          </nav>
+        </div>
   </div>
 </div>
 <div class="divider"></div>
@@ -204,21 +199,13 @@
                                     </div>
                                 </a>
                                 </div>
-                                <!-- Others Info -->
-                                <div class="row gx-2 align-items-center mt-3">
-                                <div class="col-8">
-                                    <span class="d-block fz-12"><i class="bi bi-bag me-1"></i>Available</span>
-                                </div>
-                                <div class="col-4 text-end">
-                                    <button class="wishlist-btn" type="button"><i class="bi"></i></button>
-                                </div>
-                                </div>
+                                <br>
                                 <!-- Meta Info -->
                                 <div class="row gx-2 align-items-center mt-2">
                                 <div class="col-8">
                                     <div class="name-info d-flex align-items-center">
                                     <div class="author-img position-relative">
-                                        <img class="shadow" src="/assets/img/bg-img/u2.jpg" alt="">
+                                        <img class="shadow" src="${coupon.profileImageUrl || `https://api.dicebear.com/6.x/identicon/svg?seed=${encodeURIComponent(coupon.ownerName)}`}" alt="">
                                         <i class="bi bi-check position-absolute bg-success"></i>
                                     </div>
                                     <div class="name-author">

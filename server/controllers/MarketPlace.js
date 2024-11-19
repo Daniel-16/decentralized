@@ -46,6 +46,7 @@ export const getAllCoupons = async (req, res) => {
         return {
           ...coupon._doc,
           ownerName: ownerDetails ? ownerDetails.username : "Unknown",
+          profileImageUrl: ownerDetails ? ownerDetails.profileImageUrl : "",
         };
       })
     );
@@ -199,6 +200,7 @@ export const getCoupon = async (req, res) => {
           ownerDetails && ownerDetails.length > 0
             ? ownerDetails[0].username
             : "Unknown",
+        profileImageUrl: ownerDetails ? ownerDetails.profileImageUrl : "",
       },
       moreCoupons: moreCouponsWithOwnerDetails,
     });
@@ -240,6 +242,7 @@ export const getItem = async (req, res) => {
         return {
           ...moreCoupon._doc,
           ownerName: ownerDetail ? ownerDetail.username : "Unknown",
+          profileImageUrl: ownerDetail ? ownerDetail.profileImageUrl : "",
         };
       })
     );
@@ -267,7 +270,7 @@ export const getItem = async (req, res) => {
       ...mySpecialCoupons.map((coupon) => ({ ...coupon, type: "special" })),
     ];
 
-    // console.log(combinedCoupons)
+    // console.log(ownerDetails);
 
     res.render("items/itemDetail", {
       token: {
@@ -276,6 +279,7 @@ export const getItem = async (req, res) => {
           ownerDetails && ownerDetails.length > 0
             ? ownerDetails[0].username
             : "Unknown",
+        profileImageUrl: ownerDetails ? ownerDetails.profileImageUrl : "",
       },
       moreCoupons: moreCouponsWithOwnerDetails,
       myCoupons,

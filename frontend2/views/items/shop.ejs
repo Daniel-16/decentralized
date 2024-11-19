@@ -242,7 +242,7 @@ $(document).ready(function () {
                                     <div class="row gx-2 align-items-center mt-2">
                                         <div class="col-8">
                                             <div class="name-info d-flex align-items-center">
-                                                <div class="author-img position-relative"><img class="shadow" src="/assets/img/bg-img/u1.jpg" alt=""><i class="bi bi-check position-absolute bg-success"></i></div>
+                                                <div class="author-img position-relative"><img class="shadow" src="${item.profileImageUrl || `https://api.dicebear.com/6.x/identicon/svg?seed=${encodeURIComponent(item.ownerName)}`}" alt=""><i class="bi bi-check position-absolute bg-success"></i></div>
                                                 <div class="name-author"><a class="name d-block hover-primary fw-bold text-truncate" href="/getItem/${item.collectionId}/${item.tokenId}" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.tokenName} #${item.tokenId}">${item.tokenName} #${item.tokenId}</a><a class="author d-block fz-12 hover-primary text-truncate" href="#">@${item.ownerName}</a></div>
                                             </div>
                                         </div>
@@ -258,7 +258,7 @@ $(document).ready(function () {
                                     </div>
                                     <!-- Button -->
                                     <div class="row gx-2 align-items-center justify-content-center mt-3">
-                                        <div class="col-12 text-center"><a class="btn btn-primary btn-sm rounded-pill" href="/getItem/${item.collectionId}/${item.tokenId}">Purchase</a></div>
+                                        <div class="col-12 text-center"><a class="btn btn-primary btn-sm rounded-pill" href="/getItem/${item.collectionId}/${item.tokenId}">Buy</a></div>
                                     </div>
                                 </div>
                             </div>
