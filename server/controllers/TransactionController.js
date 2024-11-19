@@ -402,6 +402,16 @@ export const purchaseItem = async (req, res) => {
       buyer.points += 10;
       await buyer.save();
 
+      // Update token ownership and status
+      await TokenModel.findOneAndUpdate(
+        { tokenId, collectionId },
+        {
+          tokenOwnerAddress: buyer.accountAddress,
+          tokenOwnerId: buyer._id,
+          isPurchased: true,
+        }
+      );
+
       // Calculate VAT and seller amounts
       const basePrice = finalPrice / 1.05;
       const vatAmount = Math.floor(finalPrice - basePrice);
@@ -437,7 +447,7 @@ export const purchaseItem = async (req, res) => {
         );
 
         // Create transaction record
-        const transaction = new TransactionModel({
+        const transaction = await TransactionModel.create({
           buyerId: buyer._id,
           buyerName: buyer.username || buyer.email,
           item: item._id,
@@ -445,8 +455,6 @@ export const purchaseItem = async (req, res) => {
           storeOwnerId: seller._id,
           totalPrice: finalPrice,
         });
-
-        await transaction.save();
 
         // Check and transfer any special tokens if applicable
         const specialTokenTransferred = await checkAndTransferSpecialToken(

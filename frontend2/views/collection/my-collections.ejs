@@ -47,7 +47,15 @@
 
                     <div class="mb-3">
                         <label for="priceOfCoupon" class="form-label">Price of Coupon:</label>
-                        <input type="number" min="0" max="5" step="0.01" placeholder="Enter price in UNQ (max 5)" id="priceOfCoupon" class="form-control" name="priceOfCoupon" required>
+                        <input type="number" 
+                               min="0" 
+                               max="5" 
+                               step="0.01" 
+                               placeholder="Enter price in UNQ (max 5)" 
+                               id="priceOfCoupon" 
+                               class="form-control" 
+                               name="priceOfCoupon" 
+                               required>
                     </div>
 
                     <div class="mb-3">
@@ -129,8 +137,16 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="priceOfCoupon" class="form-label">Price of Item:</label>
-                        <input type="number" min="0" max="5" step="0.01" placeholder="Enter price in UNQ (max 5)" id="priceOfCoupon" class="form-control" name="priceOfCoupon" required>
+                        <label for="mint_priceOfCoupon" class="form-label">Price of Item:</label>
+                        <input type="number" 
+                               min="0" 
+                               max="5" 
+                               step="0.01" 
+                               placeholder="Enter price in UNQ (max 5)" 
+                               id="mint_priceOfCoupon" 
+                               class="form-control" 
+                               name="mint_priceOfCoupon" 
+                               required>
                     </div>
 
                     <div class="mb-3">
@@ -196,6 +212,9 @@ $(document).ready(function() {
                 if (response && response.success) {
                     console.log("collections", response);
                     if (response.collections && response.collections.length > 0) {
+                        // Sort collections by createdAt date in descending order (newest first)
+                        response.collections.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                        
                         response.collections.forEach(function(collection) {
                             // console.log(collection)
                             let tokensHtml = '';
@@ -371,13 +390,15 @@ $(document).ready(function() {
         const $items = $container.children('.col-12').get();
 
         $items.sort(function(a, b) {
+            const dateA = new Date($(a).find('.bi-calendar').next('small').text());
+            const dateB = new Date($(b).find('.bi-calendar').next('small').text());
             const nameA = $(a).find('.card-title').text().toLowerCase();
             const nameB = $(b).find('.card-title').text().toLowerCase();
             
             if (sortBy === 'newest') {
-                return $(b).data('created-at') - $(a).data('created-at');
+                return dateB - dateA;
             } else if (sortBy === 'oldest') {
-                return $(a).data('created-at') - $(b).data('created-at');
+                return dateA - dateB;
             } else {
                 return nameA.localeCompare(nameB);
             }
@@ -423,16 +444,34 @@ $(document).ready(function() {
             const itemCategory = $('input[name="itemCategory"]:checked').val();
             let urlToPost = tokenType === 'standard' ? '/api/mintToken' : '/api/mintSpecialToken';
 
+            const price = $('#priceOfCoupon').val();
+            console.log('Price before parsing:', price);
+            const parsedPrice = parseFloat(price);
+            console.log('Price after parsing:', parsedPrice);
+
             const formData = {
                 collectionId: $('#collectionId').val(),
                 tokenName: $('#tokenName1').val(),
                 tokenDescription: $('#tokenDescription1').val(),
                 tokenImageUrl: base64Image, 
-                priceOfCoupon: $('#priceOfCoupon').val(),
+                priceOfCoupon: parsedPrice,
                 category: itemCategory
             };
+            console.log('Form data being sent:', formData);
 
             const token = localStorage.getItem('token');
+
+            if (!formData.priceOfCoupon || isNaN(formData.priceOfCoupon)) {
+                alert('Please enter a valid price');
+                $('#cover-spin').hide(0);
+                return;
+            }
+
+            if (formData.priceOfCoupon <= 0 || formData.priceOfCoupon > 5) {
+                alert('Price must be between 0 and 5 UNQ');
+                $('#cover-spin').hide(0);
+                return;
+            }
 
             $.ajax({
                 url: urlToPost, 
@@ -519,17 +558,35 @@ $(document).ready(function() {
             const base64Image = reader.result; 
             const itemCategory = $('input[name="mint_itemCategory"]:checked').val();
 
+            const price = $('#mint_priceOfCoupon').val();
+            console.log('Item price before parsing:', price);
+            const parsedPrice = parseFloat(price);
+            console.log('Item price after parsing:', parsedPrice);
+
             const formData = {
                 collectionId: $('#mint_collectionId').val(),
                 tokenName: $('#mint_tokenName1').val(),
                 tokenDescription: $('#mint_tokenDescription1').val(),
                 tokenImageUrl: base64Image, 
-                priceOfCoupon: $('#mint_priceOfCoupon').val(),
+                priceOfCoupon: parsedPrice,
                 isItem: true,
                 category: itemCategory
             };
+            console.log('Item form data being sent:', formData);
 
             const token = localStorage.getItem('token');
+
+            if (!formData.priceOfCoupon || isNaN(formData.priceOfCoupon)) {
+                alert('Please enter a valid price');
+                $('#cover-spin').hide(0);
+                return;
+            }
+
+            if (formData.priceOfCoupon <= 0 || formData.priceOfCoupon > 5) {
+                alert('Price must be between 0 and 5 UNQ');
+                $('#cover-spin').hide(0);
+                return;
+            }
 
             $.ajax({
                 url: '/api/mintToken', 

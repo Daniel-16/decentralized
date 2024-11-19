@@ -22,7 +22,9 @@
                                     <span class="text-muted">Created by</span>
                                     <a href="#" class="creator-link ms-2 d-flex align-items-center">
                                         <img src="/assets/img/bg-img/u1.jpg" alt="Creator" class="creator-avatar">
-                                        <span class="ms-2"><%= collection.collectionOwner %></span>
+                                        <span class="ms-2" title="<%= collection.walletAddress %>">
+                                            <%= collection.walletAddress.substring(0, 6) %>...<%=collection.walletAddress.slice(-5) %>
+                                        </span>
                                     </a>
                                 </div>
                                 <div class="collection-stats d-flex gap-4">
@@ -74,13 +76,13 @@
                              data-name="<%= token.tokenName.toLowerCase() %>"
                              data-description="<%= token.tokenDescription.toLowerCase() %>"
                              data-price="<%= token.priceOfCoupon %>"
-                             data-created="<%= token.createdAt || Date.now() %>">
+                             data-created="<%= new Date(token.createdAt).getTime() %>">
                             <div class="nft-card card h-100 border-0 shadow-sm">
                                 <div class="card-img-top position-relative">
                                     <img src="<%= token.tokenImageUrl %>" 
                                          class="w-100 token-image" 
                                          alt="<%= token.tokenName %>"
-                                         style="height: 300px; object-fit: cover;">
+                                         style="height: 200px; object-fit: cover;">
                                     <div class="token-type-badge <%= token.tokenType === 'special' ? 'bg-warning' : 'bg-primary' %>">
                                         <%= token.tokenType === 'special' ? 'Special' : 'Standard' %>
                                     </div>
@@ -109,7 +111,7 @@
 <style>
 .collection-header {
     min-height: 300px;
-    background: #f8f9fa;
+    /* background: #f8f9fa; */
     margin-bottom: 100px;
     width: 100%;
 }
@@ -213,6 +215,11 @@
 </style>
 
 <script>
+// Sort items by newest first when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    sortItems('newest');
+});
+
 // Helper function to sort items
 function sortItems(sortBy) {
     const container = document.getElementById('items-container');
