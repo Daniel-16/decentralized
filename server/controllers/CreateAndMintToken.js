@@ -185,7 +185,7 @@ export const mintToken = async (req, res) => {
         tokenOwnerAddress: user.accountAddress,
         tokenOwnerId: user._id,
         tokenDescription,
-        priceOfCoupon,
+        priceOfCoupon: Number(priceOfCoupon).toFixed(2),
         tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
         metadata: {
           storeAddress: user.accountAddress,
@@ -395,7 +395,7 @@ export const createSpecialToken = async (req, res) => {
         tokenOwnerAddress: address,
         tokenOwnerId: user._id,
         tokenUrl: `https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`,
-        priceOfCoupon,
+        priceOfCoupon: Number(priceOfCoupon).toFixed(2),
         metadata: {
           storeAddress: user.accountAddress,
           storeId: user._id,
