@@ -331,3 +331,49 @@
     });
   });
 </script>
+
+<!-- script to dismiss the sidebar when clicking outside on mobile -->
+<script>
+$(document).ready(function() {
+  // Function to check if we're on mobile view
+  function isMobileView() {
+    return window.innerWidth <= 768;
+  }
+
+  // Function to close sidebar
+  function closeSidebar() {
+    $('body').removeClass('dashboard-header-active');
+  }
+
+  // Handle clicks outside sidebar
+  $(document).on('click', function(event) {
+    if (isMobileView()) {
+      // Check if body has the active class and click is outside sidebar
+      if ($('body').hasClass('dashboard-header-active')) {
+        const sidebar = $('.admin-sidebar-wrap');
+        const menuTrigger = $('#dashboardMenuTrigger');
+        
+        // If click is outside sidebar and not on the menu trigger, close sidebar
+        if (!sidebar.is(event.target) && 
+            sidebar.has(event.target).length === 0 && 
+            !menuTrigger.is(event.target) && 
+            menuTrigger.has(event.target).length === 0) {
+          closeSidebar();
+        }
+      }
+    }
+  });
+
+  // Handle window resize
+  $(window).on('resize', function() {
+    if (!isMobileView()) {
+      closeSidebar();
+    }
+  });
+
+  // Prevent clicks inside sidebar from closing it
+  $('.admin-sidebar-wrap').on('click', function(event) {
+    event.stopPropagation();
+  });
+});
+</script>

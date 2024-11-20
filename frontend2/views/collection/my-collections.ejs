@@ -4,8 +4,8 @@
     <div class="container-fluid px-4">
         <div class="collections-header mb-4">
             <h3 class="mb-3">My Collections</h3>
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="search-filter d-flex gap-3">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div class="search-filter d-flex flex-column flex-md-row gap-3">
                     <input type="text" class="form-control" placeholder="Search collections..." id="searchCollections">
                     <select class="form-select" id="sortCollections">
                         <option value="newest">Newest</option>
@@ -13,7 +13,7 @@
                         <option value="name">Name</option>
                     </select>
                 </div>
-                <a href="/collection/create" class="btn btn-primary">Create Collection</a>
+                <a href="/collection/create" class="btn btn-primary w-100 w-md-initial">Create Collection</a>
             </div>
         </div>
         <div class="row g-4" id="collections-container">
@@ -216,7 +216,6 @@ $(document).ready(function() {
                         response.collections.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                         
                         response.collections.forEach(function(collection) {
-                            // console.log(collection)
                             let tokensHtml = '';
                             let tokenCount = 0;
 
@@ -239,30 +238,30 @@ $(document).ready(function() {
                                             `<img src="${collection.collectionImageUrl}" 
                                                  class="card-img-top collection-image" 
                                                  alt="${collection.name}"
-                                                 style="height: 300px; object-fit: cover;">` 
+                                                 style="height: 200px; object-fit: cover;">` 
                                             : `<div class="placeholder-image bg-light d-flex align-items-center justify-content-center" 
-                                                  style="height: 300px;">
-                                                  <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                                                  style="height: 200px;">
+                                                  <i class="bi bi-image text-muted" style="font-size: 2rem;"></i>
                                                </div>`
                                         }
-                                        <div class="collection-stats position-absolute bottom-0 start-0 w-100 p-3 bg-gradient-dark">
+                                        <div class="collection-stats position-absolute bottom-0 start-0 w-100 p-2 bg-gradient-dark">
                                             <div class="d-flex justify-content-between text-white">
                                                 <div class="d-flex align-items-center">
                                                     <i class="bi bi-collection me-1"></i>
-                                                    <small>${collection.tokens ? (collection.tokens.length === 1 ? '1 item' : `${collection.tokens.length} items`) : '0 items'}</small>
+                                                    <small style="font-size: 0.8rem;">${collection.tokens ? (collection.tokens.length === 1 ? '1 item' : `${collection.tokens.length} items`) : '0 items'}</small>
                                                 </div>
                                                 <div class="d-flex align-items-center">
                                                     <i class="bi bi-calendar me-1"></i>
-                                                    <small>${new Date(collection.createdAt).toLocaleDateString()}</small>
+                                                    <small style="font-size: 0.8rem;">${new Date(collection.createdAt).toLocaleDateString()}</small>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-body">
-                                        <h5 class="card-title mb-2 text-truncate">${collection.name}</h5>
+                                    <div class="card-body p-3">
+                                        <h5 class="card-title mb-2 text-truncate" style="font-size: 1rem;">${collection.name}</h5>
                                         
-                                        <div class="d-flex gap-2">
-                                            <button class="btn btn-sm btn-mint-token flex-grow-1"
+                                        <div class="d-flex flex-column flex-sm-row gap-2">
+                                            <button class="btn btn-sm btn-mint-token w-100"
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#transferModal" 
                                                     data-token-id="${collection.tokenId}" 
@@ -271,13 +270,14 @@ $(document).ready(function() {
                                                            color: white; 
                                                            border: none;
                                                            border-radius: 20px;
-                                                           padding: 8px 15px;
+                                                           padding: 6px 12px;
+                                                           font-size: 0.875rem;
                                                            font-weight: 500;
                                                            transition: all 0.3s ease;
                                                            box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
                                                 <i class="bi bi-plus-circle me-1"></i> Mint Token
                                             </button>
-                                            <button class="btn btn-sm btn-mint-item flex-grow-1"
+                                            <button class="btn btn-sm btn-mint-item w-100"
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#mintItemModal" 
                                                     data-mtoken-id="${collection.tokenId}" 
@@ -286,7 +286,8 @@ $(document).ready(function() {
                                                            color: white; 
                                                            border: none;
                                                            border-radius: 20px;
-                                                           padding: 8px 15px;
+                                                           padding: 6px 12px;
+                                                           font-size: 0.875rem;
                                                            font-weight: 500;
                                                            transition: all 0.3s ease;
                                                            box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
@@ -301,22 +302,7 @@ $(document).ready(function() {
                             $('#collections-container').append(collectionItem);
 
                             // Add hover effects with jQuery
-                            $('.btn-mint-token').hover(
-                                function() {
-                                    $(this).css({
-                                        'transform': 'translateY(-2px)',
-                                        'box-shadow': '0 4px 8px rgba(0,0,0,0.3)'
-                                    });
-                                },
-                                function() {
-                                    $(this).css({
-                                        'transform': 'translateY(0)',
-                                        'box-shadow': '0 2px 5px rgba(0,0,0,0.2)'
-                                    });
-                                }
-                            );
-
-                            $('.btn-mint-item').hover(
+                            $('.btn-mint-token, .btn-mint-item').hover(
                                 function() {
                                     $(this).css({
                                         'transform': 'translateY(-2px)',
@@ -334,12 +320,10 @@ $(document).ready(function() {
                             // Attach click event handler for mint buttons
                             $('.btn-mint-token, .btn-mint-item').on('click', function(e) {
                                 e.stopPropagation();
-                                // Get token ID and collection ID from data attributes
                                 const tokenId = $(this).data('token-id');
                                 const collectionId = $(this).data('collection-id');
                                 const mint_collectionId = $(this).data('mcollection-id');
                                 
-                                // Pre-populate the modal form fields
                                 $('#tokenId').val(tokenId);
                                 $('#collectionId').val(collectionId);
                                 $('#mint_tokenId').val(tokenId);
@@ -360,22 +344,18 @@ $(document).ready(function() {
         });
     }
 
-    // Call the function to fetch collections
     fetchUserCollections();
 
-    // Close the modal when the close button is clicked
     $('.close-button').on('click', function() {
         $('#transferModal').fadeOut();
     });
 
-    // Close the modal when clicking outside of it
     $(window).on('click', function(event) {
         if (event.target === $('#transferModal')[0]) {
             $('#transferModal').fadeOut();
         }
     });
 
-    // Add these event listeners after fetchUserCollections is called
     $('#searchCollections').on('input', function() {
         const searchTerm = $(this).val().toLowerCase();
         $('.collection-card').each(function() {

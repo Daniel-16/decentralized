@@ -47,6 +47,69 @@
          -webkit-animation: spin .8s linear infinite;
          animation: spin .8s linear infinite;
        }
+
+       /* Mobile responsiveness */
+       @media (max-width: 768px) {
+           .dashboard-hero-card {
+               padding: 1rem !important;
+           }
+
+           .dashboard-hero-card h3 {
+               font-size: 1.5rem;
+           }
+
+           .button-groups .btn {
+               display: block;
+               width: 100%;
+               margin-bottom: 0.5rem;
+           }
+
+           .button-groups .btn:last-child {
+               margin-bottom: 0;
+           }
+
+           .table-responsive {
+               overflow-x: auto;
+           }
+
+           .activity-table th,
+           .activity-table td {
+               min-width: 120px;
+               font-size: 0.875rem;
+           }
+
+           .card {
+               margin-bottom: 1rem;
+           }
+
+           #chart-timeline {
+               height: 300px !important;
+           }
+
+           .col-sm-6 {
+               width: 100%;
+           }
+
+           #swapOffersPanel,
+           #redeemReqPanel {
+               width: 100%;
+           }
+
+           .modal-dialog {
+               margin: 0.5rem;
+           }
+       }
+
+       /* Tablet responsiveness */
+       @media (min-width: 769px) and (max-width: 1024px) {
+           .col-xxl-6 {
+               width: 100%;
+           }
+
+           #swapOffersPanel {
+               width: 100%;
+           }
+       }
 </style>
 
 
