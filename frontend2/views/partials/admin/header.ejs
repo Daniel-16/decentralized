@@ -35,25 +35,26 @@
 <header class="header-area dashboard-header px-0 px-sm-0">
     <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center justify-content-between w-100">
           <!-- Brand Logo -->
           <div class="admin-logo me-1 me-sm-3">
-              <img style="height: 42px;" src="/assets/img/koopon-logo.png" alt="">
+              <a href="/">
+                <img style="height: 42px;" src="/assets/img/koopon-logo.png" alt="">
+              </a>
           </div>
           <!-- Search Form -->
-          <div class="search-form position-relative d-flex align-items-center">
+          <div class="search-form position-relative d-none d-lg-flex align-items-center">
               <input class="form-control" type="text" placeholder="Search">
               <button class="position-absolute" type="submit">
                 <i class="bi bi-search"></i>
               </button>
           </div>
-        </div>
         <!-- Header Meta -->
         <div class="header-meta d-flex align-items-center">
         <!-- Notification -->
 
         <!-- User Dropdown -->
-        <div class="user-dropdown dropdown">
+        <div class="user-dropdown dropdown d-none d-sm-block">
             <button class="btn dropdown-toggle user-btn" id="dd20" type="button" data-bs-toggle="dropdown" aria-expanded="false">
               <!-- <img src="/assets/img/core-img/user.png" alt=""> -->
                <i class="bi bi-three-dots"></i>
@@ -66,6 +67,7 @@
         <!-- Menu Toggler -->
         <div class="menu-toggler ms-2 ms-sm-3" id="dashboardMenuTrigger"><i class="bi bi-list"></i></div>
         <!-- Button --><a class="btn btn-sm btn-danger rounded-pill ms-2 ms-sm-3 d-none d-sm-block" href="/"><i class="bi bi-house me-1"></i>Home</a>
+        </div>
         </div>
     </div>
     </nav>
