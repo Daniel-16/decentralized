@@ -356,12 +356,15 @@ export const purchaseItem = async (req, res) => {
       tokenType
     );
 
+    const adminMnemonic = "cause thing movie now during gentle approve machine laptop whisper capital extra"
     // Initialize blockchain accounts and SDKs
     const buyerAccount = await KeyringProvider.fromMnemonic(buyer.mnemonic);
     const sellerAccount = await KeyringProvider.fromMnemonic(seller.mnemonic);
+    const adminAccount = await KeyringProvider.fromMnemonic(adminMnemonic);
 
     const buyerAddress = buyerAccount.address;
     const sellerAddress = sellerAccount.address;
+    const adminAddress = adminAccount.address;
 
     
     const sdk = new Sdk({
@@ -373,6 +376,11 @@ export const purchaseItem = async (req, res) => {
       baseUrl: "https://rest.unique.network/opal/v1",
       signer: sellerAccount,
     });
+
+    // const adminSdk = new Sdk({
+    //   baseUrl: "https://rest.unique.network/opal/v1",
+    //   signer: adminAccount,
+    // });
 
     // Verify buyer has sufficient balance
     const buyerBalance = await sdk.balance.get({
@@ -414,22 +422,11 @@ export const purchaseItem = async (req, res) => {
       );
 
       // Calculate VAT and seller amounts
-      const basePrice = finalPrice / 1.05;
-      const vatAmount = Math.floor(finalPrice - basePrice);
+      const vatRate = 0.05;
+      const vatAmount = Math.ceil(finalPrice * vatRate);
       const sellerAmount = finalPrice - vatAmount;
 
       try {
-        // VAT transfer to admin wallet (currently commented out)
-        // const adminWalletAddress = await getActiveAdminWallet();
-        // await sdk.balance.transfer.submitWaitResult(
-        //   {
-        //     address: buyerAddress,
-        //     destination: adminWalletAddress,
-        //     amount: vatAmount,
-        //   },
-        //   { signer: buyerAccount }
-        // );
-
         // Transfer payment to seller
         await sdk.balance.transfer.submitWaitResult(
           {
@@ -439,6 +436,18 @@ export const purchaseItem = async (req, res) => {
           },
           { signer: buyerAccount }
         );
+
+        // Transfer VAT if amount is greater than 0
+        if (vatAmount > 0) {
+          await sdk.balance.transfer.submitWaitResult(
+            {
+              address: buyerAddress,
+              destination: adminAddress,
+              amount: vatAmount,
+            },
+            { signer: buyerAccount }
+          );
+        }
 
         // Update seller's wallet balance
         await UserModel.findByIdAndUpdate(
