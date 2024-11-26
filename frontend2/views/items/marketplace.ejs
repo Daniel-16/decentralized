@@ -175,7 +175,7 @@
     // Fetch and display items
     function loadItems() {
       $.ajax({
-        url: "/api/getAllCoupons",
+        url: "/api/getAllCoupons?item=false",
         method: "GET",
         beforeSend: function () {
           $("#loading-cards").show();
