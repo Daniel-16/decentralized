@@ -276,7 +276,7 @@ export const getSwapOffers = async (req, res) => {
   try {
     // Fetch swap offers where the user is either the initiator or the recipient
     const swapOffers = await SwapOfferModel.find({
-      status: { $ne: "cancelled" },
+      // status: { $ne: "cancelled" },
       $or: [{ initiator: userId }, { recipient: userId }],
     })
       .populate("initiator", "name email")

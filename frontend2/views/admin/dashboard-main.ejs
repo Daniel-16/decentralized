@@ -422,7 +422,7 @@ function populateSwapOffers(offers, currentUserId) {
     const isInitiator = currentUserId === offer.initiator._id;
     // console.log(isInitiator);
     const viewButton = isInitiator 
-      ? '<span class="text-muted">pending</span>'  // Disable or hide button
+      ? `<span class="text-muted">${status == 'cancelled' ? 'declined' : 'pending'}</span>`  // Disable or hide button
       : `<a href="#" class="rounded-pill btn btn-sm btn-primary view-button" 
            data-bs-toggle="modal" 
            data-bs-target="#decisionModal"
