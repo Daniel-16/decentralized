@@ -236,7 +236,7 @@
             </div>
 
             <!-- coupon swap -->
-            <div id="swapOffersPanel" class="col-6 col-xxl-6">
+            <div id="swapOffersPanel" class="col-12 col-xxl-12">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4">
                         <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
@@ -375,7 +375,7 @@
             success: function(response) {
             if (response.success) {
               // console.log(response);
-              if(response.filteredOffers.length === 0) {
+              if(response.swapOffers.length === 0) {
                 $("#swapOffersPanel").hide();
               }
                 populateSwapOffers(response.swapOffers, response.currentUserId);

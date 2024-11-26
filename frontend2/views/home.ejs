@@ -2,6 +2,15 @@
 
 <style>
 
+        /* Custom height for the modal */
+        .modal-content {
+            min-height: 70vh; /* Adjust the height as needed */
+        }
+
+        .modal-dialog {
+        max-width: 60%; /* Adjust the width as needed */
+    }
+
     .fixed-size {
         width: 100%; /* Ensures the image takes full width of its container */
         height: 200px; /* Set a fixed height */
@@ -539,7 +548,7 @@
 
 
 
-<div class="welcome-area pt-120">
+<div class="welcome-area pt-120 pb-5">
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-12 col-md-10 col-xl-8">
@@ -699,6 +708,30 @@
         </div>
     <!-- end: explore categories -->
 
+
+    <!-- Button to Trigger Modal -->
+    <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#largeModal">
+        Open Large Modal
+    </button> -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="largeModal" tabindex="-1" aria-labelledby="largeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="largeModalLabel">Large Modal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>This is a large, centered modal using Bootstrap.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <!-- new items container -->
@@ -1310,7 +1343,7 @@ $(document).ready(function () {
                   <div class="col-4">
                     <div class="price text-end"><span class="fz-12 d-block">Current Price</span>
                       <h6 class="mb-0">UNQ</h6>
-                      <h6 class="mb-0">${item.finalPriceOfCoupon}</h6>
+                      <h6 class="mb-0">${parseFloat(item.finalPriceOfCoupon).toFixed(2)}</h6>
                     </div>
                   </div>
                   <div class="col-12"><a class="btn btn-primary rounded-pill btn-sm mt-3 w-100" href="/getItem/${item.collectionId}/${item.tokenId}">Buy</a></div>
