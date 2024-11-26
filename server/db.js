@@ -9,7 +9,7 @@ const connectDB = async () => {
       await mongoose.connect(`${process.env.MONGODB_TEST_URI}`);
       console.log("Connected to DB in test mode");
     } else {
-      await mongoose.connect(`${process.env.MONGODB_PROD}`);
+      await mongoose.connect(`${process.env.MONGODB_DEV}`);
       console.log("Connected to DB in development");
     }
   } catch (error) {
