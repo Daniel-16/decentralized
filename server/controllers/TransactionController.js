@@ -182,6 +182,8 @@ export const purchaseCoupon = async (req, res) => {
     const transferCompleted = txTransfer?.isCompleted;
     console.log(`Transfer completed: ${transferCompleted}`);
 
+    let transaction;
+
     if (transferCompleted) {
       // Award points to buyer
       buyer.points += 10;
@@ -231,7 +233,7 @@ export const purchaseCoupon = async (req, res) => {
         );
 
         // Create transaction record
-        const transaction = new TransactionModel({
+        transaction = new TransactionModel({
           buyerId: buyer._id,
           buyerName: buyer.username || buyer.email,
           nameOfItemPurchased: token.tokenName,
