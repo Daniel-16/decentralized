@@ -530,20 +530,21 @@ function populateSwapOffers(offers, currentUserId) {
       },
       success: function (response) {
         if (response.success) {
-        //   alert('Offer declined successfully!');
-        Swal.fire({
-            title: 'Offer declined successfully!',
-            icon: 'success',
-            showConfirmButton: false,
-            timer: 1500
-        });
+          //   alert('Offer declined successfully!');
+          Swal.fire({
+              title: 'Offer declined successfully!',
+              icon: 'success',
+              showConfirmButton: false,
+              timer: 1500
+          });
           // refresh the offers table
           $('#decisionModal').modal('hide');
         } else {
           alert('Failed to decline the offer.');
         }
       },
-      error: function () {
+      error: function (xhr) {
+        console.error('Error:', xhr.responseText);
         alert('An error occurred while declining the offer.');
       }
     });
@@ -572,7 +573,7 @@ function populateSwapOffers(offers, currentUserId) {
 
             redeemRequests.forEach((request) => {
               const tokenDetails = request.tokenDetails || {};
-              // console.log(request);
+              console.log(request);
 
               var redeemButton = '';
               if (request.status === 'pending') {

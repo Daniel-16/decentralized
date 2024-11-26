@@ -69,6 +69,7 @@ $(document).ready(function () {
         // console.log(response);
         if (response.success) {
             // Check if there are items
+            console.log(response);
             if (response.items && response.items.length > 0) {
             const items = response.items;
             let itemsHTML = "";

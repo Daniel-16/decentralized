@@ -160,6 +160,14 @@ export const getAllRedeemRequests = async (req, res) => {
       .populate("initiator", "id username email") 
       .lean();
 
+    // console.log(redeemRequests);
+    const couponsToRedeem = redeemRequests.map(
+      (request) => request.couponToRedeem
+    );
+    couponsToRedeem.forEach((coupon) => {
+      // console.log(coupon.tokenId);
+    });
+
     if (redeemRequests.length === 0) {
       return res.status(200).json({
         success: true,
@@ -171,9 +179,11 @@ export const getAllRedeemRequests = async (req, res) => {
     const enrichedRedeemRequests = await Promise.all(
       redeemRequests.map(async (redeemRequest) => {
         const token = await TokenModel.findOne({
-          tokenId: redeemRequest.couponToRedeem.tokenId,
-          collectionId: redeemRequest.couponToRedeem.collectionId,
+          tokenId: redeemRequest.couponToRedeem.tokenId || couponsToRedeem.tokenId,
+          collectionId: redeemRequest.couponToRedeem.collectionId || couponsToRedeem.collectionId,
         }).lean();
+
+        // console.log(token);
 
         if (token) {
           return {

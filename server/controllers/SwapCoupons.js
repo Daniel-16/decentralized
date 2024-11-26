@@ -59,6 +59,22 @@ export const initiateCouponSwap = async (req, res) => {
       });
     }
 
+    // check if a similar swap offer already exists
+    const existingSwapOffer = await SwapOfferModel.findOne({
+      initiator: userId,
+      recipient: desiredToken.tokenOwnerId,
+      ownTokenId,
+      ownCollectionId,
+      desiredTokenId,
+      desiredCollectionId,
+    });
+    if (existingSwapOffer) {
+      return res.status(400).json({
+        success: false,
+        message: "A similar swap offer already exists",
+      });
+    }
+
     // Create a swap offer in the database
     const swapOffer = new SwapOfferModel({
       initiator: userId,
@@ -215,11 +231,15 @@ export const acceptCouponSwap = async (req, res) => {
 
 // TODO: Implement the cancelCouponSwap controller
 export const declineCouponSwap = async (req, res) => {
-  const { swapOfferId } = req.body;
+  const { offerId } = req.body;
+  let swapOfferId = offerId;
   const userId = req.user.id;
+  // console.log("offerID: ", swapOfferId);
+  // console.log("userId: ", userId);
 
   try {
     const swapOffer = await SwapOfferModel.findById(swapOfferId);
+    console.log("swapOffer: ", swapOffer);
     if (!swapOffer) {
       return res
         .status(404)
@@ -235,7 +255,7 @@ export const declineCouponSwap = async (req, res) => {
     }
 
     // update swap offer status to declined?
-    swapOffer.status = "declined";
+    swapOffer.status = "cancelled";
     await swapOffer.save();
 
     res.status(200).json({
@@ -256,6 +276,7 @@ export const getSwapOffers = async (req, res) => {
   try {
     // Fetch swap offers where the user is either the initiator or the recipient
     const swapOffers = await SwapOfferModel.find({
+      status: { $ne: "cancelled" },
       $or: [{ initiator: userId }, { recipient: userId }],
     })
       .populate("initiator", "name email")
