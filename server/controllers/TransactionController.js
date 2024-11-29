@@ -6,6 +6,7 @@ import { KeyringProvider } from "@unique-nft/accounts/keyring";
 import TokenModel from "../models/TokenModel.js";
 import { checkAndTransferSpecialToken } from "../services/SpecialTokenService.js";
 import { applyCouponDiscount } from "../utils/UseCoupon.js";
+import { Address } from "@unique-nft/utils"
 // import AdminWalletModel from "../models/AdminWallet.js";
 
 // Helper function to get active admin wallet (currently commented out)
@@ -333,7 +334,7 @@ export const purchaseItem = async (req, res) => {
       collectionId,
       isItem: true,
     });
-    console.log(tokenId, collectionId);
+    // console.log(tokenId, collectionId);
     if (!item) {
       return res.status(404).json({ success: false, error: "Item not found" });
     }
@@ -367,6 +368,9 @@ export const purchaseItem = async (req, res) => {
     const buyerAddress = buyerAccount.address;
     const sellerAddress = sellerAccount.address;
     const adminAddress = adminAccount.address;
+    const adminMirror = Address.mirror.ethereumToSubstrate("0xaa8fb36c99A9edc21D45A1c9380471BFB8B25975")
+    // console.log(adminMirror);
+    
 
     
     const sdk = new Sdk({
@@ -444,7 +448,7 @@ export const purchaseItem = async (req, res) => {
           await sdk.balance.transfer.submitWaitResult(
             {
               address: buyerAddress,
-              destination: adminAddress,
+              destination: adminMirror,
               amount: vatAmount,
             },
             { signer: buyerAccount }
