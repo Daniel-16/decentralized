@@ -865,7 +865,7 @@ async function connectPolkadot() {
         // Get accounts
         const accounts = await extension.accounts.get();
         console.log('Accounts:', accounts);
-
+        {tokenName: "BuyHere"}
         if (!accounts || accounts.length === 0) {
             Swal.fire({
                 title: "No Accounts Found",

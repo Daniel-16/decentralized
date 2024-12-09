@@ -14,7 +14,7 @@
 
 //     res.status(201).json({
 //       success: true,
-//       adminWallet,
+//       adminWallet
 //     });
 //   } catch (error) {
 //     res.status(500).json({
