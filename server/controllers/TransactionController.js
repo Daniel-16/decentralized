@@ -429,7 +429,7 @@ export const purchaseItem = async (req, res) => {
 
       // Calculate VAT and seller amounts
       const vatRate = 0.05;
-      const vatAmount = Math.ceil(finalPrice * vatRate);
+      const vatAmount = finalPrice * vatRate;
       const sellerAmount = finalPrice - vatAmount;
 
       try {
