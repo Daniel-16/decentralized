@@ -100,6 +100,58 @@
 .modal-footer {
     border-top: 1px solid rgba(255,255,255,0.1);
 }
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 10px;
+    background: linear-gradient(145deg, #f8f9fa, #ffffff);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-3px);
+}
+
+.stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: #1f0757;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #8480ae;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        gap: 0.5rem;
+    }
+    
+    .stat-item {
+        padding: 0.75rem;
+    }
+    
+    .stat-value {
+        font-size: 1.25rem;
+    }
+}
 </style>
 
 <div class="breadcrumb-wrapper">
@@ -117,10 +169,58 @@
 </div>
 
 <div class="game-container">
-    <div class="game-stats">
-        <div>Moves: <span id="moves">0</span></div>
-        <div>Points: <span id="points">0</span></div>
-        <div>Time: <span id="timer">00:00</span></div>
+    <div class="row g-4 mb-4">
+        <!-- Current Game Stats -->
+        <div class="col-12 col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-controller text-primary me-2" style="font-size: 1.5rem;"></i>
+                        <h5 class="mb-0">Current Game</h5>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <div class="text-center">
+                            <p class="text-muted mb-1">Moves</p>
+                            <h3 class="mb-0" id="moves">0</h3>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-muted mb-1">Points</p>
+                            <h3 class="mb-0" id="points">0</h3>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-muted mb-1">Time</p>
+                            <h3 class="mb-0" id="timer">00:00</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Previous Game Stats -->
+        <!-- <div class="col-12 col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-trophy text-warning me-2" style="font-size: 1.5rem;"></i>
+                        <h5 class="mb-0">Previous Game</h5>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <div class="text-center">
+                            <p class="text-muted mb-1">Moves</p>
+                            <h3 class="mb-0" id="lastMoves">-</h3>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-muted mb-1">Points</p>
+                            <h3 class="mb-0" id="lastPoints">-</h3>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-muted mb-1">Time</p>
+                            <h3 class="mb-0" id="lastTime">-</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
     </div>
     
     <div class="game-controls">
@@ -179,6 +279,7 @@ class CouponMatchGame {
         
         this.checkCooldown();
         this.attachEventListeners();
+        this.loadPreviousGameStats();
     }
 
     initializeGame() {
@@ -323,6 +424,7 @@ class CouponMatchGame {
         if (token) {
             await this.saveScore(token);
             await this.updateProgress(token);
+            await this.loadPreviousGameStats();
         }
 
         // Show victory modal with modified buttons
@@ -354,23 +456,34 @@ class CouponMatchGame {
 
     async saveScore(token) {
         try {
+            const gameData = {
+                game: 'coupon-match',
+                score: this.points,
+                moves: this.moves,
+                time: document.getElementById('timer').textContent
+            };
+            
+            console.log('Saving game score:', gameData);
+            
             const response = await fetch('/api/game/saveGameScore', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({
-                    game: 'coupon-match',
-                    score: this.points,
-                    moves: this.moves,
-                    time: document.getElementById('timer').textContent
-                })
+                body: JSON.stringify(gameData)
             });
             
+            const data = await response.json();
+            console.log('Save score response:', data);
+            await this.loadPreviousGameStats();
+            
             if (!response.ok) {
-                console.error('Failed to save score');
+                throw new Error('Failed to save score');
             }
+            
+            // Reload previous game stats after saving
+            await this.loadPreviousGameStats();
         } catch (error) {
             console.error('Error saving score:', error);
         }
@@ -450,6 +563,43 @@ class CouponMatchGame {
             startButton.disabled = false;
             startButton.textContent = 'Start New Game';
             return true;
+        }
+    }
+
+    async loadPreviousGameStats() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.log('No token found');
+            return;
+        }
+
+        try {
+            console.log('Fetching game progress...');
+            const response = await fetch('/api/game/checkGameProgress', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (!response.ok) throw new Error('Failed to fetch game progress');
+            
+            const data = await response.json();            
+                    
+            if (data.lastGameStats) {
+                document.getElementById('lastMoves').textContent = data.lastGameStats.moves;
+                document.getElementById('lastPoints').textContent = data.lastGameStats.score;
+                document.getElementById('lastTime').textContent = data.lastGameStats.time;
+            } else {
+                console.log('No previous game stats found');
+                document.getElementById('lastMoves').textContent = '-';
+                document.getElementById('lastPoints').textContent = '-';
+                document.getElementById('lastTime').textContent = '-';
+            }
+        } catch (error) {
+            console.error('Error loading previous game stats:', error);
+            document.getElementById('lastMoves').textContent = '-';
+            document.getElementById('lastPoints').textContent = '-';
+            document.getElementById('lastTime').textContent = '-';
         }
     }
 }
