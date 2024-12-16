@@ -32,32 +32,36 @@ export const saveGameScore = async (req, res) => {
 export const checkGameProgress = async (req, res) => {
   try {
     const userId = req.user.id;
+    const now = new Date();
+
+    // Get game progress
     const progress = await GameProgress.findOne({
       userId,
-      game: "coupon-match",
+      game: "coupon-match"
     });
 
-    if (!progress) {
-      return res.status(200).json({
-        success: true,
-        canPlay: true,
-        message: "Game progress not found, user can play"
-      });
-    }
+    // Get last game stats
+    const lastGameStats = await GameScoreModel.findOne({
+      userId,
+      game: "coupon-match"
+    }).sort({ createdAt: -1 });
 
-    const now = new Date();
-    const nextAvailablePlay = new Date(progress.nextAvailablePlay);
-    const canPlay = now >= nextAvailablePlay;
+    const canPlay = !progress || now >= progress.nextAvailablePlay;
 
     res.status(200).json({
       success: true,
       canPlay,
-      nextAvailablePlay: progress.nextAvailablePlay,
+      nextAvailablePlay: progress?.nextAvailablePlay,
+      lastGameStats: lastGameStats ? {
+        time: lastGameStats.time,
+        moves: lastGameStats.moves,
+        score: lastGameStats.score
+      } : null
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: error.message
     });
   }
 };
