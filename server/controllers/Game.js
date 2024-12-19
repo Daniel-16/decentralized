@@ -58,6 +58,12 @@ export const checkGameProgress = async (req, res) => {
         score: lastGameStats.score
       } : null
     });
+    res.render('games/coupon-match', {lastGameStats: lastGameStats ? {
+      time: lastGameStats.time,
+      moves: lastGameStats.moves,
+      score: lastGameStats.score
+    } : null
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
