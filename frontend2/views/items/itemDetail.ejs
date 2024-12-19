@@ -48,6 +48,26 @@
   .card-input-element:checked + .card-input {
     box-shadow: 0 0 1px 1px #2ecc71;
   }
+
+  .transaction-toast {
+    transition: all 0.3s ease;
+    animation: slideIn 0.3s ease;
+  }
+  
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .transaction-toast .card {
+    min-width: 300px;
+  }
 </style>
 
 <!-- Breadcrumb -->
@@ -411,7 +431,7 @@
         </div>
 
         <!-- proceed with unq wallet -->
-        <div class="row align-items-center">
+        <div class="row align-items-center" onClick="closeUnqModal()">
           <div class="col-12">
             <div class="nft-card card seller-card shadow-sm">
               <div class="card-body">
@@ -990,4 +1010,122 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("  - Token is not purchased:", !isTokenPurchased);
     }
 });
+</script>
+
+<script>
+// Add to itemDetail.ejs or any purchase page
+function showTransactionToast(message) {
+  const toast = `
+    <div class="transaction-toast" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000">
+      <div class="card shadow-sm">
+        <div class="card-body p-3">
+          <div class="d-flex align-items-center">
+            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+            <div>
+              <h6 class="mb-0">Transaction in Progress</h6>
+              <small class="text-muted">${message}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  if (!document.querySelector('.transaction-toast')) {
+    document.body.insertAdjacentHTML('beforeend', toast);
+  }
+}
+</script>
+
+<script>
+  function attachPurchaseHandlers() {
+    $('.purchase-btn').off('click').on('click', async function(event) {
+      event.preventDefault();
+
+      const purchaseButton = $(this);
+      const tokenId = purchaseButton.data('token-id');
+      const collectionId = purchaseButton.data('collection-id');
+
+      // Disable the button but don't block UI
+      purchaseButton.prop('disabled', true);
+
+      // Show transaction toast
+      showTransactionToast('Processing your purchase...');
+
+      try {
+        const response = await $.ajax({
+          url: '/api/purchaseCoupon',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            tokenId,
+            collectionId
+          }),
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (response.success) {
+          // Update toast to show success
+          $('.transaction-toast').html(`
+            <div class="card shadow-sm bg-success text-white">
+              <div class="card-body p-3">
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-check-circle me-2"></i>
+                  <div>
+                    <h6 class="mb-0">Purchase Successful!</h6>
+                    <small>Transaction has been confirmed</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `);
+
+          // Remove toast after 5 seconds
+          setTimeout(() => {
+            $('.transaction-toast').fadeOut(300, function() { $(this).remove(); });
+          }, 5000);
+
+          // Optionally update UI elements
+          updateUIAfterPurchase();
+        }
+      } catch (error) {
+        // Show error in toast
+        $('.transaction-toast').html(`
+          <div class="card shadow-sm bg-danger text-white">
+            <div class="card-body p-3">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-x-circle me-2"></i>
+                <div>
+                  <h6 class="mb-0">Transaction Failed</h6>
+                  <small>${error.responseJSON?.error || 'An error occurred'}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        `);
+
+        // Remove error toast after 5 seconds
+        setTimeout(() => {
+          $('.transaction-toast').fadeOut(300, function() { $(this).remove(); });
+        }, 5000);
+      } finally {
+        // Re-enable button
+        purchaseButton.prop('disabled', false);
+      }
+    });
+  }
+
+  // Helper function to update UI elements after successful purchase
+  function updateUIAfterPurchase() {
+    // Update relevant UI elements without full page reload
+    // For example, update user's balance, inventory, etc.
+  }
+</script>
+
+<script>
+  function closeUnqModal() {
+    $('#walletModal').modal('hide');
+  }
 </script>

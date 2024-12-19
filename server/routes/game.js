@@ -6,5 +6,6 @@ const gameRouter = express.Router();
 gameRouter.get("/checkGameProgress", verifyToken, checkGameProgress);
 gameRouter.post("/updateGameProgress", verifyToken, updateGameProgress);
 gameRouter.post("/saveGameScore", verifyToken, saveGameScore);
+gameRouter.get("/coupon-match", verifyToken, checkGameProgress);
 
 export default gameRouter;
