@@ -196,12 +196,18 @@ export const getLeaderboard = async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
 
   try {
-    // Get the total count of users with points > 0
-    const totalUsers = await UserModel.countDocuments({ points: { $gt: 0 } });
+    // Get the total count of non-admin users with points > 0
+    const totalUsers = await UserModel.countDocuments({ 
+      points: { $gt: 0 },
+      isAdmin: false 
+    });
     const totalPages = Math.ceil(totalUsers / limit);
 
-    // Fetch the leaderboard for the current page (users with points > 0)
-    const leaderboard = await UserModel.find({ points: { $gt: 0 } })
+    // Fetch the leaderboard for the current page (non-admin users with points > 0)
+    const leaderboard = await UserModel.find({ 
+      points: { $gt: 0 },
+      isAdmin: false
+    })
       .sort({ points: -1 })
       .skip((page - 1) * limit)
       .limit(parseInt(limit));
