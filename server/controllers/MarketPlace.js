@@ -5,7 +5,7 @@ import UserModel from "../models/UserModel.js";
 export const getAllCoupons = async (req, res) => {
   try {
     const { item, category, priceRange, recent, userAddress, limit } = req.query;
-      console.log(req.query);
+      // console.log(req.query);
 
     // Base search query: items not purchased
     let searchQuery = {

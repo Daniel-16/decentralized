@@ -132,6 +132,10 @@ router.get('/coupon-match', (req, res) => {
   res.render('games/coupon-match');
 }); 
 
+router.get('/know-more', (req, res) => {
+  res.render('help-center/know-more');
+}); 
+
 // Add this new route for collection detail
 router.get("/collection/:collectionId", async function (req, res) {
   try {
