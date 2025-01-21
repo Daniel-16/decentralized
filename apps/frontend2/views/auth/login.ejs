@@ -1,0 +1,139 @@
+<%- include('../partials/home/header') %>
+
+
+
+<!-- Breadcrumb -->
+<div class="breadcrumb-wrapper">
+    <div class="container">
+    <div class="breadcrumb-content">
+        <h2 class="breadcrumb-title">Log In</h2>
+        <nav aria-label="breadcrumb">
+        <ol class="breadcrumb justify-content-center">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Log In</li>
+        </ol>
+        </nav>
+    </div>
+    </div>
+</div>
+<div class="divider"></div>
+<!-- Register -->
+<div class="register-area">
+    <div class="container">
+    <div class="row g-4 g-lg-5 align-items-center justify-content-between">
+        <div class="col-12 col-md-6 col-xl-5">
+        <div class="register-card">
+            <h2>Welcome Back!</h2>
+            <p>Don't have an account?<a class="ms-1 hover-primary" href="/register">Register now!</a></p>
+            <!-- Register Form -->
+            <div class="register-form mt-5">
+            <form id="loginUserForm">
+                <div class="form-group mb-4">
+                <input id="sys_email" class="form-control" type="email" placeholder="Email Address" required>
+                </div>
+                <div class="form-group mb-4">
+                <label class="label-psswd" for="registerPassword">Show</label>
+                <input id="registerPassword" class="form-control" type="password" placeholder="Password" required>
+                </div>
+                <button class="btn btn-success w-100" type="submit">Log In</button>
+            </form>
+            <div class="login-meta-data d-flex align-items-center justify-content-between">
+                <div class="form-check mt-4">
+                <input class="form-check-input" id="rememberMe" type="checkbox" value="" checked>
+                <label class="form-check-label" for="rememberMe">Keep me logged in</label>
+                </div><a class="forgot-password mt-4 text-primary fz-16" href="#">Forgot Password?</a>
+            </div>
+            </div>
+        </div>
+        </div>
+        <!-- Thumbnail -->
+        <div class="col-12 col-md-6">
+        <div class="register-thumbnail mt-5 mt-md-0"><img src="/assets/img/illustrator/4-main.png" alt=""></div>
+        </div>
+    </div>
+    </div>
+</div>
+<div class="divider"></div>
+<!-- Dark Light Wrapper -->
+<div class="dark-light-wrapper" data-aos="zoom-in" data-aos-duration="750" data-aos-delay="200">
+    <div class="container">
+    <div class="d-flex align-items-center justify-content-between">
+        <h5 class="mb-0 text-white" data-aos="fade-up" data-aos-duration="750" data-aos-delay="500">Light mode is available!</h5>
+        <!-- Switch -->
+        <div class="dark-light-mode" data-aos="fade-up" data-aos-duration="750" data-aos-delay="800">
+        <input id="darkLightSwitch" type="checkbox">
+        <label class="shadow" for="darkLightSwitch">Toggle</label>
+        </div>
+    </div>
+    </div>
+</div>
+
+
+
+
+<%- include('../partials/home/footer') %>
+
+<script>
+    $(document).ready(function () {
+        $("#loginUserForm").on("submit", function (event) {
+            event.preventDefault();
+
+            const email = $("#sys_email").val();
+            const password = $("#registerPassword").val();
+
+            const loginButton = $("button[type=submit]");
+            loginButton.prop("disabled", true).text("Please wait...");
+
+            $.ajax({
+            url: "/api/loginUser",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ email, password }),
+            success: function (response) {                
+                if (response.success) {
+                localStorage.setItem("token", response.token);
+                localStorage.setItem("username", response.user.username);
+                localStorage.setItem("email", response.user.email);
+                localStorage.setItem("accountAddress", response.user.accountAddress);
+                localStorage.setItem("hasReceivedToken", response.user.hasReceivedToken);
+                localStorage.setItem("currentStreak", response.user.currentStreak);
+                localStorage.setItem("highestStreak", response.user.highestStreak);
+                localStorage.setItem("profileImageUrl", response.user.profileImageUrl);
+
+                // Update streak display if on dashboard
+                $("#currentStreak").text(response.user.currentStreak);
+                $("#highestStreak").text(response.user.highestStreak);
+
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Login Successful",
+                    text: response.user.currentStreak > 1 ? 
+                      `🔥 ${response.user.currentStreak} day streak! Keep it up!` : 
+                      "Welcome back!",
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+
+                location.assign("/dashboard");
+                } else {
+                Swal.fire({
+                    position: "center",
+                    icon: "error",
+                    title: "Oops...",
+                    showConfirmButton: false,
+                    timer: 1500,
+                    text: response.error || "An error occurred",
+                });
+                }
+            },
+            error: function (jqXHR) {
+                toastr.info(jqXHR.responseJSON?.error || "An error occurred");
+            },
+            complete: function () {
+                loginButton.prop("disabled", false).text("Log In");
+            },
+            });
+        });
+    });
+</script>

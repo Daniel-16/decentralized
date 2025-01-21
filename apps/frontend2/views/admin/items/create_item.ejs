@@ -1,0 +1,179 @@
+<%- include('../../partials/admin/header') %>
+
+
+
+
+<div class="admin-wrapper">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            <div class="col-12 col-lg-10 col-xl-9 col-xxl-9">
+            <ul class="nav nav-tabs border-0 mb-3" role="tablist">
+            </ul>
+                <div class="tab-content">
+                    <!-- Tab Pane-->
+                    <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab--1">
+                    <div class="card">
+                        <div class="card-body p-4 p-sm-5">
+                        <form id="createItemForm">
+                            <div class="row align-items-center">
+                                <div class="col-12">
+                                <h4>Create Product/Item for your store.</h4>
+                                <div class="col-12">
+                                    <div class="form-group mb-4">
+                                        <label class="mb-2 fz-16" for="title">Product/Item Name<span class="text-danger">*</span></label>
+                                        <input class="form-control" id="nameOfItem" name="nameOfItem" type="text" placeholder="e.g Black Grand Coffee" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group mb-4">
+                                            <label class="mb-2 fz-16" for="name">Product/Item Price<span class="text-danger">*</span></label>
+                                            <input class="form-control" name="priceOfItem" id="priceOfItem" type="number" placeholder="e.g 500" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                        <div class="form-group mb-4">
+                                            <label class="mb-2 fz-16" for="name">Product/Item Image<span class="text-danger">*</span></label>
+                                            <input class="form-control" accept="image/*" name="itemImage" id="itemImage" type="file" placeholder="e.g 500" required>
+                                        </div>
+                                    </div>
+                                
+                                <div class="col-12 col-md-12">
+                                    <button class="btn btn-primary rounded-pill w-100" type="submit" id="createButton">Create</button>
+                                </div>
+                                <div class="col-12 col-md-12">
+                                    <button class="btn btn-primary rounded-pill w-100" disabled id="loadingMessage">Please wait...</button>
+                                </div>
+                            </div>
+                        </form>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<%- include('../../partials/admin/footer') %>
+<!-- store the collection and token -->
+<script>
+$(document).ready(function() {
+    $('#loadingMessage').hide();
+    $('#createItemForm').submit(function(event) {
+        event.preventDefault(); 
+        $('#cover-spin').show(0);
+
+        // Hide the Create button and show the loading message
+        $('#createButton').hide();
+        $('#loadingMessage').show();
+
+        const nameOfItem = $("#nameOfItem").val();
+        const priceOfItem = $("#priceOfItem").val();
+        const fileInput = $("#itemImage")[0].files[0];
+
+        // Check if an image is selected
+        if (!fileInput) {
+            alert("Please select an image.");
+            $('#cover-spin').hide(0);
+            $('#createButton').show();
+            $('#loadingMessage').hide();
+            return false;  // Return false to prevent form submission
+        }
+
+        // Convert image to base64
+        const reader = new FileReader();
+        reader.readAsDataURL(fileInput);
+        reader.onload = function () {
+            const base64Image = reader.result;  // Base64 encoded image
+
+            const token = localStorage.getItem('token');
+
+            $.ajax({
+                url: "/api/createItem",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    nameOfItem,
+                    priceOfItem,
+                    itemImage: base64Image,  // Send base64 image
+                }),
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                success: function(response) {
+                    $('#cover-spin').hide(0);
+                    if (response.success) {
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: response.message || "Item Created Successfully",
+                            showConfirmButton: true,
+                            timer: 1500,
+                        });
+                        // Fetch and update user balance
+                        fetchUserBalance();
+
+                        // Optionally reload after a slight delay to ensure messages are shown
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1600);
+                    } else {
+                        $('#response').html(`<p class="error">Error: ${response.error}</p>`);
+                        $('#createButton').show();
+                        $('#loadingMessage').hide();
+                    }
+                },
+                error: function(jqXHR) {
+                    $('#cover-spin').hide(0);
+                    $('#response').html(`<p class="error">An error occurred: ${jqXHR.responseText}</p>`);
+                    $('#createButton').show();
+                    $('#loadingMessage').hide();
+                }
+            });
+        };
+
+        // If there is an error reading the file
+        reader.onerror = function() {
+            alert("There was an issue reading the file.");
+            $('#cover-spin').hide(0);
+            $('#createButton').show();
+            $('#loadingMessage').hide();
+        };
+    });
+
+    // Function to fetch user balance
+    function fetchUserBalance() {
+        const wallet_address = localStorage.getItem("accountAddress");
+        const apiUrl = `/api/getUserBalance`;
+        $.ajax({
+            url: apiUrl,
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            success: function (response) {
+                if (response.success) {
+                    $("#availableBalance").text(`UNQ${parseFloat(response.availableBalance.amount).toFixed(2)}`);
+                    $("#lockedBalance").text(`UNQ${response.lockedBalance.amount.toLocaleString()}`);
+                    $("#freeBalance").text(`UNQ${response.freeBalance.amount.toLocaleString()}`);
+                } else {
+                    console.error("Failed to fetch user balance:", response.error);
+                }
+            },
+            error: function(jqXHR) {
+                console.log(jqXHR);
+            }
+        });
+    }
+});
+</script>
+<!-- end: store the collection and token -->

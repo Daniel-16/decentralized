@@ -1,0 +1,531 @@
+<%- include('../partials/home/header') %>
+
+<style>
+    .fixed-size {
+        width: 100%; 
+        height: 584px; 
+        /* object-fit: cover;  */
+        /* border-top-left-radius: 5px;
+        border-top-right-radius: 5px; */
+        /* display: block;  */
+    }
+
+    .fixed-size2{
+        width: 100%; 
+        height: 200px; 
+    }
+
+    .item-big-thumb {
+        overflow: hidden; 
+        border-radius: 5px; 
+    }
+</style>
+
+
+
+
+
+
+
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-wrapper">
+      <div class="container">
+        <div class="breadcrumb-content">
+          <h2 class="breadcrumb-title">Coupon Details</h2>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center">
+              <li class="breadcrumb-item"><a href="/shop/nft-marketplace">Coupon Marketplace</a></li>
+              <li class="breadcrumb-item active" aria-current="page">More about <%= token.tokenName %></li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <!-- Share Modal -->
+    <div class="share-modal modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body p-4 text-center">
+            <h4 class="mb-4" id="shareModalLabel">Share this item</h4>
+            <div class="d-flex align-items-center justify-content-center"><a class="mx-2" href="#"><img src="/assets/img/core-img/icons8-facebook.svg" alt=""></a><a class="mx-2" href="#"><img src="/assets/img/core-img/icons8-twitter.svg" alt=""></a><a class="mx-2" href="#"><img src="/assets/img/core-img/icons8-instagram.svg" alt=""></a><a class="mx-2" href="#"><img src="/assets/img/core-img/icons8-slack.svg" alt=""></a><a class="mx-2" href="#"><img src="/assets/img/core-img/icons8-player.svg" alt=""></a></div>
+            <button class="btn btn-danger btn-sm rounded-pill mt-4" type="button" data-bs-dismiss="modal" aria-label="Close"><i class="me-1 bi bi-x-lg"></i>Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Copy Link Modal -->
+    <div class="share-modal modal fade" id="copylinkModal" tabindex="-1" aria-labelledby="copylinkLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body p-4 text-center">
+                <h4 class="mb-4" id="copylinkLabel">Copy item link</h4>
+                <p class="user-select-all mb-0 border border-2 p-3 rounded" id="currentLink"></p> 
+                <button class="btn btn-danger btn-sm rounded-pill mt-4" type="button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="me-1 bi bi-x-lg"></i>Close
+                </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Item Details -->
+    <div class="item-details-wrap">
+      <div class="container">
+        <div class="row g-4 g-lg-5 justify-content-center">
+            <div class="col-12 col-md-12 col-lg-6">
+            <div class="item-big-thumb">
+                <img class="fixed-size" src="<%= token.tokenImageUrl %>" alt="" data-action="zoom">
+            </div>
+          </div>
+          <!-- Item Details Content -->
+          <div class="col-12 col-md-9 col-lg-6">
+            <div class="item-details-content mt-5 mt-lg-0">
+              <div class="dropdown item-details-dd">
+                <button class="dropdown-toggle" id="dwd987" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></button>
+                <!-- Dropdown Menu -->
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dwd987">
+                  <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#shareModal"><i class="me-1 bi bi-share"></i>Share</a></li>
+                  <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#copylinkModal"><i class="me-1 bi bi-box-arrow-up-right"></i>Copy Link</a></li>
+                </ul>
+              </div>
+              <div class="d-flex flex-wrap align-items-center">
+                
+                <!-- Wishlist -->
+                <!-- <button class="btn btn-dark btn-sm rounded-pill px-3 wishlist-btn" type="button"><i class="bi"></i><span class="ms-1">98</span></button> -->
+
+                <!-- Badge-->
+                <!-- <div class="badge border px-3 py-2 rounded-pill text-dark fz-14 d-inline-block ms-1 ms-sm-4"><i class="me-1 bi bi-eye"></i>8,634 people views this</div> -->
+
+              </div>
+              <h2 class="my-3"><%= token.tokenName %> #<%= token.tokenId %></h2>
+              <div class="d-flex align-items-center mb-4">
+                <div class="author-img position-relative me-3"><img style="height: 400px;" class="shadow" src="<%= token.profileImageUrl || `https://api.dicebear.com/6.x/identicon/svg?seed=${encodeURIComponent(token.ownerName)}` %>" alt=""><i class="bi bi-check position-absolute bg-primary"></i></div>
+                <div class="name-author"><span class="d-block fz-14">Owned by</span><a class="author d-block fz-16 hover-primary text-truncate" href="#"><strong> @<span class="text-primary font-weight-bold"><%= token.ownerName %></span></strong></a></div>
+              </div>
+              <div class="border-top w-75 mb-4"></div>
+              <!-- Bid End -->
+              <div class="row align-items-end">
+                <div class="col-6 col-sm-4">
+                  <p class="mb-2">Price</p>
+                  <h5 class="text-center mb-0 border border-2 px-3 py-2 border-primary d-inline-block rounded text-primary w-100"><%= token.finalPriceOfCoupon.toFixed(2) %> UNQ </h5>
+                </div>
+                <% if(!token.isPurchased) { %>
+                <div class="col-6 col-sm-4 col-lg-5">
+                    <a class="btn btn-primary rounded-pill w-100" href="#" id="purchaseBtn" data-bs-toggle="modal" data-bs-target="#walletModal">
+                        Buy
+                    </a>
+                </div>
+                <small>VAT is included</small>
+                <% } %>
+              </div>
+              <div class="border-top w-75 my-4"></div>
+
+                <% if(token.tokenDescription){ %>
+                <div class="short-description">
+                    <h5>Short Description</h5>
+                    <p class="mb-0">
+                        <%= token.tokenDescription %>
+                    </p>
+                </div>
+                <% } %>
+
+            
+        
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+    <!-- Connect wallet modal -->
+<div class="modal fade" id="walletModal" tabindex="-1" aria-labelledby="walletModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="walletModalLabel">Connect Wallet</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p>Choose how you want to connect. If you don't have a wallet, you can select a provider and create one.</p>
+                <div class="row pb-3">
+                    <!-- metamask -->
+                    <div class="col-6">
+                        <div class="nft-card card seller-card shadow-sm">
+                            <div class="card-body">
+                                <div class="row align-items-center g-3">
+                                <div class="col-4">
+                                    <div class="img-wrap">
+                                        <img src="/assets/img/bg-img/metamask.png" alt="">
+                                    </div>
+                                </div>
+                                <div class="col-8">
+                                    <div class="name-author">
+                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#" id="connectMetamask">
+                                            <i class="bi bi-patch-check-fill ms-2 text-success" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="available" data-bs-original-title="available"></i>
+                                            MetaMask
+                                        </a>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   <!-- polkadot -->
+          <div class="col-6">
+            <div class="nft-card card seller-card shadow-sm">
+              <div class="card-body">
+                <div class="row align-items-center g-3">
+                  <div class="col-4">
+                    <div class="img-wrap">
+                      <img src="/assets/img/bg-img/polkadot.png" alt="" />
+                    </div>
+                  </div>
+                  <div class="col-8">
+                    <div class="name-author">
+                      <a id="connectPolkadot" class="name d-block hover-primary fw-bold text-truncate" href="#">
+                        <i class="bi bi-patch-check-fill ms-2 text-success" 
+                           data-bs-toggle="tooltip" 
+                           data-bs-placement="top"
+                           aria-label="available"
+                           data-bs-original-title="available"></i>
+                        Polkadot
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+                <div class="row pb-3">
+                    <!-- kaikas -->
+                    <div class="col-6">
+                        <div class="nft-card card seller-card shadow-sm">
+                            <div class="card-body">
+                                <div class="row align-items-center g-3">
+                                <div class="col-4">
+                                    <div class="img-wrap">
+                                        <img src="/assets/img/bg-img/kaikas.png" alt="">
+                                    </div>
+                                </div>
+                                <div class="col-8">
+                                    <div class="name-author">
+                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#">
+                                            <i class="bi bi bi-x-circle-fill ms-2 text-danger" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="not available" data-bs-original-title="not available"></i>
+                                            Kaikas
+                                        </a>
+
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- nova wallet -->
+                    <div class="col-6">
+                        <div class="nft-card card seller-card shadow-sm">
+                            <div class="card-body">
+                                <div class="row align-items-center g-3">
+                                <div class="col-4">
+                                    <div class="img-wrap">
+                                        <img src="/assets/img/bg-img/venly.png" alt="">
+                                    </div>
+                                </div>
+                                <div class="col-8">
+                                    <div class="name-author">
+                                        <a class="name d-block hover-primary fw-bold text-truncate" href="#">
+                                            <i class="bi bi bi-x-circle-fill ms-2 text-danger" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="not available" data-bs-original-title="not available"></i>
+                                            Venly
+                                        </a>
+
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- proceed with unq wallet -->
+                <div class="row align-items-center">
+                    <div class="col-12">
+                        <div class="nft-card card seller-card shadow-sm">
+                            <div class="card-body">
+                                <a id="unqPurchase" class="purchase-btn name d-block hover-primary fw-bold text-truncate" 
+                                data-collection-id="<%= token.collectionId %>" 
+                                data-token-id="<%= token.tokenId %>" 
+                                data-item-id="<%= token._id %>" 
+                                href="#">
+                                    <div class="row align-items-center g-3">
+                                        <div class="col-4">
+                                            <div class="img-wrap">
+                                                <img src="/assets/img/unique_network_cover.jpeg" alt="">
+                                            </div>
+                                        </div>
+                                        <div class="col-8">
+                                            <div class="name-author">
+                                                <i class="bi bi-patch-check-fill ms-2 text-success" 
+                                                data-bs-toggle="tooltip" 
+                                                data-bs-placement="top" 
+                                                aria-label="available" 
+                                                data-bs-original-title="available"></i>
+                                                UNQ Balance
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <div class="d-block w-100 mb-70"></div>
+
+    <div class="divider"></div>
+    <!-- Related Project  -->
+    <div class="related-project-area">
+      <div class="container">
+        <!-- <div class="section-heading">
+          <h2 class="mb-0">
+            <a href="/collection/<%= token.collectionId %>" class="text-decoration-none">
+              More From This Collection
+            </a>
+          </h2>
+        </div> -->
+        <div class="section-heading">
+      <!-- <h2 class="mb-0">More NFTs From This Collection</h2> -->
+      <h2 class="mb-0">More Coupons From This Collection</h2>
+    </div>
+        <!-- Slide -->
+        <div class="related-project-slide">
+            <!-- Featured Card -->
+            <% moreCoupons.forEach(coupon => { %>
+            <div>
+                <div class="nft-card card shadow-sm">
+                <div class="card-body">
+                    <div class="img-wrap">
+                        <img class="fixed-size2" src="<%= coupon.tokenImageUrl %>" alt="<%= coupon.tokenName %>">
+                    <!-- Badge -->
+                    <div class="badge bg-primary position-absolute"><img src="/assets/img/core-img/fire.png" alt=""></div>
+                    <!-- Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle rounded-pill shadow-sm" id="dttd987" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></button>
+                        <!-- Dropdown Menu -->
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dttd987">
+                        <li><a class="dropdown-item" href="#"><i class="me-1 bi bi-share"></i>Share</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="me-1 bi bi-bookmark"></i>Bookmark</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="me-1 bi bi-flag"></i>Report</a></li>
+                        </ul>
+                    </div>
+                    </div>
+                    <br>
+                    <!-- Meta Info -->
+                    <div class="row gx-2 align-items-center mt-2">
+                    <div class="col-8">
+                        <div class="name-info d-flex align-items-center">
+                        <div class="author-img position-relative">
+                            <img class="shadow" src="<%= coupon.profileImageUrl || `https://api.dicebear.com/6.x/identicon/svg?seed=${encodeURIComponent(coupon.ownerName)}` %>" alt="">
+                            <i class="bi bi-check position-absolute bg-success"></i>
+                        </div>
+                        <div class="name-author">
+                            <a class="name d-block hover-primary fw-bold text-truncate" 
+                            href="/getCoupon/<%= coupon.collectionId %>/<%= coupon.tokenId %>" data-bs-toggle="tooltip" 
+                            data-bs-placement="top" title="<%= coupon.tokenName %>"><%= coupon.tokenName %></a><a class="author d-block fz-12 hover-primary text-truncate" href="#">@<%= coupon.ownerName %></a></div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="price text-end"><span class="fz-12 d-block">Current Price</span>
+                        <h6 class="mb-0"><%= coupon.priceOfCoupon %> UNQ</h6>
+                        </div>
+                    </div>
+                    </div>
+                    <!-- Button -->
+                    <div class="row gx-2 align-items-center justify-content-center mt-3">
+                        <div class="col-12 text-center">
+                        <a class="btn btn-primary btn-sm rounded-pill" href="/getCoupon/<%= coupon.collectionId %>/<%= coupon.tokenId %>">Buy</a>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <% }) %>
+          <div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <!-- CTA Wrapper -->
+    <div class="container">
+      <div class="cta-text bg-gradient p-4 p-sm-5 bg-primary" data-aos="zoom-in" data-aos-duration="750" data-aos-delay="300">
+        <div class="row align-items-center">
+          <div class="col-12 col-md-8 col-lg-9">
+            <h2 class="mb-3 mb-md-0" data-aos="fade-up" data-aos-duration="750" data-aos-delay="600">Resources for getting started with KooponCraft.</h2>
+          </div>
+          <div class="col-12 col-md-4 col-lg-3">
+            <div class="text-md-end"><a class="btn btn-warning rounded-pill" href="/help-center" data-aos="zoom-in" data-aos-duration="750" data-aos-delay="900">Get Started</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+
+
+
+
+
+
+
+
+<%- include('../partials/home/footer') %>
+
+<!-- get current link -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get the current page URL
+        const currentPageUrl = window.location.href;
+
+        // Insert the current URL into the modal's paragraph
+        document.getElementById('currentLink').textContent = currentPageUrl;
+    });
+</script>
+
+
+<script>
+    $(document).ready(function() {
+    attachPurchaseHandlers(); // Call this to bind the click event when the document is ready
+});
+
+// Handle purchase 
+function attachPurchaseHandlers() {
+    $('.purchase-btn').off('click').on('click', function(event) {
+        event.preventDefault();
+
+        const purchaseButton = $(this); 
+        const itemId = purchaseButton.data('item-id'); 
+        const tokenId = purchaseButton.data('token-id'); 
+        const collectionId = purchaseButton.data('collection-id'); 
+
+        $('#cover-spin').show(0); 
+
+        const token = localStorage.getItem("token");
+
+        $.ajax({
+            url: '/api/purchaseCoupon',
+            method: 'POST',
+            contentType: 'application/json', 
+            data: JSON.stringify({
+                tokenId: tokenId,
+                collectionId: collectionId
+            }),
+            headers: {
+                Authorization: `Bearer ${token}` 
+            },
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire({
+                        title: "Purchase Successful!",
+                        text: "You have successfully purchased this coupon! Visit your KooponCraft dashboard to redeem it.",
+                        icon: "success"
+                    });
+                    location.reload();
+                } else {
+                    alert('Error: ' + response.error);
+                }
+            },
+            error: function(jqXHR) {
+                let errorResponse = jqXHR.responseJSON;
+                if (errorResponse && errorResponse.error) {
+                    Swal.fire({
+                        title: "Oooops!",
+                        text: errorResponse.error,
+                        icon: "error"
+                    });
+                    if (errorResponse.error === 'Token is not valid') {
+                        Swal.fire({
+                            title: "Oooops!",
+                            text: "You have to be signed in to purchase a coupon.",
+                            icon: "error"
+                        });
+                    }
+                } else {
+                    alert('Error: An unexpected error occurred.');
+                }
+            },
+            complete: function() {
+                purchaseButton.show();
+                $('#cover-spin').hide(0); // Hide loading spinner
+            }
+        });
+    });
+}
+// End: handle purchase 
+</script>
+
+<script>
+const detectEthereumProvider = async () => {
+    if (typeof window.ethereum !== "undefined") {
+        return window.ethereum;
+    }
+    return null;
+};
+
+const connectMetaMask = async () => {
+    try {
+        const provider = await detectEthereumProvider();
+        if (provider) {
+            await provider.request({ method: "eth_requestAccounts" });
+            const accounts = await provider.request({ method: "eth_accounts" });
+            return accounts[0];
+        } else {
+            throw new Error("Please install MetaMask!");
+        }
+    } catch (error) {
+        console.error("Error connecting to MetaMask", error);
+        throw error;
+    }
+};
+
+$(document).ready(function() {
+    $("#connectMetamask").on("click", async function(e) {
+        e.preventDefault();
+        try {
+            const address = await connectMetaMask();
+            localStorage.setItem("metamaskAddress", address);
+            localStorage.setItem("walletType", "metamask");
+
+            // Close the modal
+            $("#walletModal").modal("hide");
+
+            // Refresh the page or update UI as needed
+            location.reload();
+        } catch (error) {
+            Swal.fire({
+                title: "Error",
+                html: 'Metamask extension is not installed or disabled. Please <a href="https://metamask.io/download/" target="_blank">install</a> it or activate it in your browser settings.',
+                icon: "error",
+                showConfirmButton: false,
+            });
+        }
+    });
+});
+</script>

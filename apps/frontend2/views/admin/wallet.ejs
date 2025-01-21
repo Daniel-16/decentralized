@@ -1,0 +1,117 @@
+<%- include('../partials/admin/header') %>
+
+
+
+
+
+
+
+
+
+
+
+<div class="admin-wrapper">
+    <div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 text-center">
+        <h4 class="mb-3">Your current wallet</h4>
+        </div>
+        <div class="col-12 col-xl-7 col-xxl-6">
+        <div class="card wallet-card shadow-sm">
+            <div class="card-body px-4 text-center">
+            <div class="d-flex align-items-center">
+                <div class="img-wrap"><img src="/assets/img/unique_network_cover.jpeg" alt=""></div>
+
+                <h4 class="mb-0 me-3">UNQ Wallet Address</h4>
+                <a class="btn btn-sm btn-warning rounded-pill ms-auto" href="#" id="copyButton">Copy</a>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div class="row g-4 justify-content-center">
+        <div class="col-12">
+        <div class="text-center">
+            <h4 class="mb-4 mt-5">Connect with one of our other available wallet providers.</h4>
+        </div>
+        </div>
+        <div class="col-12 col-md-6">
+        <div class="card wallet-card shadow-sm">
+            <div class="card-body px-3 px-sm-4">
+            <div class="d-flex align-items-center flex-wrap flex-sm-nowrap">
+                <div class="img-wrap me-2"><img src="/assets/img/bg-img/metamask.png" alt=""></div>
+                <h4 class="mb-2 mb-sm-0 me-2">Metamask</h4>
+                <a class="btn btn-sm btn-danger rounded-pill ms-auto mt-2 mt-sm-0" href="#"><b>Coming Soon</b></a>
+            </div>
+            </div>
+        </div>
+        </div>
+        <div class="col-12 col-md-6">
+        <div class="card wallet-card shadow-sm">
+            <div class="card-body px-3 px-sm-4">
+            <div class="d-flex align-items-center flex-wrap flex-sm-nowrap">
+                <div class="img-wrap me-2"><img src="/assets/img/bg-img/coinbase.png" alt=""></div>
+                <h4 class="mb-2 mb-sm-0 me-2">Coinbase Wallet</h4>
+                <a class="btn btn-sm btn-danger rounded-pill ms-auto mt-2 mt-sm-0" href="#"><b>Coming Soon</b></a>
+            </div>
+            </div>
+        </div>
+        </div>
+        <div class="col-12 col-md-6">
+        <div class="card wallet-card shadow-sm">
+            <div class="card-body px-3 px-sm-4">
+            <div class="d-flex align-items-center flex-wrap flex-sm-nowrap">
+                <div class="img-wrap me-2"><img src="/assets/img/bg-img/kaikas.png" alt=""></div>
+                <h4 class="mb-2 mb-sm-0 me-2">Kaikas</h4>
+                <a class="btn btn-sm btn-danger rounded-pill ms-auto mt-2 mt-sm-0" href="#"><b>Coming Soon</b></a>
+            </div>
+            </div>
+        </div>
+        </div>
+        <div class="col-12 col-md-6">
+        <div class="card wallet-card shadow-sm">
+            <div class="card-body px-3 px-sm-4">
+            <div class="d-flex align-items-center flex-wrap flex-sm-nowrap">
+                <div class="img-wrap me-2"><img src="/assets/img/bg-img/venly.png" alt=""></div>
+                <h4 class="mb-2 mb-sm-0 me-2">Venly</h4>
+                <a class="btn btn-sm btn-danger rounded-pill ms-auto mt-2 mt-sm-0" href="#"><b>Coming Soon</b></a>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+
+
+
+
+
+<%- include('../partials/admin/footer') %>
+
+<script>
+    $(document).ready(function() {
+        $('#copyButton').on('click', function(event) {
+            event.preventDefault(); // Prevent the default action of the link
+            
+            // Get the account address from localStorage
+            const accountAddress = localStorage.getItem("accountAddress");
+            
+            if (accountAddress) {
+                // Copy the account address to the clipboard
+                navigator.clipboard.writeText(accountAddress)
+                    .then(() => {
+                        // Show a success toastr notification
+                        toastr.success("Wallet address copied to clipboard!");
+                    })
+                    .catch(err => {
+                        // Handle errors
+                        toastr.error("Failed to copy wallet address.");
+                    });
+            } else {
+                toastr.warning("No wallet address found.");
+            }
+        });
+    });
+</script>

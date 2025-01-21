@@ -1,0 +1,267 @@
+<%- include('../partials/admin/header') %>
+
+<div class="admin-wrapper">
+    <div class="container-fluid px-4">
+        <div class="collection-detail-wrapper">
+            <!-- Collection Header -->
+            <div class="collection-header position-relative">
+                <div class="banner-wrapper">
+                    <div class="banner-overlay"></div>
+                    <img src="<%= collection.collectionImageUrl %>" class="collection-banner" alt="<%= collection.name %>">
+                </div>
+                
+                <div class="position-relative">
+                    <div class="collection-info-card">
+                        <div class="collection-avatar">
+                            <img src="<%= collection.collectionImageUrl %>" alt="<%= collection.name %>" class="rounded-circle border-4 border-white">
+                        </div>
+                        <div class="collection-details mt-4">
+                            <h1 class="collection-title h2 h3-sm"><%= collection.name %></h1>
+                            <div class="collection-meta d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 gap-md-4 mb-3">
+                                <div class="creator d-flex align-items-center">
+                                    <span class="text-muted">Created by</span>
+                                    <a href="#" class="creator-link ms-2 d-flex align-items-center">
+                                        <img src="/assets/img/bg-img/u1.jpg" alt="Creator" class="creator-avatar">
+                                        <span class="ms-2" title="<%= collection.walletAddress %>">
+                                            <%= collection.walletAddress.substring(0, 6) %>...<%=collection.walletAddress.slice(-5) %>
+                                        </span>
+                                    </a>
+                                </div>
+                                <div class="collection-stats d-flex gap-4">
+                                    <div class="stat-item">
+                                        <span class="stat-value"><%= collection.tokens ? collection.tokens.length : 0 %></span>
+                                        <span class="stat-label">items</span>
+                                    </div>
+                                    <!-- <div class="stat-item">
+                                        <span class="stat-value"><%= collection.owners || 0 %></span>
+                                        <span class="stat-label">owners</span>
+                                    </div> -->
+                                </div>
+                            </div>
+                            <p class="collection-description">
+                                <%= collection.description %>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collection Content -->
+            <div class="mt-5">
+                <!-- Filter & Sort Section -->
+                <div class="filter-section mb-4">
+                    <div class="row align-items-center gy-3">
+                        <div class="col-12 col-md-6">
+                            <div class="search-box">
+                                <input type="text" class="form-control" placeholder="Search items..." id="searchItems">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="d-flex justify-content-start justify-content-md-end gap-3">
+                                <select class="form-select" id="sortItems">
+                                    <option value="newest">Recently Added</option>
+                                    <option value="oldest">Oldest</option>
+                                    <option value="price-asc">Price: Low to High</option>
+                                    <option value="price-desc">Price: High to Low</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Items Grid -->
+                <div class="row g-4" id="items-container">
+                    <% collection.tokens.forEach(token => { %>
+                        <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-4 item-card" 
+                             data-name="<%= token.tokenName.toLowerCase() %>"
+                             data-description="<%= token.tokenDescription.toLowerCase() %>"
+                             data-price="<%= token.priceOfCoupon %>"
+                             data-created="<%= new Date(token.createdAt).getTime() %>">
+                            <div class="nft-card card h-100 border-0 shadow-sm">
+                                <div class="card-img-top position-relative">
+                                    <img src="<%= token.tokenImageUrl %>" 
+                                         class="w-100 token-image" 
+                                         alt="<%= token.tokenName %>"
+                                         style="height: 200px; object-fit: cover;">
+                                    <div class="token-type-badge <%= token.tokenType === 'special' ? 'bg-warning' : 'bg-primary' %>">
+                                        <%= token.tokenType === 'special' ? 'Special' : 'Standard' %>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title mb-2 fs-6"><%= token.tokenName %></h5>
+                                    <p class="card-text text-muted small mb-3"><%= token.tokenDescription %></p>
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                        <div class="price">
+                                            <span class="text-muted small">Price</span>
+                                            <div class="fw-bold"><%= token.priceOfCoupon %> UNQ</div>
+                                        </div>
+                                        <a href="/getItem/<%= token.collectionId %>/<%= token.tokenId %>" 
+                                           class="btn btn-primary btn-sm">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.collection-header {
+    min-height: 300px;
+    /* background: #f8f9fa; */
+    margin-bottom: 100px;
+    width: 100%;
+}
+
+.banner-wrapper {
+    height: 300px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.collection-banner {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.banner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.4));
+}
+
+.collection-info-card {
+    background: #0C153B;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+    margin-top: -80px;
+    position: relative;
+    z-index: 2;
+    color: #fff;
+}
+
+.collection-avatar {
+    width: 130px;
+    height: 130px;
+    margin-top: -85px;
+}
+
+.collection-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 4px solid white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.creator-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.token-type-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-value {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.collection-title {
+    color: #fff;
+}
+
+.text-muted {
+    color: #adb5bd !important;
+}
+
+.creator-link {
+    color: #fff;
+    text-decoration: none;
+}
+
+.creator-link:hover {
+    color: #ffc107;
+}
+</style>
+
+<script>
+// Sort items by newest first when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    sortItems('newest');
+});
+
+// Helper function to sort items
+function sortItems(sortBy) {
+    const container = document.getElementById('items-container');
+    const items = Array.from(container.getElementsByClassName('item-card'));
+    
+    items.sort((a, b) => {
+        switch(sortBy) {
+            case 'newest':
+                // Assuming we add data-created attribute with timestamp
+                return b.dataset.created - a.dataset.created;
+            case 'oldest':
+                return a.dataset.created - b.dataset.created;
+            case 'price-asc':
+                return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+            case 'price-desc':
+                return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+            default:
+                return 0;
+        }
+    });
+
+    // Re-append sorted items
+    items.forEach(item => container.appendChild(item));
+}
+
+// Search functionality
+document.getElementById('searchItems').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const items = document.getElementsByClassName('item-card');
+
+    Array.from(items).forEach(item => {
+        const name = item.dataset.name;
+        const description = item.dataset.description;
+        const isVisible = name.includes(searchTerm) || description.includes(searchTerm);
+        item.style.display = isVisible ? 'block' : 'none';
+    });
+});
+
+// Sort functionality
+document.getElementById('sortItems').addEventListener('change', function(e) {
+    sortItems(e.target.value);
+});
+</script>
+
+<%- include('../partials/admin/footer') %>

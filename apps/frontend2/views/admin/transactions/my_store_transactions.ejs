@@ -1,0 +1,156 @@
+<%- include('../../partials/admin/header') %>
+
+
+
+
+
+
+
+
+
+
+
+<div class="admin-wrapper">
+    <div class="container">
+        <div class="row g-4 justify-content-center pb-4">
+            <div class="col-12">
+                <div class="text-center">
+                    <h4 class="mb-4 mt-5">Welcome to your store! You can create new items and track transactions here.</h4>
+                </div>
+            </div>
+            <div class="col-12 col-xl-6">
+                <div class="card wallet-card shadow-sm">
+                    <div class="card-body px-4">
+                        <div class="d-flex align-items-center">
+                            <!-- <div class="img-wrap"><img src="/assets/img/bg-img/metamask.png" alt=""></div> -->
+                            <h4 class="mb-0 me-3">Create New Item
+                            </h4><a class="btn btn-sm btn-warning rounded-pill ms-auto" href="/collection/my-collections">Create<i class="ms-1 bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-6">
+            <div class="card wallet-card shadow-sm">
+                <div class="card-body px-4">
+                <div class="d-flex align-items-center">
+                    <!-- <div class="img-wrap"><img src="/assets/img/bg-img/coinbase.png" alt=""></div> -->
+                    <h4 class="mb-0 me-3">My Store Items
+                        <!-- <span class="badge bg-danger rounded-pill align-top fz-12 ms-1">Coming Soon</span> -->
+                    </h4><a class="btn btn-sm btn-primary rounded-pill ms-auto" href="/my-store-items">View<i class="ms-1 bi bi-arrow-right"></i></a>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <div class="row g-4 ">
+            <div class="col-md-8">
+                <div class="tab-content">
+              <!-- Tab Pane-->
+              <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab--1">
+                <div class="notification-content-wrap">
+                  <ul class="notification-list ps-0 mb-0" id="transactionsContainer">
+
+                  </ul>
+                </div>
+              </div>
+            </div>
+            </div>
+           <!-- <div> -->
+             <div class="col-md-4" id="additionalInfoContainer">
+
+            </div>
+           <!-- </div> -->
+
+            <!-- <div id="additionalInfoContainer">
+
+            </div> -->
+    </div>
+</div>
+
+
+
+
+
+
+<%- include('../../partials/admin/footer') %>
+
+<!-- get all transactions -->
+<script>
+$(document).ready(function () {
+  // console.log("Document ready");
+
+  // Function to fetch and display store transactions
+  function loadTransactions() {
+    const token = localStorage.getItem("token");
+
+    $.ajax({
+      url: "/api/checkStorePurchases", 
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`, 
+      },
+      success: function (response) {
+        console.log(response);
+
+        // Check if the response indicates success
+        if (response.success) {
+          // Check if there are purchases
+          if (response.purchases && response.purchases.length > 0) {
+            const transactions = response.purchases;
+            let transactionsHTML = "";
+
+            transactions.forEach((transaction) => {
+              transactionsHTML += `
+                <li class="py-3">
+                  <a href="#">
+                    ${transaction.nameOfItemPurchased}
+                    <span class="badge bg-dark fz-12 rounded-pill ms-auto">UNQ ${transaction.totalPrice.toFixed(2)}</span>
+                  </a>
+                  <p class="mb-0">Purchased by ${transaction.buyerName}. Quantity: 1</p>
+                </li>
+              `;
+            });
+
+            // Append transactions to the #transactionsContainer
+            $("#transactionsContainer").html(transactionsHTML);
+
+            // Optionally, you could append summary or additional information
+                        // Inside the AJAX success function
+            const storeSummaryHTML = `
+                <div class="card wallet-card shadow-sm">
+                <div class="card-body px-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="card-title mb-0">Store Summary</h5>
+                    </div>
+                    <div class="summary-content">
+                    <p class="mb-2"><strong>Total Sales:</strong> UNQ ${response.totalSales.toFixed(2)}</p>
+                    <p class="mb-2"><strong>Total Items Sold:</strong> ${response.totalItems}</p>
+                    <p class="mb-2"><strong>Total Transactions:</strong> ${response.totalTransactions}</p>
+                    <p class="mb-0"><strong>Highest Buyer:</strong> ${response.highestBuyer.buyerName} (Spent UNQ ${response.highestBuyer.totalPurchase.toFixed(2)})</p>
+                    </div>
+                </div>
+                </div>
+            `;
+
+            // Append it to your desired container
+            $("#additionalInfoContainer").append(storeSummaryHTML);
+
+          } else {
+            $("#transactionsContainer").html("<li><p>No purchases have been made from your store yet.</p></li>");
+          }
+        } else {
+          $("#transactionsContainer").html("<li><p>No transactions found.</p></li>");
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        $("#transactionsContainer").html("<li><p>Error fetching transactions.</p></li>");
+      },
+    });
+  }
+
+  // Load transactions when the document is ready
+  loadTransactions();
+});
+</script>
+<!-- end: get all transactions -->

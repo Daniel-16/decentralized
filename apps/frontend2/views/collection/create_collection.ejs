@@ -1,0 +1,210 @@
+<%- include('../partials/admin/header') %>
+
+
+
+
+<div class="admin-wrapper">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            <div class="col-12 col-lg-10 col-xl-9 col-xxl-9">
+            <ul class="nav nav-tabs border-0 mb-3" role="tablist">
+            </ul>
+                <div class="tab-content">
+                    <!-- Tab Pane-->
+                    <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab--1">
+                    <div class="card">
+                        <div class="card-body p-3 p-sm-5">
+                        <form id="create-collection-form">
+                            <div class="row align-items-center">
+                                <div class="col-12">
+                                <h4 class="mb-4">Create Collection</h4>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group mb-4">
+                                            <label class="mb-2 fz-16" for="name">Name</label>
+                                            <input class="form-control" name="name" id="name" type="text" placeholder="Enter a name">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 col-md-6 mb-4 mb-md-0">
+                                        <div class="form-group">
+                                            <label class="mb-2 fz-16" for="description">Description</label>
+                                            <textarea name="description" id="description" class="form-control" rows="4"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="form-group">
+                                            <label class="mb-2 fz-16" for="tokenPrefix">Token prefix</label>
+                                            <input class="form-control" name="tokenPrefix" id="tokenPrefix" type="text" placeholder="Enter a prefix">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 mt-4">
+                                    <div class="form-group mb-4">
+                                        <label class="mb-2 fz-16" for="collectionImage">Collection Image</label>
+                                        <input class="form-control" accept=".png, .jpg, .jpeg" name="collectionImage" id="collectionImage" type="file" required>
+                                        <small class="text-danger" id="collectionImageError" style="display: none;">Please upload a valid image (PNG, JPG, JPEG) and make sure it's less than 5MB.</small>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <button class="btn btn-primary rounded-pill w-100 mb-3" type="submit" id="createButton">Create</button>
+                                    <button class="btn btn-primary rounded-pill w-100" disabled id="loadingMessage" style="display: none;">Please wait...</button>
+                                </div>
+                            </div>
+                        </form>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<%- include('../partials/admin/footer') %>
+
+<!-- store the collection and token -->
+<script>
+    $(document).ready(function() {
+        $('#loadingMessage').hide();
+    $('#create-collection-form').submit(function(event) {
+        event.preventDefault(); 
+        $('#cover-spin').show(0);
+
+        // Hide the Create button and show the loading message
+        $('#createButton').hide();
+        $('#loadingMessage').show();
+
+        const collectionName = $('#name').val();
+        const description = $('#description').val();
+        const tokenPrefix = $('#tokenPrefix').val();
+        const fileInput = $("#collectionImage")[0].files[0];
+
+        if (!fileInput) {
+            alert("Please select an image for the collection.");
+            $('#cover-spin').hide(0);
+            $('#createButton').show();
+            $('#loadingMessage').hide();
+            return;
+        }
+
+        if (!validateCollectionImage(fileInput)) {
+            alert("Please upload a valid image (PNG, JPG, JPEG) and make sure it's less than 5MB.");
+            $('#cover-spin').hide(0);
+            $('#createButton').show();
+            $('#loadingMessage').hide();
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.readAsDataURL(fileInput);
+        reader.onload = function() {
+            const base64Image = reader.result;
+            const token = localStorage.getItem('token');
+
+            $.ajax({
+                url: '/api/createCollection',
+                method: 'POST',
+                contentType: 'application/json',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                data: JSON.stringify({
+                    name: collectionName,
+                    description: description,
+                    tokenPrefix: tokenPrefix,
+                    collectionImageUrl: base64Image
+                }),
+                success: function(response) {
+                    $('#cover-spin').hide(0);
+                    if (response.success) {
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: response.message,
+                            showConfirmButton: true,
+                            timer: 1500,
+                        });
+                        fetchUserBalance();
+                        location.assign('/collection/my-collections')
+                    } else {
+                        $('#loadingMessage').hide();
+                        $('#createButton').show();
+                        $('#response').html(`<p class="error">Error: ${response.error}</p>`);
+                    }
+                },
+                error: function(jqXHR) {
+                    $('#loadingMessage').hide();
+                    $('#createButton').show();
+                    $('#cover-spin').hide(0);
+                    $('#response').html(`<p class="error">An error occurred: ${jqXHR.responseText}</p>`);
+                    Swal.fire({
+                        position: "center",
+                        icon: "error",
+                        title: "An error occurred",
+                        showConfirmButton: true,
+                        timer: 1500,
+                    });
+                }
+            });
+        };
+
+        reader.onerror = function() {
+            alert("There was an error reading the file.");
+            $('#cover-spin').hide(0);
+            $('#createButton').show();
+            $('#loadingMessage').hide();
+        };
+    });
+
+    // Function to fetch user balance
+    function fetchUserBalance() {
+        const wallet_address = localStorage.getItem("accountAddress");
+        const apiUrl = `/api/getUserBalance`;
+        $.ajax({
+            url: apiUrl,
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            success: function (response) {
+                if (response.success) {
+                    $("#availableBalance").text(`UNQ${parseFloat(response.availableBalance.amount).toFixed(2)}`);
+                    $("#lockedBalance").text(`UNQ${response.lockedBalance.amount.toLocaleString()}`);
+                    $("#freeBalance").text(`UNQ${response.freeBalance.amount.toLocaleString()}`);
+                } else {
+                    console.error("Failed to fetch user balance:", response.error);
+                }
+            },
+            error: function(jqXHR) {
+                console.log(jqXHR);
+            }
+        });
+    }
+
+    function validateCollectionImage(file) {
+        // Allowed file size (5MB in bytes)
+        const maxSize = 5 * 1024 * 1024;
+        
+        // Validate file type
+        const validFileTypes = ['image/png', 'image/jpg', 'image/jpeg'];
+        const fileTypeValid = validFileTypes.includes(file.type);
+        
+        // Validate file size
+        const fileSizeValid = file.size <= maxSize;
+        
+        return fileTypeValid && fileSizeValid;
+    }
+});
+</script>
+<!-- end: store the collection and token -->

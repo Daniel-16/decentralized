@@ -1,0 +1,253 @@
+<%- include('../partials/home/header') %>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb-wrapper">
+  <div class="container">
+    <div class="breadcrumb-content">
+      <h2 class="breadcrumb-title">Register</h2>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb justify-content-center">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Register</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+</div>
+<div class="divider"></div>
+<!-- Register -->
+<div class="register-area">
+  <div class="container">
+    <div class="row g-4 g-lg-5 align-items-center justify-content-between">
+      <div class="col-12 col-md-6 col-xl-5">
+        <div class="register-card">
+          <h2>Create your free account</h2>
+          <p>
+            Already have an account?<a class="ms-1 hover-primary" href="/login"
+              >Log In</a
+            >
+          </p>
+          <!-- Register Form-->
+          <div class="register-form mt-5">
+            <form id="registerUserForm">
+              <div class="form-group mb-4">
+                <input
+                  class="form-control"
+                  id="email"
+                  type="email"
+                  placeholder="Email"
+                  required
+                />
+              </div>
+              <div class="form-group mb-4">
+                <input
+                  class="form-control"
+                  id="username"
+                  type="text"
+                  placeholder="Username"
+                  required
+                />
+              </div>
+              <!-- <div class="form-group mb-4">
+                <input class="form-control" type="text" placeholder="Full Name" required>
+                </div> -->
+              <div class="form-group mb-4">
+                <label class="label-psswd" for="registerPassword">Show</label>
+                <input
+                  class="form-control"
+                  id="registerPassword"
+                  type="password"
+                  placeholder="Password"
+                  required
+                />
+              </div>
+              <div class="form-check mb-4">
+                <input
+                  class="form-check-input"
+                  id="rememberMe"
+                  type="checkbox"
+                  value=""
+                  checked
+                />
+                <label class="form-check-label" for="rememberMe"
+                  >I agree to all terms &amp; conditions.</label
+                >
+              </div>
+
+              <button class="btn btn-primary w-100" type="submit">
+                Register Now
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="register-thumbnail mt-5 mt-md-0">
+          <img src="/assets/img/illustrator/4.png" alt="" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="divider"></div>
+<!-- Dark Light Wrapper -->
+<div
+  class="dark-light-wrapper"
+  data-aos="zoom-in"
+  data-aos-duration="750"
+  data-aos-delay="200"
+>
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between">
+      <h5
+        class="mb-0 text-white"
+        data-aos="fade-up"
+        data-aos-duration="750"
+        data-aos-delay="500"
+      >
+        Light mode is available!
+      </h5>
+      <!-- Switch -->
+      <div
+        class="dark-light-mode"
+        data-aos="fade-up"
+        data-aos-duration="750"
+        data-aos-delay="800"
+      >
+        <input id="darkLightSwitch" type="checkbox" />
+        <label class="shadow" for="darkLightSwitch">Toggle</label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal for transfer Token -->
+<div
+  class="modal fade"
+  id="mnemonicModal"
+  tabindex="-1"
+  aria-labelledby="mnemonicModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="mnemonicModalLabel">
+          Copy and Store your mnemonic safely.
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <p class="text-warning">
+            Your mnemonic is a secret phrase that gives you access to your
+            wallet and funds. Never share it with anyone and store it securely
+            offline.
+          </p>
+          <label for="mnemonic" class="form-label">Mnemonic:</label>
+          <textarea id="mnemonicText" class="form-control" readonly></textarea>
+        </div>
+
+        <button id="copyMnemonicBtn" class="btn btn-primary w-100 mb-3">
+          Copy Mnemonic
+        </button>
+        <button id="mnemonicModalCloseBtn" class="btn btn-danger w-100">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end:modal for transfer -->
+
+<%- include('../partials/home/footer') %>
+
+<script>
+  $(document).ready(function () {
+    $("#registerUserForm").on("submit", function (event) {
+      event.preventDefault();
+
+      const email = $("#email").val();
+      const username = $("#username").val();
+      const password = $("#registerPassword").val();
+
+      const loginButton = $("button[type=submit]");
+      loginButton.prop("disabled", true).text("Please wait...");
+
+      $.ajax({
+        url: "/api/createUser",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ username, email, password }),
+        success: function (response) {
+          // console.log(response);
+          if (response.success) {
+            localStorage.setItem("token", response.token);
+            localStorage.setItem("username", response.user.username);
+            localStorage.setItem("email", response.user.email);
+            localStorage.setItem("profileImageUrl", response.user.profileImageUrl);
+            localStorage.setItem(
+              "accountAddress",
+              response.account.address
+            );
+            localStorage.setItem(
+              "hasReceivedToken",
+              response.user.hasReceivedToken
+            );
+
+            $("#mnemonicText").val(response.mnemonic);
+
+            $("#mnemonicModal").modal("show");
+            toastr.success("Registration Successful!");
+            // Swal.fire({
+            //     position: "center",
+            //     icon: "success",
+            //     title: "Registration Successful",
+            //     showConfirmButton: false,
+            //     timer: 1500,
+            // });
+          } else {
+            Swal.fire({
+              position: "center",
+              icon: "error",
+              title: "Oops...",
+              showConfirmButton: false,
+              timer: 1500,
+              text: response.error || "An error occurred",
+            });
+          }
+        },
+        error: function (jqXHR) {
+          toastr.info(jqXHR.responseJSON?.error || "An error occurred");
+        },
+        complete: function () {
+          loginButton.prop("disabled", false).text("Register Now");
+        },
+      });
+    });
+
+    // copy mnemonic to clipboard
+    $("#copyMnemonicBtn").on("click", function () {
+      const mnemonicText = $("#mnemonicText");
+      mnemonicText.select();
+      document.execCommand("copy");
+      toastr.success("Mnemonic copied to clipboard!");
+
+      // slight delay to ensure that the toastr is shown before redirect
+      // setTimeout(function () {
+      //     location.assign("/");
+      // }, 1500);
+    });
+
+    // close modal
+    $("#mnemonicModalCloseBtn, .btn-close").on("click", function () {
+      $("#mnemonicModal").modal("hide");
+      location.assign("/");
+    });
+  });
+</script>

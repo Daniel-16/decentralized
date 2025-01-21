@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="KooponCraft - Dashboard - NFT Marketplace">
+<!-- Title-->
+<title>KooponCraft - Admin - NFT Marketplace</title>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-T6F64Y8FKX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-T6F64Y8FKX');
+</script>
+<!-- Favicon-->
+<link rel="shortcut icon" href="/assets/img/koopon-logo.png" type="image/x-icon">
+<!-- All CSS Stylesheet-->
+<link rel="stylesheet" href="/assets/css/all-css-libraries.css">
+<!-- Core Stylesheet-->
+<link rel="stylesheet" href="/assets/style.css">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"/>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+  integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+</head>
+<body>
+<!-- Preloader-->
+<div class="preloader" id="preloader">
+    <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+</div>
+<!-- Header Wrapper -->
+<header class="header-area dashboard-header px-0 px-sm-0">
+    <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <div class="d-flex align-items-center justify-content-between w-100">
+          <!-- Brand Logo -->
+          <div class="admin-logo me-1 me-sm-3">
+              <a href="/">
+                <img style="height: 42px;" src="/assets/img/koopon-logo.png" alt="">
+              </a>
+          </div>
+          <!-- Search Form -->
+          <div class="search-form position-relative d-none d-lg-flex align-items-center">
+              <input class="form-control" type="text" placeholder="Search">
+              <button class="position-absolute" type="submit">
+                <i class="bi bi-search"></i>
+              </button>
+          </div>
+        <!-- Header Meta -->
+        <div class="header-meta d-flex align-items-center">
+        <!-- Notification -->
+
+        <!-- User Dropdown -->
+        <div class="user-dropdown dropdown d-none d-sm-block">
+            <button class="btn dropdown-toggle user-btn" id="dd20" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <!-- <img src="/assets/img/core-img/user.png" alt=""> -->
+               <i class="bi bi-three-dots"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end mt-3" aria-labelledby="dd20">
+            <li><a id="logout" class="dropdown-item" href="#"><i class="me-2 bi bi-power"></i>Logout</a></li>
+            <!-- <li><a id="marketplace" class="dropdown-item" href="/shop/nft-marketplace">Coupon Marketplace</a></li> -->
+            </ul>
+        </div>
+        <!-- Menu Toggler -->
+        <div class="menu-toggler ms-2 ms-sm-3" id="dashboardMenuTrigger"><i class="bi bi-list"></i></div>
+        <!-- Button --><a class="btn btn-sm btn-danger rounded-pill ms-2 ms-sm-3 d-none d-sm-block" href="/"><i class="bi bi-house me-1"></i>Home</a>
+        </div>
+        </div>
+    </div>
+    </nav>
+</header>
+
+<%- include('sidebar') %>
+
+
+<script>
+    (function() {
+      const authRequired = <%- JSON.stringify(locals.authRequired) %>;
+      if (authRequired) {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          window.location.href = '/login';
+        } else {
+          $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+            jqXHR.setRequestHeader('Authorization', 'Bearer ' + token);
+          });
+        }
+      }
+    })();
+  </script>
+<!-- logout event handler -->
+<script>
+    $(document).ready(function () {
+    $("#logout").on("click", function (e) {
+        e.preventDefault();
+        // clear the token from localStorage
+        // localStorage.removeItem("token");
+        localStorage.clear();
+        toastr.info("Logout successful");
+
+        window.location.href = "/";
+    });
+    });
+</script>
