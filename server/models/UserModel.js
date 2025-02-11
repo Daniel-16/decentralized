@@ -8,7 +8,7 @@ const UserSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
+    // required: true,
     unique: true,
     match: [
       /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
@@ -17,7 +17,7 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    // required: true,
     minLength: 6,
   },
   isAdmin: {
@@ -40,7 +40,7 @@ const UserSchema = new mongoose.Schema({
   ],
   mnemonic: {
     type: String,
-    required: true,
+    // required: true,
   },
   walletBalance: {
     type: Number,

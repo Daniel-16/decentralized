@@ -79,6 +79,16 @@
               </button>
             </form>
           </div>
+          <!-- Add Polkadot Wallet Login Option -->
+          <div class="text-center mt-3">Or connect with</div>
+          <button
+            class="btn btn-primary w-100 mt-3"
+            id="connectPolkadotWallet"
+            type="button"
+            onclick="connectPolkadot()"
+          >
+            Polkadot Wallet
+          </button>
         </div>
       </div>
       <div class="col-12 col-md-6">
@@ -190,11 +200,11 @@
             localStorage.setItem("token", response.token);
             localStorage.setItem("username", response.user.username);
             localStorage.setItem("email", response.user.email);
-            localStorage.setItem("profileImageUrl", response.user.profileImageUrl);
             localStorage.setItem(
-              "accountAddress",
-              response.account.address
+              "profileImageUrl",
+              response.user.profileImageUrl
             );
+            localStorage.setItem("accountAddress", response.account.address);
             localStorage.setItem(
               "hasReceivedToken",
               response.user.hasReceivedToken
@@ -249,5 +259,112 @@
       $("#mnemonicModal").modal("hide");
       location.assign("/");
     });
+  });
+</script>
+
+
+<!-- Connect to polkadot wallet -->
+<script>
+  async function connectPolkadot() {
+      if (!window.injectedWeb3) {
+          Swal.fire({
+              title: "Polkadot Extension Not Found",
+              text: "Please install the Polkadot.js extension first",
+              icon: "warning",
+              confirmButtonText: "Install Extension",
+              showCancelButton: true,
+          }).then((result) => {
+              if (result.isConfirmed) {
+                  window.open('https://polkadot.js.org/extension/', '_blank');
+              }
+          });
+          return;
+      }
+  
+      try {
+          await new Promise((resolve) => setTimeout(resolve, 100));
+          const allInjected = await window.injectedWeb3;
+          const injected = allInjected['polkadot-js'];
+          
+          if (!injected) {
+              throw new Error('Polkadot{.js} extension not found');
+          }
+  
+          const extension = await injected.enable('KooponCraft');
+          const accounts = await extension.accounts.get();
+          
+          if (!accounts || accounts.length === 0) {
+              Swal.fire({
+                  title: "No Accounts Found",
+                  text: "Please create or import an account in your Polkadot.js extension first",
+                  icon: "warning",
+                  confirmButtonText: "Open Extension",
+                  showCancelButton: true,
+              });
+              return;
+          }
+  
+          const account = accounts[0];
+          
+          $.ajax({
+              url: "/api/createUserWithPolkadot",
+              method: "POST",
+              contentType: "application/json",
+              data: JSON.stringify({
+                  address: account.address,
+                  username: account.name || account.meta.name
+              }),
+              success: function(response) {
+                  if (response.success) {
+                      localStorage.setItem("token", response.token);
+                      localStorage.setItem("username", response.user.username);
+                      localStorage.setItem("profileImageUrl", response.user.profileImageUrl);
+                      localStorage.setItem("accountAddress", response.account.address);
+                      localStorage.setItem("hasReceivedToken", response.user.hasReceivedToken);
+
+                      if (response.mnemonic) {
+                          $("#mnemonicText").val(response.mnemonic);
+                          $("#mnemonicModal").modal("show");
+                      } else {
+                          // Redirect immediately if no mnemonic
+                          window.location.href = "/dashboard";
+                      }
+
+                      toastr.success("Registration with Polkadot Successful!");
+                  } else {
+                      Swal.fire({
+                          icon: "error",
+                          title: "Registration Failed",
+                          text: response.error || "An error occurred"
+                      });
+                  }
+              },
+              error: function(jqXHR) {
+                  toastr.error(jqXHR.responseJSON?.error || "An error occurred during registration");
+              }
+          });
+
+      } catch (error) {
+          console.error('Polkadot connection error:', error);
+          Swal.fire({
+              title: "Connection Error",
+              text: error.message,
+              icon: "error",
+              confirmButtonText: "OK"
+          });
+      }
+  }
+  
+  $(document).ready(function() {
+      $('#connectPolkadotWallet').on('click', function(e) {
+          e.preventDefault();
+          connectPolkadot();
+      });
+
+      // Add handler for modal close to redirect
+      $("#mnemonicModalCloseBtn, .btn-close").on("click", function() {
+          $("#mnemonicModal").modal("hide");
+          window.location.href = "/dashboard";
+      });
   });
 </script>
