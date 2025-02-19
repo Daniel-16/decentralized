@@ -10,9 +10,11 @@ import {
 } from "../controllers/CreateAndMintToken.js";
 import {
   createUser,
+  createUserWithPolkadot,
   getLeaderboard,
   getUser,
   loginUser,
+  loginWithPolkadot,
 } from "../controllers/UserController.js";
 import {
   createItem,
@@ -300,5 +302,19 @@ router.get("/getItemsByCategory/:category", verifyToken, getItemsByCategory);
  * @access Private
  */
 router.get("/getLeaderboard", getLeaderboard);
+
+/**
+ * @route POST /api/createUserWithPolkadot
+ * @description Create a new user with Polkadot wallet
+ * @access Public
+ */
+router.post("/createUserWithPolkadot", createUserWithPolkadot);
+
+/**
+ * @route POST /api/loginWithPolkadot
+ * @description Sign in a user with Polkadot wallet
+ * @access Public
+ */
+router.post("/loginWithPolkadot", loginWithPolkadot);
 
 export default router;
