@@ -257,17 +257,14 @@ export const createUserWithPolkadot = async (req, res) => {
       profileImageUrl: avatarUrl
     });
 
-    // const token = generateToken(user);
+    const token = generateToken(user);
 
     res.status(201).json({
       success: true,
       user: {
-        id: user._id,
-        username: user.username,
-        accountAddress: user.accountAddress,
-        profileImageUrl: user.profileImageUrl
+        ...user.toObject()
       },
-      // token
+      token
     });
   } catch (error) {
     res.status(500).json({
@@ -278,7 +275,7 @@ export const createUserWithPolkadot = async (req, res) => {
 };
 
 export const loginWithPolkadot = async (req, res) => {
-  const { address, username} = req.body;
+  const { address } = req.body;
   
   try {
     const user = await UserModel.findOne({ accountAddress: address });
@@ -313,8 +310,7 @@ export const loginWithPolkadot = async (req, res) => {
       user: {
         ...user.toObject(),
         currentStreak: streakInfo.currentStreak,
-        highestStreak: streakInfo.highestStreak,
-        username
+        highestStreak: streakInfo.highestStreak
       },
       token,
     });

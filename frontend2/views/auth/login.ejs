@@ -221,31 +221,17 @@
     }
 
     try {
-      // Wait for the injection to happen
       await new Promise((resolve) => setTimeout(resolve, 100));
-
-      // Get all extensions
       const allInjected = await window.injectedWeb3;
-
-      // Look specifically for polkadot-js
       const injected = allInjected["polkadot-js"];
 
       if (!injected) {
         throw new Error("Polkadot{.js} extension not found");
       }
 
-      // Enable the extension
       const extension = await injected.enable("KooponCraft");
-
-      // Debug log to see the structure
-      console.log("Extension response:", extension);
-
-      // Get accounts
       const accounts = await extension.accounts.get();
-      console.log("Accounts:", accounts);
-      {
-        tokenName: "BuyHere";
-      }
+
       if (!accounts || accounts.length === 0) {
         Swal.fire({
           title: "No Accounts Found",
@@ -253,93 +239,68 @@
           icon: "warning",
           confirmButtonText: "Open Extension",
           showCancelButton: true,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // This will trigger the extension popup
-            if (chrome && chrome.runtime && chrome.runtime.sendMessage) {
-              chrome.runtime.sendMessage("mgmcbmgbmgjnhaapjfdamiibidkgalli", {
-                method: "open",
-              });
-            }
-          }
         });
         return;
       }
 
       const account = accounts[0];
+      
+      // Call login API with wallet address
+      $.ajax({
+        url: "/api/loginWithPolkadot",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ 
+          address: account.address,
+          name: account.name || account.meta.name
+        }),
+        success: function(response) {
+          if (response.success) {
+            // Save user data to localStorage            
+            localStorage.setItem("token", response.token);
+            localStorage.setItem("username", response.user.username);
+            localStorage.setItem("accountAddress", response.user.accountAddress);
+            localStorage.setItem("hasReceivedToken", response.user.hasReceivedToken);
+            localStorage.setItem("currentStreak", response.user.currentStreak);
+            localStorage.setItem("highestStreak", response.user.highestStreak);
+            localStorage.setItem("profileImageUrl", response.user.profileImageUrl);
 
-      // Store account info
-      const accountData = {
-        address: account.address,
-        name: account.name || account.meta.name,
-        type: account.type,
-        genesisHash: account.genesisHash,
-      };
+            Swal.fire({
+              title: "Success!",
+              text: "Successfully logged in with Polkadot wallet",
+              icon: "success",
+              timer: 1500
+            });
 
-      //        localStorage.setItem('polkadotAccount', JSON.stringify(accountData));
-
-      Swal.fire({
-        title: "Connected!",
-        text: `Successfully connected to account: ${
-          accountData.name || accountData.address.slice(0, 10)
-        }...`,
-        icon: "success",
-        confirmButtonText: "OK",
+            location.assign("/dashboard");
+          } else {
+            Swal.fire({
+              title: "Error",
+              text: response.error || "Failed to login",
+              icon: "error"
+            });
+          }
+        },
+        error: function(jqXHR) {
+          Swal.fire({
+            title: "Error",
+            text: jqXHR.responseJSON?.error || "Failed to login",
+            icon: "error"
+          });
+        }
       });
 
-      $("#walletModal").modal("hide");
     } catch (error) {
       console.error("Polkadot connection error:", error);
-
-      let errorMessage = error.message;
-      if (error.message.includes("Authorization")) {
-        errorMessage =
-          "Please accept the connection request in the Polkadot.js extension popup";
-      }
-
       Swal.fire({
         title: "Connection Error",
-        text: errorMessage,
+        text: error.message,
         icon: "error",
-        confirmButtonText: "OK",
       });
     }
   }
 
-  // Update document ready function
-  $(document).ready(function () {
-    $("#connectPolkadot")
-      .off("click")
-      .on("click", async function (e) {
-        e.preventDefault();
-
-        // Check if we already have a connected account
-        const existingAccountStr = localStorage.getItem("polkadotAccount");
-        if (existingAccountStr) {
-          try {
-            const existingAccount = JSON.parse(existingAccountStr);
-            Swal.fire({
-              title: "Already Connected",
-              text: `Currently connected to account: ${
-                existingAccount.name || existingAccount.address.slice(0, 10)
-              }...`,
-              icon: "info",
-              showCancelButton: true,
-              confirmButtonText: "Connect Different Account",
-              cancelButtonText: "OK",
-            }).then((result) => {
-              if (result.isConfirmed) {
-                localStorage.removeItem("polkadotAccount");
-                connectPolkadot();
-              }
-            });
-            return;
-          } catch (e) {
-            localStorage.removeItem("polkadotAccount");
-          }
-        }
-
-        connectPolkadot();
-      });
+  $(document).ready(function() {
+    $("#connectPolkadotWallet").on("click", connectPolkadot);
   });
 </script>
