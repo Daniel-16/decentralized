@@ -244,6 +244,30 @@
                 <p>Time: <span id="finalTime">00:00</span></p>
                 <p>Points Earned: <span id="finalPoints">0</span></p>
                 <p class="mt-3">Come back tomorrow to play again!</p>
+                <p>Returning to home in <span id="countdownTimer">3</span> seconds...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="window.location.href='/'">Return Home</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Moves Limit Modal -->
+<div class="modal fade" id="movesLimitModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Game Over! ⏱️</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>You've reached the maximum number of moves (16)!</p>
+                <p>Moves: <span id="limitMoves">0</span></p>
+                <p>Time: <span id="limitTime">00:00</span></p>
+                <p>Points Earned: <span id="limitPoints">0</span></p>
+                <p class="mt-3">Come back tomorrow to play again!</p>
+                <p>Returning to home in <span id="limitCountdownTimer">3</span> seconds...</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" onclick="window.location.href='/'">Return Home</button>
@@ -357,7 +381,7 @@ class CouponMatchGame {
 
         // Check if moves limit reached
         if (this.moves >= 16) {
-            this.gameComplete();
+            this.movesLimitReached();
         }
     }
 
@@ -409,6 +433,45 @@ class CouponMatchGame {
         document.getElementById('points').textContent = this.points;
     }
 
+    // New method for when move limit is reached
+    async movesLimitReached() {
+        // Stop the timer
+        clearInterval(this.timerInterval);
+        const finalTime = document.getElementById('timer').textContent;
+        
+        // Update modal content
+        document.getElementById('limitMoves').textContent = this.moves;
+        document.getElementById('limitTime').textContent = finalTime;
+        document.getElementById('limitPoints').textContent = this.points;
+
+        // Save high score and update progress if user is logged in
+        const token = localStorage.getItem('token');
+        if (token) {
+            await this.saveScore(token);
+            await this.updateProgress(token);
+            await this.loadPreviousGameStats();
+        }
+
+        // Show moves limit modal
+        const movesLimitModal = new bootstrap.Modal(document.getElementById('movesLimitModal'));
+        movesLimitModal.show();
+
+        // Start countdown
+        let countdown = 3;
+        const countdownElement = document.getElementById('limitCountdownTimer');
+        countdownElement.textContent = countdown;
+        
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            countdownElement.textContent = countdown;
+            
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                window.location.href = '/';
+            }
+        }, 1000);
+    }
+
     async gameComplete() {
         // Stop the timer
         clearInterval(this.timerInterval);
@@ -427,23 +490,38 @@ class CouponMatchGame {
             await this.loadPreviousGameStats();
         }
 
-        // Show victory modal with modified buttons
+        // Show victory modal with countdown
         const victoryModal = new bootstrap.Modal(document.getElementById('victoryModal'));
         victoryModal.show();
 
-        // After 3 seconds, redirect to home
-        setTimeout(() => {
-            window.location.href = '/';
-        }, 3000);
+        // Start countdown
+        let countdown = 3;
+        const countdownElement = document.getElementById('countdownTimer');
+        countdownElement.textContent = countdown;
+        
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            countdownElement.textContent = countdown;
+            
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                window.location.href = '/';
+            }
+        }, 1000);
     }
 
     async updateProgress(token) {
         try {
+            // Set the cooldown period to 24 hours
             const response = await fetch('/api/game/updateGameProgress', {
                 method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
-                }
+                },
+                body: JSON.stringify({
+                    cooldownHours: 24 // Explicitly set 24-hour cooldown
+                })
             });
             
             if (!response.ok) {
@@ -491,20 +569,10 @@ class CouponMatchGame {
 
     attachEventListeners() {
         const startButton = document.getElementById('startGame');
-        const playAgainButton = document.getElementById('playAgain');
 
         startButton.addEventListener('click', async () => {
             const canPlay = await this.checkCooldown();
             if (canPlay) {
-                this.initializeGame();
-            }
-        });
-
-        playAgainButton.addEventListener('click', async () => {
-            const canPlay = await this.checkCooldown();
-            if (canPlay) {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('victoryModal'));
-                modal.hide();
                 this.initializeGame();
             }
         });
@@ -608,4 +676,4 @@ class CouponMatchGame {
 document.addEventListener('DOMContentLoaded', () => {
     new CouponMatchGame();
 });
-</script> 
+</script>
