@@ -962,18 +962,34 @@
         <!-- our top performers -->
             <div class="popular-collection-wrapper">
             <div class="container">
-              <div class="section-heading position-relative z-index-1000 d-flex align-items-center justify-content-between">
+              <div class="section-heading position-relative z-index-1000 d-flex align-items-center justify-content-center">
               <div class="d-flex align-items-center">
                 <h2 class="mb-0">Our Top Performers</h2>
-                <select class="popular-collection-select ms-3" id="popularSelect">
+                <!-- <select class="popular-collection-select ms-3" id="popularSelect">
                 <option selected value="1">Daily</option>
+                </select> -->
+                <select class="popular-collection-select" id="networkSelect" style="display: none;">
+                  <option selected value="polkadot">Polkadot</option>
+                  <option value="moonbeam">Moonbeam</option>
+                  <option value="acala">Acala</option>
                 </select>
+
+                <div class="nice-select popular-collection-select" tabindex="0" id="customNetworkSelect">
+                  <span class="current">Polkadot</span>
+                  <div class="nice-select-dropdown">
+                    <ul class="list">
+                      <li data-value="polkadot" class="option selected">Polkadot</li>
+                      <li data-value="moonbeam" class="option">Moonbeam</li>
+                      <li data-value="acala" class="option">Acala</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
-              <select class="popular-collection-select" id="networkSelect" onchange="handleNetworkChange(this)">
+              <!-- <select class="popular-collection-select" id="networkSelect" onchange="handleNetworkChange(this)">
                 <option selected value="polkadot">Polkadot</option>
                 <option value="moonbeam">Moonbeam</option>
                 <option value="acala">Acala</option>
-              </select>
+              </select> -->
               </div>
             </div>
             <div class="container">
@@ -982,22 +998,6 @@
               </div>
             </div>
 
-            <script>
-              function handleNetworkChange(select) {
-              const network = select.value;
-              if (network === 'moonbeam' || network === 'acala') {
-                // Clear the leaderboard container
-                document.getElementById('leaderboard-container').innerHTML = `
-                <div class="col-12 text-center">
-                  <h5>No users found on ${network} network</h5>
-                </div>
-                `;
-              } else {
-                // If polkadot is selected, fetch and show normal leaderboard
-                fetchLeaderboard();
-              }
-              }
-            </script>
             </div>
         <div class="divider"></div>
 
@@ -1153,6 +1153,60 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const select = document.getElementById("networkSelect");
+    const customSelect = document.getElementById("customNetworkSelect");
+    const current = customSelect.querySelector(".current");
+    const options = customSelect.querySelectorAll(".option");
+
+    function handleNetworkChange(select) {
+        const network = select.value;
+        if (network === 'moonbeam' || network === 'acala') {
+            // Clear the leaderboard container
+            document.getElementById('leaderboard-container').innerHTML = `
+                <div class="col-12 text-center">
+                  <h5>Got what it takes?😼 Be the first the hop on ${network}!</h5>
+                </div>
+            `;
+        } else {
+            // If Polkadot is selected, fetch and show normal leaderboard
+            fetchLeaderboard();
+        }
+    }
+
+    options.forEach(option => {
+        option.addEventListener("click", function () {
+            // Update custom select
+            current.textContent = this.textContent;
+            options.forEach(opt => opt.classList.remove("selected"));
+            this.classList.add("selected");
+
+            // Update real select
+            select.value = this.getAttribute("data-value");
+            select.dispatchEvent(new Event("change"));
+
+            // Call the network change function with the correct parameter
+            handleNetworkChange(select);
+        });
+    });
+
+    customSelect.addEventListener("click", function () {
+        this.classList.toggle("open");
+    });
+
+    document.addEventListener("click", function (e) {
+        if (!customSelect.contains(e.target)) {
+            customSelect.classList.remove("open");
+        }
+    });
+});
+</script>
+
+
+
 <!-- handle list of items dynamically -->
 <script>
 $(document).ready(function () {
