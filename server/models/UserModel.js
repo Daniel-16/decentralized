@@ -78,6 +78,10 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  walletType: {
+    type: String,
+    default: null
+  }
 });
 
 UserSchema.pre("save", async function (next) {

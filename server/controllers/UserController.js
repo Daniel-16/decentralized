@@ -234,8 +234,52 @@ export const getLeaderboard = async (req, res) => {
   }
 };
 
+export const getLeaderboardByWallet = async (req, res) => {
+  const { page = 1, limit = 10, walletType } = req.query;
+
+  try {
+    const query = { 
+      points: { $gt: 0 },
+      isAdmin: false
+    };
+
+    if (walletType) {
+      query.walletType = walletType;
+    }
+
+    const totalUsers = await UserModel.countDocuments(query);
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    const leaderboard = await UserModel.find(query)
+      .sort({ points: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    const enhancedLeaderboard = leaderboard.map((user, index) => ({
+      position: (page - 1) * limit + index + 1,
+      username: user.username,
+      points: user.points,
+      walletType: user.walletType,
+      last1DayChange: ((Math.random() * 2 - 1) * 2).toFixed(2),
+      last7DaysChange: ((Math.random() * 2 - 1) * 5).toFixed(2),
+    }));
+
+    res.status(200).json({
+      success: true,
+      leaderboard: enhancedLeaderboard,
+      totalPages,
+      walletType: walletType || 'all'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+};
+
 export const createUserWithPolkadot = async (req, res) => {
-  const { address, username } = req.body;
+  const { address, username, walletType } = req.body;
 
   try {
     const userExist = await UserModel.findOne({ accountAddress: address });
@@ -254,7 +298,8 @@ export const createUserWithPolkadot = async (req, res) => {
       accountAddress: address,
       points: 10,
       lastPointsAssigned: new Date(),
-      profileImageUrl: avatarUrl
+      profileImageUrl: avatarUrl,
+      walletType
     });
 
     const token = generateToken(user);

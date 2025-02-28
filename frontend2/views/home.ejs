@@ -962,24 +962,39 @@
         <!-- our top performers -->
           <div class="popular-collection-wrapper">
             <div class="container">
-              <div class="section-heading position-relative z-index-1000 d-flex align-items-center justify-content-center">
-                <h2 class="mb-0">Our Top Performers</h2>
-                <select class="popular-collection-select" id="popularSelect">
-                  <option selected value="1">Daily</option>
-
+              <div class="section-heading position-relative z-index-1000 d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                  <h2 class="mb-0">Our Top Performers</h2>
+                  <select class="popular-collection-select ms-3" id="popularSelect">
+                    <option selected value="1">Daily</option>
+                  </select>
+                </div>
+                <select class="popular-collection-select" id="networkSelect">
+                  <option selected value="polkadot">Polkadot</option>
+                  <option value="moonbeam">Moonbeam</option>
+                  <option value="acala">Acala</option>
                 </select>
               </div>
             </div>
             <div class="container">
               <div class="row g-4 justify-content-center" id="leaderboard-container">
-                <!-- Single Card -->
-                
-
-
+                <!-- Leaderboard items will be dynamically populated -->
               </div>
             </div>
           </div>
-        <!-- end: our top performers -->
+
+          <div class="popular-collection-wrapper mt-5">
+            <div class="container">
+              <div class="section-heading position-relative z-index-1000">
+                <h2 class="mb-0">Network Top Performers</h2>
+              </div>
+            </div>
+            <div class="container">
+              <div class="row g-4 justify-content-center" id="network-leaderboard">
+                <!-- Network specific leaderboard will be populated here -->
+              </div>
+            </div>
+          </div>
         <div class="divider"></div>
 
 
