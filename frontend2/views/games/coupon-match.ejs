@@ -267,14 +267,14 @@ class CouponMatchGame {
         
         // Coupon types for the game
         this.couponTypes = [
-            { name: 'Discount', icon: '🏷️', color: '#f472b6' },
-            { name: 'Gift Card', icon: '🎁', color: '#8b5cf6' },
-            { name: 'Special', icon: '⭐', color: '#f59e0b' },
-            { name: 'Sale', icon: '💰', color: '#10b981' },
-            { name: 'Premium', icon: '👑', color: '#6366f1' },
-            { name: 'Limited', icon: '⚡', color: '#ef4444' },
-            { name: 'Bonus', icon: '🎯', color: '#14b8a6' },
-            { name: 'Reward', icon: '🏆', color: '#f97316' }
+            { name: 'UNQ', image: '/assets/img/parachains/unique1.png', color: '#f472b6' },
+            { name: 'Unique', image: '/assets/img/parachains/unique22.png', color: '#8b5cf6' },
+            { name: 'Moonbeam', image: '/assets/img/parachains/moonbeam1.jpg', color: '#f59e0b' },
+            { name: 'You-Moonbeam', image: '/assets/img/parachains/moonbeam2.png', color: '#10b981' },
+            { name: 'Acala', image: '/assets/img/parachains/acala1.png', color: '#6366f1' },
+            { name: 'You-Acala', image: '/assets/img/parachains/acala3.png', color: '#ef4444' },
+            { name: 'Polkadot', image: '/assets/img/parachains/polkadot1.png', color: '#14b8a6' },
+            { name: 'You-Polkadot', image: '/assets/img/parachains/polkadot2.png', color: '#f97316' }
         ];
         
         this.checkCooldown();
@@ -304,28 +304,28 @@ class CouponMatchGame {
     }
 
     createCard(coupon, index) {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.dataset.index = index;
-        card.dataset.name = coupon.name;
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.dataset.index = index;
+            card.dataset.name = coupon.name;
 
-        card.innerHTML = `
-            <div class="card-face card-front">
-                <div class="card-content">
-                    <div style="font-size: 2em;">${coupon.icon}</div>
-                    <div>${coupon.name}</div>
+            card.innerHTML = `
+                <div class="card-face card-front">
+                    <div class="card-content">
+                        <img src="${coupon.image}" alt="${coupon.name}" style="width: 80px; height: 80px;">
+                        <div>${coupon.name}</div>
+                    </div>
                 </div>
-            </div>
-            <div class="card-face card-back">
-                <div class="card-content">
-                    <img src="/assets/img/koopon-logo.png" alt="KooponCraft">
+                <div class="card-face card-back">
+                    <div class="card-content">
+                        <img src="/assets/img/koopon-logo.png" alt="KooponCraft">
+                    </div>
                 </div>
-            </div>
-        `;
+            `;
 
-        card.addEventListener('click', () => this.flipCard(card));
-        return card;
-    }
+            card.addEventListener('click', () => this.flipCard(card));
+            return card;
+        }
 
     flipCard(card) {
         if (this.isLocked || card.classList.contains('flipped') || 
