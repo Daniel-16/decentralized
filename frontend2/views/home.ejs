@@ -960,41 +960,45 @@
 
         <div class="divider"></div>
         <!-- our top performers -->
-          <div class="popular-collection-wrapper">
+            <div class="popular-collection-wrapper">
             <div class="container">
               <div class="section-heading position-relative z-index-1000 d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center">
-                  <h2 class="mb-0">Our Top Performers</h2>
-                  <select class="popular-collection-select ms-3" id="popularSelect">
-                    <option selected value="1">Daily</option>
-                  </select>
-                </div>
-                <select class="popular-collection-select" id="networkSelect">
-                  <option selected value="polkadot">Polkadot</option>
-                  <option value="moonbeam">Moonbeam</option>
-                  <option value="acala">Acala</option>
+              <div class="d-flex align-items-center">
+                <h2 class="mb-0">Our Top Performers</h2>
+                <select class="popular-collection-select ms-3" id="popularSelect">
+                <option selected value="1">Daily</option>
                 </select>
+              </div>
+              <select class="popular-collection-select" id="networkSelect" onchange="handleNetworkChange(this)">
+                <option selected value="polkadot">Polkadot</option>
+                <option value="moonbeam">Moonbeam</option>
+                <option value="acala">Acala</option>
+              </select>
               </div>
             </div>
             <div class="container">
               <div class="row g-4 justify-content-center" id="leaderboard-container">
-                <!-- Leaderboard items will be dynamically populated -->
+              <!-- Leaderboard items will be dynamically populated -->
               </div>
             </div>
-          </div>
 
-          <div class="popular-collection-wrapper mt-5">
-            <div class="container">
-              <div class="section-heading position-relative z-index-1000">
-                <h2 class="mb-0">Network Top Performers</h2>
-              </div>
+            <script>
+              function handleNetworkChange(select) {
+              const network = select.value;
+              if (network === 'moonbeam' || network === 'acala') {
+                // Clear the leaderboard container
+                document.getElementById('leaderboard-container').innerHTML = `
+                <div class="col-12 text-center">
+                  <h5>No users found on ${network} network</h5>
+                </div>
+                `;
+              } else {
+                // If polkadot is selected, fetch and show normal leaderboard
+                fetchLeaderboard();
+              }
+              }
+            </script>
             </div>
-            <div class="container">
-              <div class="row g-4 justify-content-center" id="network-leaderboard">
-                <!-- Network specific leaderboard will be populated here -->
-              </div>
-            </div>
-          </div>
         <div class="divider"></div>
 
 
