@@ -582,7 +582,7 @@ class CouponMatchGame {
         const startButton = document.getElementById('startGame');
         const token = localStorage.getItem('token');
         
-        // If no token, enable the game for non-logged-in users
+        // If no token, enable the game for non-logged-in users.
         if (!token) {
             startButton.disabled = false;
             startButton.textContent = 'Start New Game';
