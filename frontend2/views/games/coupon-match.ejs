@@ -262,7 +262,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p>You've reached the maximum number of moves (16)!</p>
+                <p>You've reached the maximum number of moves (12)!</p>
                 <p>Moves: <span id="limitMoves">0</span></p>
                 <p>Time: <span id="limitTime">00:00</span></p>
                 <p>Points Earned: <span id="limitPoints">0</span></p>
@@ -279,60 +279,61 @@
 <%- include('../partials/home/footer') %>
 
 <script>
-class CouponMatchGame {
-    constructor() {
-        this.moves = 0;
-        this.points = 0;
-        this.startTime = null;
-        this.timerInterval = null;
-        this.flippedCards = [];
-        this.matchedPairs = 0;
-        this.isLocked = false;
-        
-        // Coupon types for the game
-        this.couponTypes = [
-            { name: 'UNQ', image: '/assets/img/parachains/unique1.png', color: '#f472b6' },
-            { name: 'Unique', image: '/assets/img/parachains/unique22.png', color: '#8b5cf6' },
-            { name: 'Moonbeam', image: '/assets/img/parachains/moonbeam1.jpg', color: '#f59e0b' },
-            { name: 'You-Moonbeam', image: '/assets/img/parachains/moonbeam2.png', color: '#10b981' },
-            { name: 'Acala', image: '/assets/img/parachains/acala1.png', color: '#6366f1' },
-            { name: 'You-Acala', image: '/assets/img/parachains/acala3.png', color: '#ef4444' },
-            { name: 'Polkadot', image: '/assets/img/parachains/polkadot1.png', color: '#14b8a6' },
-            { name: 'You-Polkadot', image: '/assets/img/parachains/polkadot2.png', color: '#f97316' }
-        ];
-        
-        this.checkCooldown();
-        this.attachEventListeners();
-        this.loadPreviousGameStats();
-    }
-
-    initializeGame() {
-        this.gameBoard = document.getElementById('gameBoard');
-        this.moves = 0;
-        this.points = 0;
-        this.matchedPairs = 0;
-        this.updateStats();
-        this.createBoard();
-        this.startTimer();
-    }
-
-    createBoard() {
-        this.gameBoard.innerHTML = '';
-        const shuffledCoupons = [...this.couponTypes, ...this.couponTypes]
-            .sort(() => Math.random() - 0.5);
-
-        shuffledCoupons.forEach((coupon, index) => {
-            const card = this.createCard(coupon, index);
-            this.gameBoard.appendChild(card);
-        });
-    }
-
-    createCard(coupon, index) {
+    class CouponMatchGame {
+        constructor() {
+            this.moves = 0;
+            this.points = 0;
+            this.startTime = null;
+            this.timerInterval = null;
+            this.flippedCards = [];
+            this.matchedPairs = 0;
+            this.isLocked = false;
+            this.maxMoves = 12; // Changed from 16 to 12
+            
+            // Coupon types for the game
+            this.couponTypes = [
+                { name: 'UNQ', image: '/assets/img/parachains/unique1.png', color: '#f472b6' },
+                { name: 'Unique', image: '/assets/img/parachains/unique22.png', color: '#8b5cf6' },
+                { name: 'Moonbeam', image: '/assets/img/parachains/moonbeam1.jpg', color: '#f59e0b' },
+                { name: 'You-Moonbeam', image: '/assets/img/parachains/moonbeam2.png', color: '#10b981' },
+                { name: 'Acala', image: '/assets/img/parachains/acala1.png', color: '#6366f1' },
+                { name: 'You-Acala', image: '/assets/img/parachains/acala3.png', color: '#ef4444' },
+                { name: 'Polkadot', image: '/assets/img/parachains/polkadot1.png', color: '#14b8a6' },
+                { name: 'You-Polkadot', image: '/assets/img/parachains/polkadot2.png', color: '#f97316' }
+            ];
+            
+            this.checkCooldown();
+            this.attachEventListeners();
+            this.loadPreviousGameStats();
+        }
+    
+        initializeGame() {
+            this.gameBoard = document.getElementById('gameBoard');
+            this.moves = 0;
+            this.points = 0;
+            this.matchedPairs = 0;
+            this.updateStats();
+            this.createBoard();
+            this.startTimer();
+        }
+    
+        createBoard() {
+            this.gameBoard.innerHTML = '';
+            const shuffledCoupons = [...this.couponTypes, ...this.couponTypes]
+                .sort(() => Math.random() - 0.5);
+    
+            shuffledCoupons.forEach((coupon, index) => {
+                const card = this.createCard(coupon, index);
+                this.gameBoard.appendChild(card);
+            });
+        }
+    
+        createCard(coupon, index) {
             const card = document.createElement('div');
             card.className = 'card';
             card.dataset.index = index;
             card.dataset.name = coupon.name;
-
+    
             card.innerHTML = `
                 <div class="card-face card-front">
                     <div class="card-content">
@@ -346,334 +347,369 @@ class CouponMatchGame {
                     </div>
                 </div>
             `;
-
+    
             card.addEventListener('click', () => this.flipCard(card));
             return card;
         }
-
-    flipCard(card) {
-        if (this.isLocked || card.classList.contains('flipped') || 
-            this.flippedCards.includes(card)) return;
-
-        card.classList.add('flipped');
-        this.flippedCards.push(card);
-
-        if (this.flippedCards.length === 2) {
-            this.moves++;
+    
+        flipCard(card) {
+            if (this.isLocked || card.classList.contains('flipped') || 
+                this.flippedCards.includes(card)) return;
+    
+            card.classList.add('flipped');
+            this.flippedCards.push(card);
+    
+            if (this.flippedCards.length === 2) {
+                this.moves++;
+                this.updateStats();
+                this.checkMatch();
+                
+                // Check if moves limit reached immediately after updating moves
+                if (this.moves >= this.maxMoves) {
+                    setTimeout(() => this.movesLimitReached(), 1000); // Add delay to allow last match animation
+                }
+            }
+        }
+    
+        checkMatch() {
+            this.isLocked = true;
+            const [card1, card2] = this.flippedCards;
+            const match = card1.dataset.name === card2.dataset.name;
+    
+            if (match) {
+                this.handleMatch(card1, card2);
+            } else {
+                this.handleMismatch(card1, card2);
+            }
+    
+            this.flippedCards = [];
+            
+            // Keep isLocked true if we're at max moves
+            if (this.moves >= this.maxMoves) {
+                this.isLocked = true;
+            } else {
+                this.isLocked = false;
+            }
+        }
+    
+        handleMatch(card1, card2) {
+            this.matchedPairs++;
+            this.points += 100;
             this.updateStats();
-            this.checkMatch();
-        }
-    }
-
-    checkMatch() {
-        this.isLocked = true;
-        const [card1, card2] = this.flippedCards;
-        const match = card1.dataset.name === card2.dataset.name;
-
-        if (match) {
-            this.handleMatch(card1, card2);
-        } else {
-            this.handleMismatch(card1, card2);
-        }
-
-        this.flippedCards = [];
-        this.isLocked = false;
-
-        // Check if moves limit reached
-        if (this.moves >= 16) {
-            this.movesLimitReached();
-        }
-    }
-
-    handleMatch(card1, card2) {
-        this.matchedPairs++;
-        this.points += 100;
-        this.updateStats();
-        
-        this.createConfetti(card1);
-        this.createConfetti(card2);
-
-        if (this.matchedPairs === this.couponTypes.length) {
-            this.gameComplete();
-        }
-    }
-
-    handleMismatch(card1, card2) {
-        setTimeout(() => {
-            card1.classList.remove('flipped');
-            card2.classList.remove('flipped');
-        }, 1000);
-    }
-
-    createConfetti(card) {
-        const rect = card.getBoundingClientRect();
-        for (let i = 0; i < 5; i++) {
-            const confetti = document.createElement('div');
-            confetti.className = 'confetti';
-            confetti.style.left = `${rect.left + Math.random() * rect.width}px`;
-            confetti.style.top = `${rect.top}px`;
-            document.body.appendChild(confetti);
             
-            confetti.addEventListener('animationend', () => confetti.remove());
-        }
-    }
-
-    startTimer() {
-        this.startTime = Date.now();
-        this.timerInterval = setInterval(() => {
-            const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
-            const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
-            const seconds = (elapsed % 60).toString().padStart(2, '0');
-            document.getElementById('timer').textContent = `${minutes}:${seconds}`;
-        }, 1000);
-    }
-
-    updateStats() {
-        document.getElementById('moves').textContent = this.moves;
-        document.getElementById('points').textContent = this.points;
-    }
-
-    // New method for when move limit is reached
-    async movesLimitReached() {
-        // Stop the timer
-        clearInterval(this.timerInterval);
-        const finalTime = document.getElementById('timer').textContent;
-        
-        // Update modal content
-        document.getElementById('limitMoves').textContent = this.moves;
-        document.getElementById('limitTime').textContent = finalTime;
-        document.getElementById('limitPoints').textContent = this.points;
-
-        // Save high score and update progress if user is logged in
-        const token = localStorage.getItem('token');
-        if (token) {
-            await this.saveScore(token);
-            await this.updateProgress(token);
-            await this.loadPreviousGameStats();
-        }
-
-        // Show moves limit modal
-        const movesLimitModal = new bootstrap.Modal(document.getElementById('movesLimitModal'));
-        movesLimitModal.show();
-
-        // Start countdown
-        let countdown = 3;
-        const countdownElement = document.getElementById('limitCountdownTimer');
-        countdownElement.textContent = countdown;
-        
-        const countdownInterval = setInterval(() => {
-            countdown--;
-            countdownElement.textContent = countdown;
-            
-            if (countdown <= 0) {
-                clearInterval(countdownInterval);
-                window.location.href = '/';
+            this.createConfetti(card1);
+            this.createConfetti(card2);
+    
+            if (this.matchedPairs === this.couponTypes.length) {
+                // Keep the victory check, but make sure it doesn't run if we're at max moves
+                if (this.moves < this.maxMoves) {
+                    setTimeout(() => this.gameComplete(), 500);
+                }
             }
-        }, 1000);
-    }
-
-    async gameComplete() {
-        // Stop the timer
-        clearInterval(this.timerInterval);
-        const finalTime = document.getElementById('timer').textContent;
-        
-        // Update modal content
-        document.getElementById('finalMoves').textContent = this.moves;
-        document.getElementById('finalTime').textContent = finalTime;
-        document.getElementById('finalPoints').textContent = this.points;
-
-        // Save high score and update progress if user is logged in
-        const token = localStorage.getItem('token');
-        if (token) {
-            await this.saveScore(token);
-            await this.updateProgress(token);
-            await this.loadPreviousGameStats();
         }
-
-        // Show victory modal with countdown
-        const victoryModal = new bootstrap.Modal(document.getElementById('victoryModal'));
-        victoryModal.show();
-
-        // Start countdown
-        let countdown = 3;
-        const countdownElement = document.getElementById('countdownTimer');
-        countdownElement.textContent = countdown;
-        
-        const countdownInterval = setInterval(() => {
-            countdown--;
-            countdownElement.textContent = countdown;
-            
-            if (countdown <= 0) {
-                clearInterval(countdownInterval);
-                window.location.href = '/';
-            }
-        }, 1000);
-    }
-
-    async updateProgress(token) {
-        try {
-            // Set the cooldown period to 24 hours
-            const response = await fetch('/api/game/updateGameProgress', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    cooldownHours: 24 // Explicitly set 24-hour cooldown
-                })
-            });
-            
-            if (!response.ok) {
-                console.error('Failed to update game progress');
-            }
-        } catch (error) {
-            console.error('Error updating game progress:', error);
+    
+        handleMismatch(card1, card2) {
+            setTimeout(() => {
+                card1.classList.remove('flipped');
+                card2.classList.remove('flipped');
+            }, 1000);
         }
-    }
-
-    async saveScore(token) {
-        try {
-            const gameData = {
-                game: 'coupon-match',
-                score: this.points,
-                moves: this.moves,
-                time: document.getElementById('timer').textContent
-            };
-            
-            console.log('Saving game score:', gameData);
-            
-            const response = await fetch('/api/game/saveGameScore', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(gameData)
-            });
-            
-            const data = await response.json();
-            console.log('Save score response:', data);
-            await this.loadPreviousGameStats();
-            
-            if (!response.ok) {
-                throw new Error('Failed to save score');
+    
+        createConfetti(card) {
+            const rect = card.getBoundingClientRect();
+            for (let i = 0; i < 5; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${rect.left + Math.random() * rect.width}px`;
+                confetti.style.top = `${rect.top}px`;
+                document.body.appendChild(confetti);
+                
+                confetti.addEventListener('animationend', () => confetti.remove());
             }
+        }
+    
+        startTimer() {
+            this.startTime = Date.now();
+            this.timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                const seconds = (elapsed % 60).toString().padStart(2, '0');
+                document.getElementById('timer').textContent = `${minutes}:${seconds}`;
+            }, 1000);
+        }
+    
+        updateStats() {
+            document.getElementById('moves').textContent = this.moves;
+            document.getElementById('points').textContent = this.points;
+        }
+    
+        // Completely rewritten to ensure it works for all users
+        async movesLimitReached() {
+            console.log("Move limit reached! Showing modal...");
             
-            // Reload previous game stats after saving
-            await this.loadPreviousGameStats();
-        } catch (error) {
-            console.error('Error saving score:', error);
-        }
-    }
-
-    attachEventListeners() {
-        const startButton = document.getElementById('startGame');
-
-        startButton.addEventListener('click', async () => {
-            const canPlay = await this.checkCooldown();
-            if (canPlay) {
-                this.initializeGame();
+            // Stop the timer
+            clearInterval(this.timerInterval);
+            
+            // Get final time
+            const finalTime = document.getElementById('timer').textContent;
+            
+            // Update modal content
+            document.getElementById('limitMoves').textContent = this.moves;
+            document.getElementById('limitTime').textContent = finalTime;
+            document.getElementById('limitPoints').textContent = this.points;
+    
+            // Save score for logged in users only
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    await this.saveScore(token);
+                    await this.updateProgress(token);
+                } catch (error) {
+                    console.error("Error saving game data:", error);
+                }
             }
-        });
-    }
-
-    async checkCooldown() {
-        const startButton = document.getElementById('startGame');
-        const token = localStorage.getItem('token');
-        
-        // If no token, enable the game for non-logged-in users.
-        if (!token) {
-            startButton.disabled = false;
-            startButton.textContent = 'Start New Game';
-            return true;
+    
+            // Force a small delay to ensure modal shows after any animations
+            setTimeout(() => {
+                try {
+                    // Show moves limit modal using Bootstrap's API
+                    const movesLimitModal = new bootstrap.Modal(document.getElementById('movesLimitModal'));
+                    movesLimitModal.show();
+                    
+                    // Start countdown
+                    let countdown = 3;
+                    const countdownElement = document.getElementById('limitCountdownTimer');
+                    countdownElement.textContent = countdown.toString();
+                    
+                    const countdownInterval = setInterval(() => {
+                        countdown--;
+                        countdownElement.textContent = countdown.toString();
+                        
+                        if (countdown <= 0) {
+                            clearInterval(countdownInterval);
+                            window.location.href = '/';
+                        }
+                    }, 1000);
+                } catch (e) {
+                    console.error("Error showing modal:", e);
+                    // Fallback if modal fails
+                    alert("Game over! You've reached the maximum number of moves (12).");
+                    window.location.href = '/';
+                }
+            }, 500);
         }
-
-        try {
-            const response = await fetch('/api/game/checkGameProgress', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
+    
+        async gameComplete() {
+            // Stop the timer
+            clearInterval(this.timerInterval);
+            const finalTime = document.getElementById('timer').textContent;
+            
+            // Update modal content
+            document.getElementById('finalMoves').textContent = this.moves;
+            document.getElementById('finalTime').textContent = finalTime;
+            document.getElementById('finalPoints').textContent = this.points;
+    
+            // Save high score and update progress if user is logged in
+            const token = localStorage.getItem('token');
+            if (token) {
+                await this.saveScore(token);
+                await this.updateProgress(token);
+            }
+    
+            // Show victory modal with countdown
+            setTimeout(() => {
+                const victoryModal = new bootstrap.Modal(document.getElementById('victoryModal'));
+                victoryModal.show();
+                
+                // Start countdown
+                let countdown = 3;
+                const countdownElement = document.getElementById('countdownTimer');
+                countdownElement.textContent = countdown.toString();
+                
+                const countdownInterval = setInterval(() => {
+                    countdown--;
+                    countdownElement.textContent = countdown.toString();
+                    
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        window.location.href = '/';
+                    }
+                }, 1000);
+            }, 500);
+        }
+    
+        async updateProgress(token) {
+            try {
+                // Set the cooldown period to 24 hours
+                const response = await fetch('/api/game/updateGameProgress', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        cooldownHours: 24 // Explicitly set 24-hour cooldown
+                    })
+                });
+                
+                if (!response.ok) {
+                    console.error('Failed to update game progress');
+                }
+            } catch (error) {
+                console.error('Error updating game progress:', error);
+            }
+        }
+    
+        async saveScore(token) {
+            try {
+                const gameData = {
+                    game: 'coupon-match',
+                    score: this.points,
+                    moves: this.moves,
+                    time: document.getElementById('timer').textContent
+                };
+                
+                console.log('Saving game score:', gameData);
+                
+                const response = await fetch('/api/game/saveGameScore', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(gameData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to save score');
+                }
+                
+                const data = await response.json();
+                console.log('Save score response:', data);
+                
+                // Reload previous game stats after saving
+                await this.loadPreviousGameStats();
+            } catch (error) {
+                console.error('Error saving score:', error);
+            }
+        }
+    
+        attachEventListeners() {
+            const startButton = document.getElementById('startGame');
+    
+            startButton.addEventListener('click', async () => {
+                const canPlay = await this.checkCooldown();
+                if (canPlay) {
+                    this.initializeGame();
                 }
             });
+        }
+    
+        async checkCooldown() {
+            const startButton = document.getElementById('startGame');
+            const token = localStorage.getItem('token');
             
-            if (!response.ok) {
-                throw new Error('Failed to check game progress');
-            }
-
-            const data = await response.json();
-            
-            // If user can play (either no progress or cooldown passed)
-            if (data.canPlay) {
+            // If no token, enable the game for non-logged-in users.
+            if (!token) {
                 startButton.disabled = false;
                 startButton.textContent = 'Start New Game';
                 return true;
             }
-            
-            // User cannot play yet, show countdown
-            const nextAvailablePlay = new Date(data.nextAvailablePlay);
-            const now = new Date();
-            const timeDiff = nextAvailablePlay - now;
-            
-            // Calculate remaining hours and minutes
-            const hoursRemaining = Math.floor(timeDiff / (60 * 60 * 1000));
-            const minutesRemaining = Math.floor((timeDiff % (60 * 60 * 1000)) / (60 * 1000));
-            
-            startButton.disabled = true;
-            startButton.textContent = hoursRemaining > 0 ? 
-                `Available in ${hoursRemaining}h ${minutesRemaining}m` : 
-                `Available in ${minutesRemaining} minutes`;
-            
-            return false;
-            
-        } catch (error) {
-            console.error('Error checking game progress:', error);
-            // In case of error, enable the game
-            startButton.disabled = false;
-            startButton.textContent = 'Start New Game';
-            return true;
-        }
-    }
-
-    async loadPreviousGameStats() {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            console.log('No token found');
-            return;
-        }
-
-        try {
-            console.log('Fetching game progress...');
-            const response = await fetch('/api/game/checkGameProgress', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
+    
+            try {
+                const response = await fetch('/api/game/checkGameProgress', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to check game progress');
                 }
-            });
-            
-            if (!response.ok) throw new Error('Failed to fetch game progress');
-            
-            const data = await response.json();            
-                    
-            if (data.lastGameStats) {
-                document.getElementById('lastMoves').textContent = data.lastGameStats.moves;
-                document.getElementById('lastPoints').textContent = data.lastGameStats.score;
-                document.getElementById('lastTime').textContent = data.lastGameStats.time;
-            } else {
-                console.log('No previous game stats found');
-                document.getElementById('lastMoves').textContent = '-';
-                document.getElementById('lastPoints').textContent = '-';
-                document.getElementById('lastTime').textContent = '-';
+    
+                const data = await response.json();
+                
+                // If user can play (either no progress or cooldown passed)
+                if (data.canPlay) {
+                    startButton.disabled = false;
+                    startButton.textContent = 'Start New Game';
+                    return true;
+                }
+                
+                // User cannot play yet, show countdown
+                const nextAvailablePlay = new Date(data.nextAvailablePlay);
+                const now = new Date();
+                const timeDiff = nextAvailablePlay - now;
+                
+                // Calculate remaining hours and minutes
+                const hoursRemaining = Math.floor(timeDiff / (60 * 60 * 1000));
+                const minutesRemaining = Math.floor((timeDiff % (60 * 60 * 1000)) / (60 * 1000));
+                
+                startButton.disabled = true;
+                startButton.textContent = hoursRemaining > 0 ? 
+                    `Available in ${hoursRemaining}h ${minutesRemaining}m` : 
+                    `Available in ${minutesRemaining} minutes`;
+                
+                return false;
+                
+            } catch (error) {
+                console.error('Error checking game progress:', error);
+                // In case of error, enable the game
+                startButton.disabled = false;
+                startButton.textContent = 'Start New Game';
+                return true;
             }
-        } catch (error) {
-            console.error('Error loading previous game stats:', error);
-            document.getElementById('lastMoves').textContent = '-';
-            document.getElementById('lastPoints').textContent = '-';
-            document.getElementById('lastTime').textContent = '-';
+        }
+    
+        async loadPreviousGameStats() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.log('No token found');
+                return;
+            }
+    
+            try {
+                console.log('Fetching game progress...');
+                const response = await fetch('/api/game/checkGameProgress', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Failed to fetch game progress');
+                
+                const data = await response.json();            
+                        
+                if (data.lastGameStats) {
+                    const lastStatsElements = document.querySelectorAll('#lastMoves, #lastPoints, #lastTime');
+                    if (lastStatsElements.length > 0) {
+                        document.getElementById('lastMoves').textContent = data.lastGameStats.moves;
+                        document.getElementById('lastPoints').textContent = data.lastGameStats.score;
+                        document.getElementById('lastTime').textContent = data.lastGameStats.time;
+                    }
+                } else {
+                    console.log('No previous game stats found');
+                    const lastStatsElements = document.querySelectorAll('#lastMoves, #lastPoints, #lastTime');
+                    if (lastStatsElements.length > 0) {
+                        document.getElementById('lastMoves').textContent = '-';
+                        document.getElementById('lastPoints').textContent = '-';
+                        document.getElementById('lastTime').textContent = '-';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading previous game stats:', error);
+                const lastStatsElements = document.querySelectorAll('#lastMoves, #lastPoints, #lastTime');
+                if (lastStatsElements.length > 0) {
+                    document.getElementById('lastMoves').textContent = '-';
+                    document.getElementById('lastPoints').textContent = '-';
+                    document.getElementById('lastTime').textContent = '-';
+                }
+            }
         }
     }
-}
-
-// Initialize game when document is ready
-document.addEventListener('DOMContentLoaded', () => {
-    new CouponMatchGame();
-});
+    
+    // Initialize game when document is ready
+    document.addEventListener('DOMContentLoaded', () => {
+        new CouponMatchGame();
+    });
 </script>
