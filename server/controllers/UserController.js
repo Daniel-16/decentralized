@@ -366,3 +366,92 @@ export const loginWithPolkadot = async (req, res) => {
     });
   }
 };
+export const createUserWithSubWallet = async (req, res) => {
+  const { address, username, walletType, networkType } = req.body;
+
+  try {
+    const userExist = await UserModel.findOne({ accountAddress: address });
+
+    if (userExist) {
+      return res.status(409).json({
+        success: false,
+        error: "User with this wallet address already exists"
+      });
+    }
+
+    const avatarUrl = `https://api.dicebear.com/6.x/identicon/svg?seed=${encodeURIComponent(username)}`;
+
+    const user = await UserModel.create({
+      username,
+      accountAddress: address,
+      points: 10,
+      lastPointsAssigned: new Date(),
+      profileImageUrl: avatarUrl,
+      walletType
+    });
+
+    const token = generateToken(user);
+
+    res.status(201).json({
+      success: true,
+      user: {
+        ...user.toObject()
+      },
+      token,
+      networkType
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+};
+
+export const loginWithSubWallet = async (req, res) => {
+  const { address } = req.body;
+  
+  try {
+    const user = await UserModel.findOne({ accountAddress: address });
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: "No user found with this wallet address"
+      });
+    }
+
+    // Verify the signature here
+    // This would require implementing signature verification logic
+    // specific to Polkadot's cryptography
+
+    // Update firstUse if it's the user's first login
+    if (!user.firstUse) {
+      user.firstUse = true;
+      await user.save();
+    }
+
+    // Update login streak
+    const streakInfo = await updateLoginStreak(user._id);
+
+    // Assign daily points
+    await assignDailyPoints(user._id);
+
+    const token = generateToken(user);
+
+    res.status(200).json({
+      success: true,
+      user: {
+        ...user.toObject(),
+        currentStreak: streakInfo.currentStreak,
+        highestStreak: streakInfo.highestStreak
+      },
+      token,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+};
