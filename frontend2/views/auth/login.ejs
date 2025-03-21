@@ -337,7 +337,6 @@
       await new Promise((resolve) => setTimeout(resolve, 100));
       const allInjected = await window.injectedWeb3;
 
-      // Check if SubWallet is available
       const selectedWallet = "subwallet-js";
       const injected = allInjected[selectedWallet];
       if (!injected) {
