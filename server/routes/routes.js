@@ -316,5 +316,18 @@ router.post("/createUserWithPolkadot", createUserWithPolkadot);
  * @access Public
  */
 router.post("/loginWithPolkadot", loginWithPolkadot);
+/**
+ * @route POST /api/createUserWithSubWallet
+ * @description Create a new user with Sub wallet
+ * @access Public
+ */
+router.post("/createUserWithSubWallet", createUserWithPolkadot);
+
+/**
+ * @route POST /api/loginWithSubWallet
+ * @description Sign in a user with Sub wallet
+ * @access Public
+ */
+router.post("/loginWithSubWallet", loginWithPolkadot);
 
 export default router;

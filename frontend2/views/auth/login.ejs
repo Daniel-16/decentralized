@@ -83,6 +83,17 @@
               Polkadot Wallet
             </button>
           </div>
+          <!-- Add SubWallet Login Option -->
+          <div class="text-center mt-3">Or connect with</div>
+          <button
+            class="btn btn-primary w-100 mt-3"
+            id="connectSubWallet"
+            type="button"
+            onclick="loginWithSubWallet()"
+          >
+            SubWallet
+          </button>
+        </div>
         </div>
       </div>
       <!-- Thumbnail -->
@@ -302,5 +313,199 @@
 
   $(document).ready(function() {
     $("#connectPolkadotWallet").on("click", connectPolkadot);
+  });
+</script>
+
+<script>
+  async function loginWithSubWallet() {
+    if (!window.injectedWeb3) {
+      Swal.fire({
+        title: "SubWallet Extension Not Found",
+        text: "Please install the SubWallet extension first",
+        icon: "warning",
+        confirmButtonText: "Install Extension",
+        showCancelButton: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.open("https://subwallet.app/", "_blank");
+        }
+      });
+      return;
+    }
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      const allInjected = await window.injectedWeb3;
+
+      // Check if SubWallet is available
+      const selectedWallet = "subwallet-js";
+      const injected = allInjected[selectedWallet];
+      if (!injected) {
+        throw new Error("No compatible SubWallet extension found");
+      }
+
+      const extension = await injected.enable("KooponCraft");
+      const accounts = await extension.accounts.get();
+
+      if (!accounts || accounts.length === 0) {
+        Swal.fire({
+          title: "No Accounts Found",
+          text: "Please create or import an account in your SubWallet extension first",
+          icon: "warning",
+          confirmButtonText: "Open Extension",
+          showCancelButton: true,
+        });
+        return;
+      }
+
+      const account = accounts[0];
+      console.log("Account metadata:", account.meta);
+
+      const networkType = determineNetworkFromAccount(account);
+      let walletType = networkType;
+      if (
+        networkType === "Unknown" ||
+        networkType === "Polkadot" ||
+        networkType === "Kusama"
+      ) {
+        walletType = determineWalletType(selectedWallet, allInjected);
+      }
+
+      console.log("Detected network:", networkType);
+      console.log("Final wallet type for storage:", walletType);
+
+      // Call login API with wallet address and wallet type
+      $.ajax({
+        url: "/api/loginWithSubWallet",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+          address: account.address,
+        }),
+        success: function (response) {
+          if (response.success) {
+            localStorage.setItem("token", response.token);
+            localStorage.setItem("username", response.user.username);
+            localStorage.setItem(
+              "accountAddress",
+              response.user.accountAddress
+            );
+            localStorage.setItem(
+              "hasReceivedToken",
+              response.user.hasReceivedToken
+            );
+            localStorage.setItem("currentStreak", response.user.currentStreak);
+            localStorage.setItem("highestStreak", response.user.highestStreak);
+            localStorage.setItem(
+              "profileImageUrl",
+              response.user.profileImageUrl
+            );
+            localStorage.setItem("walletType", walletType);
+
+            Swal.fire({
+              title: "Success!",
+              text: `Successfully logged in with ${walletType} wallet`,
+              icon: "success",
+              timer: 1500,
+            });
+
+            location.assign("/dashboard");
+          } else {
+            Swal.fire({
+              title: "Error",
+              text: response.error || "Failed to login",
+              icon: "error",
+            });
+          }
+        },
+        error: function (jqXHR) {
+          Swal.fire({
+            title: "Error",
+            text: jqXHR.responseJSON?.error || "Failed to login",
+            icon: "error",
+          });
+        },
+      });
+    } catch (error) {
+      console.error("SubWallet connection error:", error);
+      Swal.fire({
+        title: "Connection Error",
+        text: error.message,
+        icon: "error",
+      });
+    }
+  }
+
+  function determineWalletType(injectedKey, allInjected) {
+    // Map of known wallet extension identifiers to friendly names
+    const walletMapping = {
+      "polkadot-js": "Polkadot.js",
+      talisman: "Talisman",
+      "subwallet-js": "SubWallet",
+      nova: "Nova Wallet",
+      fearless: "Fearless Wallet",
+      mathwallet: "Math Wallet",
+      clover: "Clover",
+      polkagate: "PolkaGate",
+      pontem: "Pontem",
+    };
+
+    return walletMapping[injectedKey] || injectedKey;
+  }
+
+  function determineNetworkFromAccount(account) {
+    if (account.address) {
+      const SS58_ACALA = 10;
+      try {
+      } catch (e) {
+        console.log("Address format check error:", e);
+      }
+    }
+
+    // Check for network in the account's meta fields
+    if (account.meta) {      
+      if (
+        account.meta.network === "acala" ||
+        (account.meta.name && account.meta.name.toLowerCase().includes("acala"))
+      ) {
+        return "Acala";
+      }
+      
+      if (account.meta.genesisHash) {
+        return determineNetworkFromGenesis(account.meta.genesisHash);
+      }
+    }
+
+    return "Unknown";
+  }
+
+  function determineNetworkFromGenesis(genesisHash) {    
+    const genesisMapping = {
+      // Polkadot mainnet
+      "0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3":
+        "Polkadot",
+      // Kusama
+      "0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe":
+        "Kusama",
+      // Acala mainnet
+      "0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c":
+        "Acala",
+      // Acala testnet (Mandala)
+      "0x0000000000000000000000000000000000000000000000000000000000000000":
+        "Acala",
+      // Karura (Acala's Kusama deployment)
+      "0xbaf5aabe40646d11f0ee8abbdc64f4a4b7674925cba08e4a05ff9ebed6e2126b":
+        "Karura",
+      "0x9eb76c5184c4ab8679d2d5d819fdf90b9c001403e9e17da2e14b6d8aec4029c6":
+        "Astar",
+      "0xfe58ea77779b7abda7da4ec526d14db9b1e9cd40a217c34892af80a9b332b76d":
+        "Moonbeam",
+    };
+
+    return genesisMapping[genesisHash] || "Unknown";
+  }
+
+  $(document).ready(function () {
+    $("#connectSubWallet").on("click", loginWithSubWallet);
   });
 </script>
