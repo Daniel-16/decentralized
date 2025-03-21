@@ -372,8 +372,7 @@
 
       console.log("Detected network:", networkType);
       console.log("Final wallet type for storage:", walletType);
-
-      // Call login API with wallet address and wallet type
+      
       $.ajax({
         url: "/api/loginWithSubWallet",
         method: "POST",
