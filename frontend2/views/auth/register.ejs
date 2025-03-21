@@ -329,7 +329,7 @@
       // IMPORTANT: For walletType, we prioritize the network over the extension type
       // This ensures Acala accounts are identified as "Acala" even if using Polkadot.js
       const networkType = determineNetworkFromAccount(account);
-      
+
       let walletType = networkType;
       if (
         networkType === "Unknown" ||
@@ -523,8 +523,7 @@
     try {
       await new Promise((resolve) => setTimeout(resolve, 100));
       const allInjected = await window.injectedWeb3;
-
-      // Check if SubWallet is available
+      
       const selectedWallet = "subwallet-js";
       const injected = allInjected[selectedWallet];
       if (!injected) {
